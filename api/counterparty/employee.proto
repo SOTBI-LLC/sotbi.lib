@@ -1,0 +1,63 @@
+syntax = "proto3";
+package counterparty;
+option go_package = "github.com/COTBU/sotbisrv/api/counterparty";
+
+import "google/protobuf/timestamp.proto";
+import "google/api/field_behavior.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+message EmployeesResponse {
+  int64 id = 1;
+  repeated Employee employees = 10;
+}
+
+// Работник
+message Employee {
+  int64 ID = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {type: INTEGER,format: "int64"}
+  ];
+  int64 CounterpartyID = 3 [json_name = "counterparty_id"]; // ID контрагента
+  string Position = 6 [json_name = "position"]; // Должность
+  string PositionType = 9 [json_name = "position_type"]; // Тип должности (Основное/По совместительству)
+  string ContourType = 12 [json_name = "contour_type"]; // Тип контура (Внутренний/Внешний)
+  google.protobuf.Timestamp Start = 15 [json_name = "start"]; // Дата начала работы
+  optional google.protobuf.Timestamp Stop = 18 [json_name = "stop"]; // Дата окончания работы
+  optional int64 UserID = 21 [json_name = "user_id"]; // ID пользователя
+  optional string UserName = 24 [json_name = "user_name"]; // Имя пользователя
+  google.protobuf.Timestamp CreatedAt = 27 [json_name = "created_at"];
+  google.protobuf.Timestamp UpdatedAt = 30 [json_name = "updated_at"];
+}
+
+message AddEmployeeRequest {
+  int64 id = 1 [// Counterparty ID
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {type: INTEGER,format: "int64"}
+  ];
+  string Position = 3 [json_name = "position"];
+  string PositionType = 5 [json_name = "position_type"];
+  string ContourType = 7 [json_name = "contour_type"];
+  google.protobuf.Timestamp Start = 9 [json_name = "start"];
+  optional google.protobuf.Timestamp Stop = 11 [json_name = "stop"];
+  optional int64 UserID = 13 [json_name = "user_id"];
+  optional string UserName = 15 [json_name = "user_name"];
+}
+
+message UpdateEmployeesRequest {
+  int64 id = 1 [// CounterpartyID or UserID
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {type: INTEGER,format: "int64"}
+  ];
+  repeated Employee employees = 10;
+}
+
+message UserID {
+  int64 user_id = 1 [// UserID
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {type: INTEGER,format: "int64"}
+  ];
+}

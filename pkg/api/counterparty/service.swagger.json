@@ -1,0 +1,1004 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "counterparty/service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Counterparties"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/counterparties": {
+      "get": {
+        "summary": "Получить спсок контрагентов",
+        "operationId": "Counterparties_GetCounterparties",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/counterpartyCounterparty"
+              }
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Counterparties"
+        ]
+      },
+      "post": {
+        "summary": "Создать контрагента",
+        "operationId": "Counterparties_CreateCounterparty",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/counterpartyCounterparty"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/counterpartyAddCounterpartyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Counterparties"
+        ]
+      }
+    },
+    "/api/counterparties/employees/{id}": {
+      "get": {
+        "summary": "Получить список всех работников по user_id",
+        "operationId": "Counterparties_GetEmployeesByUserID",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/counterpartyEmployee"
+              }
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Counterparties"
+        ]
+      },
+      "put": {
+        "summary": "Отредактировать список всех работников по user_id",
+        "operationId": "Counterparties_UpdateEmployeesByUserID",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/counterpartyEmployee"
+              }
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CounterpartiesUpdateEmployeesByUserIDBody"
+            }
+          }
+        ],
+        "tags": [
+          "Counterparties"
+        ]
+      }
+    },
+    "/api/counterparties/rules": {
+      "get": {
+        "summary": "Получить правила авторизации для контрагентов",
+        "operationId": "Counterparties_GetRules",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/counterpartyAuthMessage"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Counterparties"
+        ]
+      },
+      "put": {
+        "operationId": "Counterparties_UpdateRules",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/counterpartyAuthMessage"
+            }
+          }
+        ],
+        "tags": [
+          "Counterparties"
+        ]
+      }
+    },
+    "/api/counterparties/{id}": {
+      "get": {
+        "summary": "Получить контрагента по ID",
+        "operationId": "Counterparties_GetCounterpartyByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/counterpartyCounterparty"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Counterparties"
+        ]
+      },
+      "delete": {
+        "summary": "Архивировать контрагента",
+        "operationId": "Counterparties_ArchiveCounterparty",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Counterparties"
+        ]
+      },
+      "put": {
+        "summary": "Отредактировать контрагента",
+        "operationId": "Counterparties_UpdateCounterparty",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/counterpartyCounterparty"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CounterpartiesUpdateCounterpartyBody"
+            }
+          }
+        ],
+        "tags": [
+          "Counterparties"
+        ]
+      }
+    },
+    "/api/counterparties/{id}/bank_details": {
+      "get": {
+        "summary": "Получить банковские реквизиты контрагента по ID контрагента",
+        "operationId": "Counterparties_GetBankDetailsByCounterpartyID",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/counterpartyBankDetail"
+              }
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Counterparties"
+        ]
+      },
+      "put": {
+        "summary": "Отредактировать банковские счета контрагента",
+        "operationId": "Counterparties_UpdateBankDetails",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/counterpartyBankDetail"
+              }
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID контрагента",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CounterpartiesUpdateBankDetailsBody"
+            }
+          }
+        ],
+        "tags": [
+          "Counterparties"
+        ]
+      }
+    },
+    "/api/counterparties/{id}/employees": {
+      "get": {
+        "summary": "Получить список всех работников контрагента по ID контрагента",
+        "operationId": "Counterparties_GetEmployeesByCounterpartyID",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/counterpartyEmployee"
+              }
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Counterparties"
+        ]
+      },
+      "put": {
+        "summary": "Отредактировать список работников контрагента",
+        "operationId": "Counterparties_UpdateEmployees",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/counterpartyEmployee"
+              }
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CounterpartiesUpdateEmployeesBody"
+            }
+          }
+        ],
+        "tags": [
+          "Counterparties"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "CounterpartiesUpdateBankDetailsBody": {
+      "type": "object",
+      "properties": {
+        "bankDetails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/counterpartyBankDetail"
+          }
+        }
+      }
+    },
+    "CounterpartiesUpdateCounterpartyBody": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "boolean",
+          "title": "ЮЛ/ФЛ"
+        },
+        "name": {
+          "type": "string",
+          "title": "Краткое наименование"
+        },
+        "full_name": {
+          "type": "string",
+          "title": "Полное наименование"
+        },
+        "alias": {
+          "type": "string",
+          "title": "Погоняло"
+        },
+        "inn": {
+          "type": "string",
+          "maxLength": 12,
+          "minLength": 10,
+          "pattern": "^[0-9]+$"
+        },
+        "kpp": {
+          "type": "string"
+        },
+        "ogrn": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string",
+          "title": "Юридический адрес"
+        },
+        "post_address": {
+          "type": "string",
+          "title": "Почтовый адрес"
+        },
+        "contacts": {
+          "type": "string",
+          "title": "Контакты"
+        },
+        "email": {
+          "type": "string",
+          "title": "Электронная почта"
+        },
+        "ceo": {
+          "type": "string",
+          "title": "Руководитель"
+        },
+        "chief_accountant": {
+          "type": "string",
+          "title": "Главный бухгалтер"
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/counterpartyLink"
+          },
+          "title": "Ссылки"
+        },
+        "access": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Доступы"
+        }
+      },
+      "title": "Отредактировать контрагента"
+    },
+    "CounterpartiesUpdateEmployeesBody": {
+      "type": "object",
+      "properties": {
+        "employees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/counterpartyEmployee"
+          }
+        }
+      }
+    },
+    "CounterpartiesUpdateEmployeesByUserIDBody": {
+      "type": "object",
+      "properties": {
+        "employees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/counterpartyEmployee"
+          }
+        }
+      }
+    },
+    "counterpartyAddCounterpartyRequest": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "boolean",
+          "title": "ЮЛ/ФЛ"
+        },
+        "name": {
+          "type": "string",
+          "title": "Краткое наименование"
+        },
+        "full_name": {
+          "type": "string",
+          "title": "Полное наименование"
+        },
+        "alias": {
+          "type": "string",
+          "title": "Погоняло"
+        },
+        "inn": {
+          "type": "string"
+        },
+        "kpp": {
+          "type": "string"
+        },
+        "ogrn": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string",
+          "title": "Юридический адрес"
+        },
+        "post_address": {
+          "type": "string",
+          "title": "Почтовый адрес"
+        },
+        "contacts": {
+          "type": "string",
+          "title": "Контакты"
+        },
+        "email": {
+          "type": "string",
+          "title": "Электронная почта"
+        },
+        "ceo": {
+          "type": "string",
+          "title": "Руководитель"
+        },
+        "chief_accountant": {
+          "type": "string",
+          "title": "Главный бухгалтер"
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/counterpartyLink"
+          },
+          "title": "Ссылки"
+        },
+        "access": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Доступы"
+        }
+      },
+      "title": "Добавить контрагента"
+    },
+    "counterpartyAuthMessage": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "allow_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/counterpartyRules"
+          }
+        },
+        "deny_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/counterpartyRules"
+          }
+        }
+      }
+    },
+    "counterpartyBankDetail": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "counterparty_id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "bank_account": {
+          "type": "string",
+          "description": "Only 20 digits allowed.",
+          "maxLength": 20,
+          "minLength": 20,
+          "pattern": "^[0-9]+$"
+        },
+        "bank": {
+          "type": "string"
+        },
+        "corr_account": {
+          "type": "string",
+          "description": "Only 20 digits allowed.",
+          "maxLength": 20,
+          "minLength": 20,
+          "pattern": "^[0-9]+$"
+        },
+        "bik": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "open_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "close_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "account_type_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "has_client_bank": {
+          "type": "boolean"
+        },
+        "updated_by": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "counterpartyBankDetailsResponse": {
+      "type": "object",
+      "properties": {
+        "bankDetails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/counterpartyBankDetail"
+          }
+        }
+      }
+    },
+    "counterpartyCounterpartiesResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/counterpartyCounterparty"
+          }
+        }
+      }
+    },
+    "counterpartyCounterparty": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "kind": {
+          "type": "boolean",
+          "title": "ЮЛ/ФЛ"
+        },
+        "name": {
+          "type": "string",
+          "title": "Краткое наименование"
+        },
+        "full_name": {
+          "type": "string",
+          "title": "Полное наименование"
+        },
+        "alias": {
+          "type": "string",
+          "title": "Погоняло"
+        },
+        "inn": {
+          "type": "string"
+        },
+        "kpp": {
+          "type": "string"
+        },
+        "ogrn": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string",
+          "title": "Юридический адрес"
+        },
+        "post_address": {
+          "type": "string",
+          "title": "Почтовый адрес"
+        },
+        "contacts": {
+          "type": "string",
+          "title": "Контакты"
+        },
+        "email": {
+          "type": "string",
+          "title": "Электронная почта"
+        },
+        "ceo": {
+          "type": "string",
+          "title": "Руководитель"
+        },
+        "chief_accountant": {
+          "type": "string",
+          "title": "Главный бухгалтер"
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/counterpartyLink"
+          },
+          "title": "Ссылки"
+        },
+        "access": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Доступы"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "deleted_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "title": "Контрагент"
+    },
+    "counterpartyEmployee": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "counterparty_id": {
+          "type": "string",
+          "format": "int64",
+          "title": "ID контрагента"
+        },
+        "position": {
+          "type": "string",
+          "title": "Должность"
+        },
+        "position_type": {
+          "type": "string",
+          "title": "Тип должности (Основное/По совместительству)"
+        },
+        "contour_type": {
+          "type": "string",
+          "title": "Тип контура (Внутренний/Внешний)"
+        },
+        "start": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Дата начала работы"
+        },
+        "stop": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Дата окончания работы"
+        },
+        "user_id": {
+          "type": "string",
+          "format": "int64",
+          "title": "ID пользователя"
+        },
+        "user_name": {
+          "type": "string",
+          "title": "Имя пользователя"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "title": "Работник",
+      "required": [
+        "id"
+      ]
+    },
+    "counterpartyEmployeesResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "employees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/counterpartyEmployee"
+          }
+        }
+      }
+    },
+    "counterpartyHeaders": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "counterpartyLink": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "counterpartyRequest": {
+      "type": "object",
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "headers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/counterpartyHeaders"
+          }
+        }
+      }
+    },
+    "counterpartyRules": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "request": {
+          "$ref": "#/definitions/counterpartyRequest"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

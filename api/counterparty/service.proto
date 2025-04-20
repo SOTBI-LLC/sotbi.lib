@@ -1,0 +1,139 @@
+syntax = "proto3";
+package counterparty;
+option go_package = "github.com/COTBU/sotbisrv/api/counterparty";
+
+import "google/protobuf/empty.proto";
+import "counterparty/common.proto";
+import "counterparty/counterparty.proto";
+import "counterparty/bank_detail.proto";
+import "counterparty/employee.proto";
+import "google/api/annotations.proto";
+
+message Headers {
+  string Key = 1 [json_name = "key"];
+  repeated string Values = 2 [json_name = "values"];
+}
+
+message Request {
+  repeated string Paths = 1 [json_name = "paths"];
+  repeated Headers Headers = 2 [json_name = "headers"];
+}
+
+message Rules {
+  string name = 1;
+  Request request = 2;
+}
+
+message AuthMessage {
+  string Name = 1 [json_name = "name"];
+  repeated Rules AllowRules = 2 [json_name = "allow_rules"];
+  repeated Rules DenyRules = 3 [json_name = "deny_rules"];
+}
+
+service Counterparties {
+  // Получить спсок контрагентов
+  rpc GetCounterparties(google.protobuf.Empty) returns (CounterpartiesResponse) {
+    option (google.api.http) = {
+      get: "/api/counterparties"
+      response_body: "items"
+    };
+  }
+
+  // Создать контрагента
+  rpc CreateCounterparty(AddCounterpartyRequest) returns (Counterparty) {
+    option (google.api.http) = {
+      post: "/api/counterparties"
+      body: "*"
+    };
+  }
+
+  // Получить спсок контрагентов (stream)
+  rpc GetCounterpartiesStream(google.protobuf.Empty) returns (stream Counterparty) {}
+
+  // Получить контрагента по ID
+  rpc GetCounterpartyByID(CounterpartyID) returns (Counterparty) {
+    option (google.api.http) = {
+      get: "/api/counterparties/{id}"
+    };
+  }
+
+  // Архивировать контрагента
+  rpc ArchiveCounterparty(CounterpartyID) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/api/counterparties/{id}"
+    };
+  }
+
+  // Отредактировать контрагента
+  rpc UpdateCounterparty(UpdateCounterpartyRequest) returns (Counterparty) {
+    option (google.api.http) = {
+      put: "/api/counterparties/{id}"
+      body: "*"
+    };
+  }
+
+  // Получить банковские реквизиты контрагента по ID контрагента
+  rpc GetBankDetailsByCounterpartyID(CounterpartyID) returns (BankDetailsResponse) {
+    option (google.api.http) = {
+      get: "/api/counterparties/{id}/bank_details"
+      response_body: "bank_details"
+    };
+  }
+
+  // Отредактировать банковские счета контрагента
+  rpc UpdateBankDetails(UpdateBankDetailsRequest) returns (BankDetailsResponse) {
+    option (google.api.http) = {
+      put: "/api/counterparties/{id}/bank_details"
+      body: "*"
+      response_body: "bank_details"
+    };
+  }
+
+  // Получить список всех работников контрагента по ID контрагента
+  rpc GetEmployeesByCounterpartyID(CounterpartyID) returns (EmployeesResponse) {
+    option (google.api.http) = {
+      get: "/api/counterparties/{id}/employees"
+      response_body: "employees"
+    };
+  }
+
+  // Получить список всех работников по user_id
+  rpc GetEmployeesByUserID(UserID) returns (EmployeesResponse) {
+    option (google.api.http) = {
+      get: "/api/counterparties/employees/{user_id}"
+      response_body: "employees"
+    };
+  }
+
+  // Отредактировать список работников контрагента
+  rpc UpdateEmployees(UpdateEmployeesRequest) returns (EmployeesResponse) {
+    option (google.api.http) = {
+      put: "/api/counterparties/{id}/employees"
+      body: "*"
+      response_body: "employees"
+    };
+  }
+
+  // Отредактировать список всех работников по user_id
+  rpc UpdateEmployeesByUserID(UpdateEmployeesRequest) returns (EmployeesResponse) {
+    option (google.api.http) = {
+      put: "/api/counterparties/employees/{id}"
+      body: "*"
+      response_body: "employees"
+    };
+  }
+
+  // Получить правила авторизации для контрагентов
+  rpc GetRules (google.protobuf.Empty) returns (AuthMessage) {
+    option (google.api.http) = {
+      get: "/api/counterparties/rules"
+    };
+  }
+
+  rpc UpdateRules (AuthMessage) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/api/counterparties/rules"
+      body: "*"
+    };
+  }
+}

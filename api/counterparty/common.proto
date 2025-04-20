@@ -1,0 +1,8 @@
+syntax = "proto3";
+package counterparty;
+option go_package = "github.com/COTBU/sotbisrv/api/counterparty";
+
+message CounterpartyID {
+  int64 id = 1;
+}
+

@@ -1,0 +1,90 @@
+syntax = "proto3";
+package counterparty;
+option go_package = "github.com/COTBU/sotbisrv/api/counterparty";
+
+import "google/protobuf/timestamp.proto";
+import "google/api/field_behavior.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+message CounterpartiesResponse {
+  repeated Counterparty items = 1;
+}
+
+message Link {
+  string name = 1 [json_name = "name"];
+  string url = 2 [json_name = "url"];
+}
+
+// Контрагент
+message Counterparty {
+  int64 ID = 1 [
+    json_name = "id",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {type: INTEGER,format: "int64"}
+  ];
+  bool Kind = 3 [json_name = "kind"]; // ЮЛ/ФЛ
+  string Name = 6 [json_name = "name"]; // Краткое наименование
+  optional string FullName = 9 [json_name = "full_name"]; // Полное наименование
+  optional string Alias = 12 [json_name = "alias"]; // Погоняло
+  string INN = 15 [json_name = "inn"];
+  optional string KPP = 18 [json_name = "kpp"];
+  optional string OGRN = 21 [json_name = "ogrn"];
+  optional string Address = 24 [json_name = "address"]; // Юридический адрес
+  optional string PostAddress = 27 [json_name = "post_address"]; // Почтовый адрес
+  optional string Contacts = 30 [json_name = "contacts"]; // Контакты
+  optional string Email = 33 [json_name = "email"]; // Электронная почта
+  optional string CEO = 36 [json_name = "ceo"]; // Руководитель
+  optional string ChiefAccountant = 39 [json_name = "chief_accountant"];  // Главный бухгалтер
+  repeated Link links = 42 [json_name = "links"]; // Ссылки
+  repeated string access = 45 [json_name = "access"]; // Доступы
+  optional google.protobuf.Timestamp CreatedAt = 48 [json_name = "created_at"];
+  optional google.protobuf.Timestamp UpdatedAt = 51 [json_name = "updated_at"];
+  optional google.protobuf.Timestamp DeletedAt = 54 [json_name = "deleted_at"];
+}
+
+// Добавить контрагента
+message AddCounterpartyRequest {
+  bool Kind = 3 [json_name = "kind"]; // ЮЛ/ФЛ
+  string Name = 6 [json_name = "name"]; // Краткое наименование
+  optional string FullName = 9 [json_name = "full_name"]; // Полное наименование
+  optional string Alias = 12 [json_name = "alias"]; // Погоняло
+  string INN = 15 [json_name = "inn"];
+  optional string KPP = 18 [json_name = "kpp"];
+  optional string OGRN = 21 [json_name = "ogrn"];
+  optional string Address = 24 [json_name = "address"]; // Юридический адрес
+  optional string PostAddress = 27 [json_name = "post_address"]; // Почтовый адрес
+  optional string Contacts = 30 [json_name = "contacts"]; // Контакты
+  optional string Email = 33 [json_name = "email"]; // Электронная почта
+  optional string CEO = 36 [json_name = "ceo"]; // Руководитель
+  optional string ChiefAccountant = 39 [json_name = "chief_accountant"];  // Главный бухгалтер
+  repeated Link links = 42 [json_name = "links"]; // Ссылки
+  repeated string access = 45 [json_name = "access"]; // Доступы
+}
+
+// Отредактировать контрагента
+message UpdateCounterpartyRequest {
+  int64 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {type: INTEGER,format: "int64"}
+  ];
+  bool Kind = 3 [json_name = "kind"]; // ЮЛ/ФЛ
+  string Name = 6 [json_name = "name"]; // Краткое наименование
+  optional string FullName = 9 [json_name = "full_name"]; // Полное наименование
+  optional string Alias = 12 [json_name = "alias"]; // Погоняло
+  string INN = 15 [json_name = "inn", (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+    pattern: "^[0-9]+$"
+    max_length: 12
+    min_length: 10
+  }];
+  optional string KPP = 18 [json_name = "kpp"];
+  optional string OGRN = 21 [json_name = "ogrn"];
+  optional string Address = 24 [json_name = "address"]; // Юридический адрес
+  optional string PostAddress = 27 [json_name = "post_address"]; // Почтовый адрес
+  optional string Contacts = 30 [json_name = "contacts"]; // Контакты
+  optional string Email = 33 [json_name = "email"]; // Электронная почта
+  optional string CEO = 36 [json_name = "ceo"]; // Руководитель
+  optional string ChiefAccountant = 39 [json_name = "chief_accountant"];  // Главный бухгалтер
+  repeated Link links = 42 [json_name = "links"]; // Ссылки
+  repeated string access = 45 [json_name = "access"]; // Доступы
+}
+

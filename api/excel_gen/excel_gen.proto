@@ -1,0 +1,43 @@
+syntax = "proto3";
+package excel_gen;
+import "google/protobuf/timestamp.proto";
+option go_package = "github.com/COTBU/sotbisrv/api/excel_gen";
+
+enum Status {
+  REGISTERED = 0;
+  INVALID = 1;
+  PROCESSING = 2;
+  PROCESSED = 3;
+}
+
+enum Type {
+  CALCULATIONS = 0;
+  CALCULATIONS_SUMS = 1;
+  COST = 2;
+}
+
+message ExcelGenRequest {
+    Type type = 1;
+    sint32 user = 2;
+    string email = 3;
+    google.protobuf.Timestamp created_at = 4;
+}
+
+message ExcelGenResponse {
+    uint64 task_id = 1;
+    Status status = 2;
+}
+
+message ExcelGenStatusRequest {
+  uint64 task_id = 1;
+}
+
+message ExcelFileResponse {
+  bytes file = 1;
+}
+
+service ExcelGenService {
+    rpc Generate(ExcelGenRequest) returns (ExcelGenResponse);
+    rpc GetStatus(ExcelGenStatusRequest) returns (stream ExcelGenResponse);
+    rpc GetFile(ExcelGenStatusRequest) returns (stream ExcelFileResponse);
+}
