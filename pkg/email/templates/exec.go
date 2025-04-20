@@ -9,6 +9,8 @@ import (
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
+
+	"github.com/COTBU/sotbi.lib/pkg/times"
 )
 
 //go:embed _header.html
@@ -28,7 +30,7 @@ func ExecTemplate(data any, templ, ip string) (res string, err error) {
 	funcs := template.FuncMap{
 		"getRequestFiles": GetRequestFiles,
 		"formatDate": func(date time.Time) string {
-			return date.In(GetMoscowLocation()).Format("02.01.2006 15:04")
+			return date.In(times.GetMoscowLocation()).Format("02.01.2006 15:04")
 		},
 	}
 
@@ -85,13 +87,4 @@ func GetRequestFiles(sType uint) string {
 	}
 
 	return b.String()
-}
-
-func GetMoscowLocation() *time.Location {
-	location, err := time.LoadLocation("Europe/Moscow")
-	if err != nil {
-		location = time.FixedZone("UTC+3", 3*60*60)
-	}
-
-	return location
 }
