@@ -19,7 +19,7 @@ import (
 
 const magicByte byte = 0x0
 
-// TODO: remove this
+// TODO: remove this.
 var schemas = map[string]proto.Message{
 	"notifier": &pb.Notification{},
 }

@@ -1,71 +1,10 @@
+version: "2"
 run:
   tests: false
   concurrency: 4
   go: '1.24'
 
 # all available settings of specific linters
-linters-settings:
-  gosec:
-    excludes:
-      - G115
-      - G602
-  godot:
-    exclude:
-      - "^fixme:"
-      - "^todo:"
-  errcheck:
-    check-type-assertions: true
-  govet:
-    disable:
-      - printf
-  gocyclo:
-    min-complexity: 25
-#  maligned:
-#    # print struct with more effective memory layout or not, false by default
-#    suggest-new: true
-  # misspell:
-  #   locale: US
-  # unparam:
-  #   check-exported: true
-  wsl:
-    allow-assign-and-anything: true
-  gofumpt:
-    extra-rules: true
-  whitespace:
-    multi-if: false
-  gocritic:
-    settings:
-      hugeParam:
-        sizeThreshold: 255
-    enabled-checks:
-      - sprintfQuotedString
-      - badLock
-      - badSorting
-      - badSyncOnceFunc
-      - boolExprSimplify
-      - deferInLoop
-      - rangeValCopy
-      - unnamedResult
-      - truncateCmp
-      - appendCombine
-      - equalFold
-      - hugeParam
-      - indexAlloc
-      - preferDecodeRune
-      - preferFprint
-      - preferStringWriter
-      - rangeExprCopy
-      - ptrToRefParam
-      - paramTypeCombine
-      - nestingReduce
-      - httpNoBody
-      - evalOrder
-      - sliceClear
-  gci:
-    sections:
-      - standard
-      - default
-      - localmodule
 linters:
   enable:
     - bodyclose
@@ -92,30 +31,88 @@ linters:
     - nlreturn
     - wsl
     - gci
-  fast: false
+  settings:
+    gosec:
+      excludes:
+        - G115
+        - G602
+    godot:
+      exclude:
+        - "^fixme:"
+        - "^todo:"
+    errcheck:
+      check-type-assertions: true
+    govet:
+      disable:
+        - printf
+    gocyclo:
+      min-complexity: 25
+  #  maligned:
+  #    # print struct with more effective memory layout or not, false by default
+  #    suggest-new: true
+    # misspell:
+    #   locale: US
+    # unparam:
+    #   check-exported: true
+    wsl:
+      allow-assign-and-anything: true
+    whitespace:
+      multi-if: false
+    gocritic:
+      settings:
+        hugeParam:
+          sizeThreshold: 255
+      enabled-checks:
+        - sprintfQuotedString
+        - badLock
+        - badSorting
+        - badSyncOnceFunc
+        - boolExprSimplify
+        - deferInLoop
+        - rangeValCopy
+        - unnamedResult
+        - truncateCmp
+        - appendCombine
+        - equalFold
+        - hugeParam
+        - indexAlloc
+        - preferDecodeRune
+        - preferFprint
+        - preferStringWriter
+        - rangeExprCopy
+        - ptrToRefParam
+        - paramTypeCombine
+        - nestingReduce
+        - httpNoBody
+        - evalOrder
+        - sliceClear
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - gocyclo
+          - errcheck
+          - dupl
+          - gosec
+          - scopelint
+      - path: model/.*\.go
+        linters:
+          - lll
+      - path: entity/.*\.go
+        linters:
+          - lll
+    paths:
+      - "mocks\\.go$"
+      - assets
+      - build
+      - test
+
+formatters:
+  settings:
+    gofumpt:
+      extra-rules: true
+    golines:
+      shorten-comments: true
 
 issues:
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - gocyclo
-        - errcheck
-        - dupl
-        - gosec
-        - scopelint
-    - path: model/.*\.go
-      linters:
-        - lll
-    - path: entity/.*\.go
-      linters:
-        - lll
-  exclude-files:
-    - "mocks\\.go$"
-  exclude-dirs:
-    - assets
-    - build
-    - test
-
-
-  max-same-issues: 0
-  new: false
+  fix: true
