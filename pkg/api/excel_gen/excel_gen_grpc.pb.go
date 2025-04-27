@@ -19,18 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ExcelGenService_Generate_FullMethodName  = "/excel_gen.ExcelGenService/Generate"
-	ExcelGenService_GetStatus_FullMethodName = "/excel_gen.ExcelGenService/GetStatus"
-	ExcelGenService_GetFile_FullMethodName   = "/excel_gen.ExcelGenService/GetFile"
+	ExcelGenService_GeneralGenerate_FullMethodName = "/excel_gen.ExcelGenService/GeneralGenerate"
+	ExcelGenService_Generate_FullMethodName        = "/excel_gen.ExcelGenService/Generate"
+	ExcelGenService_GetStatus_FullMethodName       = "/excel_gen.ExcelGenService/GetStatus"
 )
 
 // ExcelGenServiceClient is the client API for ExcelGenService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ExcelGenServiceClient interface {
+	GeneralGenerate(ctx context.Context, in *ExcelGeneralRequest, opts ...grpc.CallOption) (*ExcelGenResponse, error)
 	Generate(ctx context.Context, in *ExcelGenRequest, opts ...grpc.CallOption) (*ExcelGenResponse, error)
-	GetStatus(ctx context.Context, in *ExcelGenStatusRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ExcelGenResponse], error)
-	GetFile(ctx context.Context, in *ExcelGenStatusRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ExcelFileResponse], error)
+	GetStatus(ctx context.Context, in *ExcelGenStatusRequest, opts ...grpc.CallOption) (*ExcelGenResponse, error)
 }
 
 type excelGenServiceClient struct {
@@ -39,6 +39,16 @@ type excelGenServiceClient struct {
 
 func NewExcelGenServiceClient(cc grpc.ClientConnInterface) ExcelGenServiceClient {
 	return &excelGenServiceClient{cc}
+}
+
+func (c *excelGenServiceClient) GeneralGenerate(ctx context.Context, in *ExcelGeneralRequest, opts ...grpc.CallOption) (*ExcelGenResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ExcelGenResponse)
+	err := c.cc.Invoke(ctx, ExcelGenService_GeneralGenerate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *excelGenServiceClient) Generate(ctx context.Context, in *ExcelGenRequest, opts ...grpc.CallOption) (*ExcelGenResponse, error) {
@@ -51,51 +61,23 @@ func (c *excelGenServiceClient) Generate(ctx context.Context, in *ExcelGenReques
 	return out, nil
 }
 
-func (c *excelGenServiceClient) GetStatus(ctx context.Context, in *ExcelGenStatusRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ExcelGenResponse], error) {
+func (c *excelGenServiceClient) GetStatus(ctx context.Context, in *ExcelGenStatusRequest, opts ...grpc.CallOption) (*ExcelGenResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &ExcelGenService_ServiceDesc.Streams[0], ExcelGenService_GetStatus_FullMethodName, cOpts...)
+	out := new(ExcelGenResponse)
+	err := c.cc.Invoke(ctx, ExcelGenService_GetStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[ExcelGenStatusRequest, ExcelGenResponse]{ClientStream: stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
+	return out, nil
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type ExcelGenService_GetStatusClient = grpc.ServerStreamingClient[ExcelGenResponse]
-
-func (c *excelGenServiceClient) GetFile(ctx context.Context, in *ExcelGenStatusRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ExcelFileResponse], error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &ExcelGenService_ServiceDesc.Streams[1], ExcelGenService_GetFile_FullMethodName, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &grpc.GenericClientStream[ExcelGenStatusRequest, ExcelFileResponse]{ClientStream: stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type ExcelGenService_GetFileClient = grpc.ServerStreamingClient[ExcelFileResponse]
 
 // ExcelGenServiceServer is the server API for ExcelGenService service.
 // All implementations must embed UnimplementedExcelGenServiceServer
 // for forward compatibility.
 type ExcelGenServiceServer interface {
+	GeneralGenerate(context.Context, *ExcelGeneralRequest) (*ExcelGenResponse, error)
 	Generate(context.Context, *ExcelGenRequest) (*ExcelGenResponse, error)
-	GetStatus(*ExcelGenStatusRequest, grpc.ServerStreamingServer[ExcelGenResponse]) error
-	GetFile(*ExcelGenStatusRequest, grpc.ServerStreamingServer[ExcelFileResponse]) error
+	GetStatus(context.Context, *ExcelGenStatusRequest) (*ExcelGenResponse, error)
 	mustEmbedUnimplementedExcelGenServiceServer()
 }
 
@@ -106,14 +88,14 @@ type ExcelGenServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedExcelGenServiceServer struct{}
 
+func (UnimplementedExcelGenServiceServer) GeneralGenerate(context.Context, *ExcelGeneralRequest) (*ExcelGenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GeneralGenerate not implemented")
+}
 func (UnimplementedExcelGenServiceServer) Generate(context.Context, *ExcelGenRequest) (*ExcelGenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Generate not implemented")
 }
-func (UnimplementedExcelGenServiceServer) GetStatus(*ExcelGenStatusRequest, grpc.ServerStreamingServer[ExcelGenResponse]) error {
-	return status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
-}
-func (UnimplementedExcelGenServiceServer) GetFile(*ExcelGenStatusRequest, grpc.ServerStreamingServer[ExcelFileResponse]) error {
-	return status.Errorf(codes.Unimplemented, "method GetFile not implemented")
+func (UnimplementedExcelGenServiceServer) GetStatus(context.Context, *ExcelGenStatusRequest) (*ExcelGenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
 }
 func (UnimplementedExcelGenServiceServer) mustEmbedUnimplementedExcelGenServiceServer() {}
 func (UnimplementedExcelGenServiceServer) testEmbeddedByValue()                         {}
@@ -136,6 +118,24 @@ func RegisterExcelGenServiceServer(s grpc.ServiceRegistrar, srv ExcelGenServiceS
 	s.RegisterService(&ExcelGenService_ServiceDesc, srv)
 }
 
+func _ExcelGenService_GeneralGenerate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExcelGeneralRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExcelGenServiceServer).GeneralGenerate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ExcelGenService_GeneralGenerate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExcelGenServiceServer).GeneralGenerate(ctx, req.(*ExcelGeneralRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ExcelGenService_Generate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ExcelGenRequest)
 	if err := dec(in); err != nil {
@@ -154,27 +154,23 @@ func _ExcelGenService_Generate_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ExcelGenService_GetStatus_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ExcelGenStatusRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _ExcelGenService_GetStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExcelGenStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(ExcelGenServiceServer).GetStatus(m, &grpc.GenericServerStream[ExcelGenStatusRequest, ExcelGenResponse]{ServerStream: stream})
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type ExcelGenService_GetStatusServer = grpc.ServerStreamingServer[ExcelGenResponse]
-
-func _ExcelGenService_GetFile_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ExcelGenStatusRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+	if interceptor == nil {
+		return srv.(ExcelGenServiceServer).GetStatus(ctx, in)
 	}
-	return srv.(ExcelGenServiceServer).GetFile(m, &grpc.GenericServerStream[ExcelGenStatusRequest, ExcelFileResponse]{ServerStream: stream})
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ExcelGenService_GetStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExcelGenServiceServer).GetStatus(ctx, req.(*ExcelGenStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type ExcelGenService_GetFileServer = grpc.ServerStreamingServer[ExcelFileResponse]
 
 // ExcelGenService_ServiceDesc is the grpc.ServiceDesc for ExcelGenService service.
 // It's only intended for direct use with grpc.RegisterService,
@@ -184,21 +180,18 @@ var ExcelGenService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ExcelGenServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "GeneralGenerate",
+			Handler:    _ExcelGenService_GeneralGenerate_Handler,
+		},
+		{
 			MethodName: "Generate",
 			Handler:    _ExcelGenService_Generate_Handler,
 		},
-	},
-	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "GetStatus",
-			Handler:       _ExcelGenService_GetStatus_Handler,
-			ServerStreams: true,
-		},
-		{
-			StreamName:    "GetFile",
-			Handler:       _ExcelGenService_GetFile_Handler,
-			ServerStreams: true,
+			MethodName: "GetStatus",
+			Handler:    _ExcelGenService_GetStatus_Handler,
 		},
 	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "api/excel_gen/excel_gen.proto",
 }

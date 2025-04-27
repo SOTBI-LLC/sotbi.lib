@@ -1,6 +1,7 @@
 syntax = "proto3";
 package excel_gen;
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
 option go_package = "github.com/COTBU/sotbisrv/api/excel_gen";
 
 enum Status {
@@ -32,12 +33,13 @@ message ExcelGenStatusRequest {
   uint64 task_id = 1;
 }
 
-message ExcelFileResponse {
-  bytes file = 1;
+message ExcelGeneralRequest {
+  google.protobuf.Struct data = 1;
+  string template = 2;
 }
 
 service ExcelGenService {
+    rpc GeneralGenerate(ExcelGeneralRequest) returns (ExcelGenResponse);
     rpc Generate(ExcelGenRequest) returns (ExcelGenResponse);
-    rpc GetStatus(ExcelGenStatusRequest) returns (stream ExcelGenResponse);
-    rpc GetFile(ExcelGenStatusRequest) returns (stream ExcelFileResponse);
+    rpc GetStatus(ExcelGenStatusRequest) returns (ExcelGenResponse);
 }
