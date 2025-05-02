@@ -20,9 +20,10 @@ enum Type {
 message ExcelGenRequest {
     Type type = 1;
     sint32 user = 2;
-    string email = 3;
+    string email = 3 [deprecated = true];
     google.protobuf.Timestamp created_at = 4;
-}
+    repeated string recipients = 5;
+  }
 
 message ExcelGenResponse {
     uint64 task_id = 1;
@@ -36,6 +37,8 @@ message ExcelGenStatusRequest {
 message ExcelGeneralRequest {
   google.protobuf.Struct data = 1;
   string template = 2;
+  repeated string recipients = 3;
+  google.protobuf.Timestamp created_at = 4;
 }
 
 service ExcelGenService {
