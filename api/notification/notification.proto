@@ -14,7 +14,12 @@ enum NotificationType {
 // Определение сообщения Notification
 message Notification {
   NotificationType type = 1;
+  // Теиа письма
   string subject = 2;// [(validate.rules).string.min_len = 2];
+  // Само сообщение
   bytes body = 3;
+  // список получателей
   repeated string recipients = 4; // [(validate.rules).repeated.items.string.email = true];
+  // название объекта, в котором лежит вложение
+  string objectName = 5;
 }
