@@ -13,21 +13,15 @@ import (
 	"github.com/riferrei/srclient"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/protoadapt"
-
-	pb "github.com/COTBU/sotbi.lib/pkg/api/notification"
 )
 
 const magicByte byte = 0x0
-
-// TODO: remove this.
-var schemas = map[string]proto.Message{
-	"notifier": &pb.Notification{},
-}
 
 type SchemaRegistry struct {
 	URL      string
 	Username string
 	Password string
+  SchemaNames map[string]proto.Message
 	schemas  map[string]int
 }
 
@@ -51,7 +45,7 @@ func (r *SchemaRegistry) registerSchemas() error {
 
 	r.schemas = make(map[string]int)
 
-	for topic, msg := range schemas {
+	for topic, msg := range r.SchemaNames {
 		valueSubject := fmt.Sprintf("%s-value", topic)
 
 		valueSchema, err := toProtoFileString(msg)
