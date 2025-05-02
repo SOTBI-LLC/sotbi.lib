@@ -18,11 +18,11 @@ import (
 const magicByte byte = 0x0
 
 type SchemaRegistry struct {
-	URL      string
-	Username string
-	Password string
-  SchemaNames map[string]proto.Message
-	schemas  map[string]int
+	URL         string
+	Username    string
+	Password    string
+	SchemaNames map[string]proto.Message
+	schemas     map[string]int
 }
 
 // WithSchemaRegistry при инициализации продюсера публикует схемы в Kafka Schema Registry.

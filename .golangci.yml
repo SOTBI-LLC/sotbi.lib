@@ -10,8 +10,6 @@ linters:
     - bodyclose
     - containedctx
     - errname
-    - goimports
-    # - revive
     - gosec
     - unconvert
     - goconst
@@ -30,7 +28,6 @@ linters:
     - whitespace
     - nlreturn
     - wsl
-    - gci
   settings:
     gosec:
       excludes:

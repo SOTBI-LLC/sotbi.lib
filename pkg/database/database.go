@@ -62,7 +62,7 @@ func Connect(opts ...Option) (*Conn, error) {
 		return nil, err
 	}
 
-	conn.DB.Exec("set timezone to 'Europe/Moscow'")
+	conn.Exec("set timezone to 'Europe/Moscow'")
 
 	return conn, nil
 }
@@ -88,7 +88,7 @@ func (c *Conn) Ping(ctx context.Context) error {
 		return err
 	}
 
-	c.DB.Logger.Info(ctx, "%#v\n", c.db.Stats())
+	c.Logger.Info(ctx, "%#v\n", c.db.Stats())
 
 	return nil
 }
