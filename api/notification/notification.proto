@@ -1,0 +1,25 @@
+syntax = "proto3";
+// edition = "2023";
+package notification;
+option go_package = "sotbisrv/api/notification";
+// import "api/validate/validate.proto";
+import "google/protobuf/descriptor.proto";
+
+// Определение перечисления NotificationType
+enum NotificationType {
+  EMAIL = 0;    // Уведомление на почту
+  TELEGRAM = 1; // Уведомление в телеграмм
+}
+
+// Определение сообщения Notification
+message Notification {
+  NotificationType type = 1;
+  // Теиа письма
+  string subject = 2;// [(validate.rules).string.min_len = 2];
+  // Само сообщение
+  bytes body = 3;
+  // список получателей
+  repeated string recipients = 4; // [(validate.rules).repeated.items.string.email = true];
+  // название объекта, в котором лежит вложение
+  string objectName = 5;
+}
