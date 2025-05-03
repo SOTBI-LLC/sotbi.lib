@@ -5,6 +5,7 @@ go 1.24.2
 require (
 	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/docker/go-connections v0.5.0
+	github.com/go-resty/resty/v2 v2.16.5
 	github.com/go-testfixtures/testfixtures/v3 v3.14.0
 	github.com/golang-migrate/migrate/v4 v4.18.3
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3
@@ -18,6 +19,8 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/testcontainers/testcontainers-go v0.37.0
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.37.0
+	github.com/tit/go-inn-validator v0.0.0-20190109123112-212f8480a7d1
+	github.com/yuin/goldmark v1.7.11
 	golang.org/x/text v0.24.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20250428153025-10db94c68c34
 	google.golang.org/grpc v1.72.0
@@ -108,7 +111,6 @@ require (
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
-	github.com/yuin/goldmark v1.7.11 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	github.com/zeebo/errs v1.4.0 // indirect
 	go.opencensus.io v0.24.0 // indirect

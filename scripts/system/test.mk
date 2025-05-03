@@ -1,5 +1,5 @@
 .PHONY: test
-test: gomod
+test: fullfmt
 	bash -c 'set -a; . .env; set +a; go test  ./... -v --race --tags=tests'
 
 test-cov:  ## Запустить тесты с покрытием

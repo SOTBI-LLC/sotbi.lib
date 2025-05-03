@@ -7,9 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/COTBU/sotbi.lib/pkg/times"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
+
+	"github.com/COTBU/sotbi.lib/pkg/times"
 )
 
 //go:embed _header.html

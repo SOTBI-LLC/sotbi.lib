@@ -20,7 +20,7 @@ func (l *traceLogger) Log(
 	_ context.Context,
 	level tracelog.LogLevel,
 	msg string,
-	data map[string]interface{},
+	data map[string]any,
 ) {
 	var (
 		i      int
