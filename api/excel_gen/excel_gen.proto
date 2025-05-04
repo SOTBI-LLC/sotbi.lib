@@ -18,16 +18,16 @@ enum Type {
 }
 
 message ExcelGenRequest {
-    Type type = 1;
-    sint32 user = 2;
-    string email = 3 [deprecated = true];
-    google.protobuf.Timestamp created_at = 4;
-    repeated string recipients = 5;
-  }
+  Type type = 1;
+  sint32 user = 2;
+  string email = 3 [deprecated = true];
+  google.protobuf.Timestamp created_at = 4;
+  repeated string recipients = 5;
+}
 
 message ExcelGenResponse {
-    uint64 task_id = 1;
-    Status status = 2;
+  uint64 task_id = 1;
+  Status status = 2;
 }
 
 message ExcelGenStatusRequest {
@@ -35,16 +35,33 @@ message ExcelGenStatusRequest {
 }
 
 message ExcelGeneralRequest {
-  google.protobuf.Struct data = 1;
-  string template = 2;
-  repeated string recipients = 3;
-  google.protobuf.Timestamp created_at = 4;
-  google.protobuf.ListValue items = 5;
-  optional int64 id = 6;
+  optional int64 id = 1;
+  google.protobuf.Struct data = 2;
+  string template = 3;
+  repeated string recipients = 4;
+  google.protobuf.Timestamp created_at = 5;
+  oneof items {
+    CostWithDebtors cost_with_debtors = 6;
+  }
+}
+
+message CostWithDebtors {
+  message Item {
+    uint32 id = 1;
+    google.protobuf.Timestamp date = 2;
+    string user_name = 3;
+    string debtor_name = 4;
+    uint32 minutes_costs = 5;
+    optional string description = 6;
+    optional string work_category_name = 7;
+    string time = 8;
+    string debtor_group = 9;
+  }
+  repeated Item items = 1;
 }
 
 service ExcelGenService {
-    rpc GeneralGenerate(ExcelGeneralRequest) returns (ExcelGenResponse);
-    rpc Generate(ExcelGenRequest) returns (ExcelGenResponse);
-    rpc GetStatus(ExcelGenStatusRequest) returns (ExcelGenResponse);
+  rpc GeneralGenerate(ExcelGeneralRequest) returns (ExcelGenResponse);
+  rpc Generate(ExcelGenRequest) returns (ExcelGenResponse);
+  rpc GetStatus(ExcelGenStatusRequest) returns (ExcelGenResponse);
 }
