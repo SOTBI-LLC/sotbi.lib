@@ -49,14 +49,17 @@ message ExcelGeneralRequest {
 message CostWithDebtors {
   message Item {
     uint64 id = 1;
-    google.protobuf.Timestamp date = 2;
+    string date = 2;
     string user_name = 3;
-    string debtor_name = 4;
-    uint64 minutes_costs = 5;
-    optional string description = 6;
-    optional string work_category_name = 7;
-    string time = 8;
-    string debtor_group = 9;
+    string user_unit1 = 4;
+    string user_unit2 = 5;
+    string debtor_name = 6;
+    string project_name = 7;
+    uint64 minutes_costs = 8;
+    optional string description = 9;
+    optional string work_category_name = 10;
+    string time = 11;
+    string debtor_group = 12;
   }
   repeated Item items = 1;
 }
