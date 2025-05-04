@@ -48,11 +48,11 @@ message ExcelGeneralRequest {
 
 message CostWithDebtors {
   message Item {
-    uint32 id = 1;
+    uint64 id = 1;
     google.protobuf.Timestamp date = 2;
     string user_name = 3;
     string debtor_name = 4;
-    uint32 minutes_costs = 5;
+    uint64 minutes_costs = 5;
     optional string description = 6;
     optional string work_category_name = 7;
     string time = 8;
