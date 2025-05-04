@@ -42,6 +42,7 @@ message ExcelGeneralRequest {
   google.protobuf.Timestamp created_at = 5;
   oneof items {
     CostWithDebtors cost_with_debtors = 6;
+    ProjectsAndDebtors projects_and_debtors = 7;
   }
 }
 
@@ -56,6 +57,17 @@ message CostWithDebtors {
     optional string work_category_name = 7;
     string time = 8;
     string debtor_group = 9;
+  }
+  repeated Item items = 1;
+}
+
+message ProjectsAndDebtors {
+  message Item {
+    uint64 id = 1;
+    string name = 2;
+    uint64 project_id = 3;
+    string project_name = 4;
+    double percentage = 5;
   }
   repeated Item items = 1;
 }
