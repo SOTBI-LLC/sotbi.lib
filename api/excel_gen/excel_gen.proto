@@ -51,7 +51,7 @@ message ExcelGeneralRequest {
 
 message DebtorPaymentsRequest {
   message Item {
-    string date = 1;
+    string data = 1;
     string number = 2;
     string payer1 = 3;
     string payer_inn = 4;
