@@ -87,7 +87,7 @@ message ReportPaymentsRequest {
 
 message InitiatorPaymentsRequest {
   message Item {
-    string date = 1;
+    string data = 1;
     string bank_account = 2;
     string number = 3;
     string inn = 4;
