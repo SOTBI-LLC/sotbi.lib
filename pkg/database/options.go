@@ -33,8 +33,8 @@ func ConnDSN(dsn string) Option {
 	}
 }
 
-func WithLogger(logger Writer) Option {
+func WithLogger(level string) Option {
 	return func(c *Conn) {
-		c.Writer = logger
+		c.logLevel = level
 	}
 }

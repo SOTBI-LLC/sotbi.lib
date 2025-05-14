@@ -4,13 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 const (
@@ -28,7 +26,7 @@ type Writer interface {
 
 type Conn struct {
 	*gorm.DB
-  	Writer
+  logLevel string
 	db              *sql.DB
 	maxIdleConns    int
 	maxOpenConns    int
@@ -43,7 +41,7 @@ func Connect(opts ...Option) (*Conn, error) {
 		maxOpenConns:    _maxOpenConns,
 		connMaxLifetime: _connMaxLifetime,
 		dsn:             _DSN,
-    Writer:          log.New(os.Stdout, "\r\n", log.LstdFlags),
+    logLevel:       "info",
 	}
 	// Custom options
 	for _, opt := range opts {
@@ -63,15 +61,7 @@ func Connect(opts ...Option) (*Conn, error) {
 
 	conn.db = sqlDB
 
-  newLogger := logger.New(
-  conn.Writer,
-  logger.Config{
-    SlowThreshold:              500*time.Millisecond,   // Slow SQL threshold
-    LogLevel:                   logger.Error, // Log level
-    IgnoreRecordNotFoundError: true,           // Ignore ErrRecordNotFound error for logger
-    Colorful:                  false,          // Disable color
-  },
-)
+  newLogger := New(conn.logLevel)
 
 	conn.DB, err = gorm.Open(postgres.New(postgres.Config{
 		Conn:                 sqlDB,
