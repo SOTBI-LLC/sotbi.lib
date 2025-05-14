@@ -4,11 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 const (
@@ -19,8 +21,14 @@ const (
 		"port=5432 TimeZone=Europe/Moscow sslmode=disable"
 )
 
+// Writer log writer interface
+type Writer interface {
+	Printf(string, ...interface{})
+}
+
 type Conn struct {
 	*gorm.DB
+  	Writer
 	db              *sql.DB
 	maxIdleConns    int
 	maxOpenConns    int
@@ -35,6 +43,7 @@ func Connect(opts ...Option) (*Conn, error) {
 		maxOpenConns:    _maxOpenConns,
 		connMaxLifetime: _connMaxLifetime,
 		dsn:             _DSN,
+    Writer:          log.New(os.Stdout, "\r\n", log.LstdFlags),
 	}
 	// Custom options
 	for _, opt := range opts {
@@ -54,10 +63,20 @@ func Connect(opts ...Option) (*Conn, error) {
 
 	conn.db = sqlDB
 
+  newLogger := logger.New(
+  conn.Writer,
+  logger.Config{
+    SlowThreshold:              500*time.Millisecond,   // Slow SQL threshold
+    LogLevel:                   logger.Error, // Log level
+    IgnoreRecordNotFoundError: true,           // Ignore ErrRecordNotFound error for logger
+    Colorful:                  false,          // Disable color
+  },
+)
+
 	conn.DB, err = gorm.Open(postgres.New(postgres.Config{
 		Conn:                 sqlDB,
 		PreferSimpleProtocol: true, // disables implicit prepared statement usage
-	}), &gorm.Config{CreateBatchSize: 100})
+	}), &gorm.Config{CreateBatchSize: 100, Logger: newLogger })
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +107,7 @@ func (c *Conn) Ping(ctx context.Context) error {
 		return err
 	}
 
-	c.Logger.Info(ctx, "%#v\n", c.db.Stats())
+	c.DB.Logger.Info(ctx, "%#v\n", c.db.Stats())
 
 	return nil
 }
