@@ -94,7 +94,7 @@ func (l *SlogLogger) Trace(ctx context.Context, begin time.Time, fc func() (stri
 		attrs = append(attrs, slog.String("error", err.Error()))
 		l.slog.LogAttrs(ctx, slog.LevelError, "query error", attrs...)
 	case elapsed > 200*time.Millisecond && l.logLevel >= logger.Warn:
-		l.slog.LogAttrs(ctx, slog.LevelInfo, "slow query", attrs...)
+		l.slog.LogAttrs(ctx, slog.LevelWarn, "slow query", attrs...)
 	case l.logLevel >= logger.Info:
 		l.slog.LogAttrs(ctx, slog.LevelInfo, "query", attrs...)
 	}
