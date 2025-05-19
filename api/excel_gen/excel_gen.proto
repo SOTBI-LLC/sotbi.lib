@@ -23,6 +23,7 @@ message ExcelGenRequest {
   string email = 3 [deprecated = true];
   google.protobuf.Timestamp created_at = 4;
   repeated string recipients = 5;
+  bytes meta = 6;
 }
 
 message ExcelGenResponse {
