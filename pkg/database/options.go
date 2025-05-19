@@ -1,6 +1,8 @@
 package database
 
-import "time"
+import (
+	"time"
+)
 
 type Option func(*Conn)
 
@@ -28,5 +30,11 @@ func ConnMaxLifetime(timeout time.Duration) Option {
 func ConnDSN(dsn string) Option {
 	return func(c *Conn) {
 		c.dsn = dsn
+	}
+}
+
+func WithLogger(level string) Option {
+	return func(c *Conn) {
+		c.logLevel = level
 	}
 }

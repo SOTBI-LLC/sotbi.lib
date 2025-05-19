@@ -19,8 +19,14 @@ const (
 		"port=5432 TimeZone=Europe/Moscow sslmode=disable"
 )
 
+// Writer log writer interface
+type Writer interface {
+	Printf(string, ...interface{})
+}
+
 type Conn struct {
 	*gorm.DB
+  logLevel string
 	db              *sql.DB
 	maxIdleConns    int
 	maxOpenConns    int
@@ -35,6 +41,7 @@ func Connect(opts ...Option) (*Conn, error) {
 		maxOpenConns:    _maxOpenConns,
 		connMaxLifetime: _connMaxLifetime,
 		dsn:             _DSN,
+    logLevel:       "info",
 	}
 	// Custom options
 	for _, opt := range opts {
@@ -54,10 +61,12 @@ func Connect(opts ...Option) (*Conn, error) {
 
 	conn.db = sqlDB
 
+  newLogger := New(conn.logLevel)
+
 	conn.DB, err = gorm.Open(postgres.New(postgres.Config{
 		Conn:                 sqlDB,
 		PreferSimpleProtocol: true, // disables implicit prepared statement usage
-	}), &gorm.Config{CreateBatchSize: 100})
+	}), &gorm.Config{CreateBatchSize: 100, Logger: newLogger })
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +97,7 @@ func (c *Conn) Ping(ctx context.Context) error {
 		return err
 	}
 
-	c.Logger.Info(ctx, "%#v\n", c.db.Stats())
+	c.DB.Logger.Info(ctx, "%#v\n", c.db.Stats())
 
 	return nil
 }
