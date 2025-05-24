@@ -83,6 +83,7 @@ const (
 	Type_CALCULATIONS_SUMS       Type = 1
 	Type_COST                    Type = 2
 	Type_DEBTORS_PAYMENTS_REPORT Type = 3
+	Type_DEBTORS_PAYMENTS        Type = 4
 )
 
 // Enum value maps for Type.
@@ -92,12 +93,14 @@ var (
 		1: "CALCULATIONS_SUMS",
 		2: "COST",
 		3: "DEBTORS_PAYMENTS_REPORT",
+		4: "DEBTORS_PAYMENTS",
 	}
 	Type_value = map[string]int32{
 		"CALCULATIONS":            0,
 		"CALCULATIONS_SUMS":       1,
 		"COST":                    2,
 		"DEBTORS_PAYMENTS_REPORT": 3,
+		"DEBTORS_PAYMENTS":        4,
 	}
 )
 
@@ -321,8 +324,6 @@ type ExcelGeneralRequest struct {
 	//
 	//	*ExcelGeneralRequest_CostWithDebtors
 	//	*ExcelGeneralRequest_ProjectsAndDebtors
-	//	*ExcelGeneralRequest_DebtorPayments
-	//	*ExcelGeneralRequest_ReportPayments
 	//	*ExcelGeneralRequest_InitiatorPayments
 	Items         isExcelGeneralRequest_Items `protobuf_oneof:"items"`
 	unknownFields protoimpl.UnknownFields
@@ -419,24 +420,6 @@ func (x *ExcelGeneralRequest) GetProjectsAndDebtors() *ProjectsAndDebtors {
 	return nil
 }
 
-func (x *ExcelGeneralRequest) GetDebtorPayments() *DebtorPaymentsRequest {
-	if x != nil {
-		if x, ok := x.Items.(*ExcelGeneralRequest_DebtorPayments); ok {
-			return x.DebtorPayments
-		}
-	}
-	return nil
-}
-
-func (x *ExcelGeneralRequest) GetReportPayments() *ReportPaymentsRequest {
-	if x != nil {
-		if x, ok := x.Items.(*ExcelGeneralRequest_ReportPayments); ok {
-			return x.ReportPayments
-		}
-	}
-	return nil
-}
-
 func (x *ExcelGeneralRequest) GetInitiatorPayments() *InitiatorPaymentsRequest {
 	if x != nil {
 		if x, ok := x.Items.(*ExcelGeneralRequest_InitiatorPayments); ok {
@@ -458,14 +441,6 @@ type ExcelGeneralRequest_ProjectsAndDebtors struct {
 	ProjectsAndDebtors *ProjectsAndDebtors `protobuf:"bytes,7,opt,name=projects_and_debtors,json=projectsAndDebtors,proto3,oneof"`
 }
 
-type ExcelGeneralRequest_DebtorPayments struct {
-	DebtorPayments *DebtorPaymentsRequest `protobuf:"bytes,8,opt,name=debtor_payments,json=debtorPayments,proto3,oneof"`
-}
-
-type ExcelGeneralRequest_ReportPayments struct {
-	ReportPayments *ReportPaymentsRequest `protobuf:"bytes,9,opt,name=report_payments,json=reportPayments,proto3,oneof"`
-}
-
 type ExcelGeneralRequest_InitiatorPayments struct {
 	InitiatorPayments *InitiatorPaymentsRequest `protobuf:"bytes,10,opt,name=initiator_payments,json=initiatorPayments,proto3,oneof"`
 }
@@ -474,99 +449,7 @@ func (*ExcelGeneralRequest_CostWithDebtors) isExcelGeneralRequest_Items() {}
 
 func (*ExcelGeneralRequest_ProjectsAndDebtors) isExcelGeneralRequest_Items() {}
 
-func (*ExcelGeneralRequest_DebtorPayments) isExcelGeneralRequest_Items() {}
-
-func (*ExcelGeneralRequest_ReportPayments) isExcelGeneralRequest_Items() {}
-
 func (*ExcelGeneralRequest_InitiatorPayments) isExcelGeneralRequest_Items() {}
-
-type DebtorPaymentsRequest struct {
-	state         protoimpl.MessageState        `protogen:"open.v1"`
-	Items         []*DebtorPaymentsRequest_Item `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DebtorPaymentsRequest) Reset() {
-	*x = DebtorPaymentsRequest{}
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DebtorPaymentsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DebtorPaymentsRequest) ProtoMessage() {}
-
-func (x *DebtorPaymentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DebtorPaymentsRequest.ProtoReflect.Descriptor instead.
-func (*DebtorPaymentsRequest) Descriptor() ([]byte, []int) {
-	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *DebtorPaymentsRequest) GetItems() []*DebtorPaymentsRequest_Item {
-	if x != nil {
-		return x.Items
-	}
-	return nil
-}
-
-type ReportPaymentsRequest struct {
-	state         protoimpl.MessageState        `protogen:"open.v1"`
-	Items         []*ReportPaymentsRequest_Item `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ReportPaymentsRequest) Reset() {
-	*x = ReportPaymentsRequest{}
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReportPaymentsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReportPaymentsRequest) ProtoMessage() {}
-
-func (x *ReportPaymentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReportPaymentsRequest.ProtoReflect.Descriptor instead.
-func (*ReportPaymentsRequest) Descriptor() ([]byte, []int) {
-	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *ReportPaymentsRequest) GetItems() []*ReportPaymentsRequest_Item {
-	if x != nil {
-		return x.Items
-	}
-	return nil
-}
 
 type InitiatorPaymentsRequest struct {
 	state         protoimpl.MessageState           `protogen:"open.v1"`
@@ -577,7 +460,7 @@ type InitiatorPaymentsRequest struct {
 
 func (x *InitiatorPaymentsRequest) Reset() {
 	*x = InitiatorPaymentsRequest{}
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[6]
+	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -589,7 +472,7 @@ func (x *InitiatorPaymentsRequest) String() string {
 func (*InitiatorPaymentsRequest) ProtoMessage() {}
 
 func (x *InitiatorPaymentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[6]
+	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -602,7 +485,7 @@ func (x *InitiatorPaymentsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InitiatorPaymentsRequest.ProtoReflect.Descriptor instead.
 func (*InitiatorPaymentsRequest) Descriptor() ([]byte, []int) {
-	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{6}
+	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *InitiatorPaymentsRequest) GetItems() []*InitiatorPaymentsRequest_Item {
@@ -621,7 +504,7 @@ type CostWithDebtors struct {
 
 func (x *CostWithDebtors) Reset() {
 	*x = CostWithDebtors{}
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[7]
+	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -633,7 +516,7 @@ func (x *CostWithDebtors) String() string {
 func (*CostWithDebtors) ProtoMessage() {}
 
 func (x *CostWithDebtors) ProtoReflect() protoreflect.Message {
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[7]
+	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -646,7 +529,7 @@ func (x *CostWithDebtors) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CostWithDebtors.ProtoReflect.Descriptor instead.
 func (*CostWithDebtors) Descriptor() ([]byte, []int) {
-	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{7}
+	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CostWithDebtors) GetItems() []*CostWithDebtors_Item {
@@ -665,7 +548,7 @@ type ProjectsAndDebtors struct {
 
 func (x *ProjectsAndDebtors) Reset() {
 	*x = ProjectsAndDebtors{}
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[8]
+	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -677,7 +560,7 @@ func (x *ProjectsAndDebtors) String() string {
 func (*ProjectsAndDebtors) ProtoMessage() {}
 
 func (x *ProjectsAndDebtors) ProtoReflect() protoreflect.Message {
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[8]
+	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -690,7 +573,7 @@ func (x *ProjectsAndDebtors) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProjectsAndDebtors.ProtoReflect.Descriptor instead.
 func (*ProjectsAndDebtors) Descriptor() ([]byte, []int) {
-	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{8}
+	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ProjectsAndDebtors) GetItems() []*ProjectsAndDebtors_Item {
@@ -698,270 +581,6 @@ func (x *ProjectsAndDebtors) GetItems() []*ProjectsAndDebtors_Item {
 		return x.Items
 	}
 	return nil
-}
-
-type DebtorPaymentsRequest_Item struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Data            string                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	Number          string                 `protobuf:"bytes,2,opt,name=number,proto3" json:"number,omitempty"`
-	Payer1          string                 `protobuf:"bytes,3,opt,name=payer1,proto3" json:"payer1,omitempty"`
-	PayerInn        string                 `protobuf:"bytes,4,opt,name=payer_inn,json=payerInn,proto3" json:"payer_inn,omitempty"`
-	PayerAccount    string                 `protobuf:"bytes,5,opt,name=payer_account,json=payerAccount,proto3" json:"payer_account,omitempty"`
-	PayerBank1      string                 `protobuf:"bytes,6,opt,name=payer_bank1,json=payerBank1,proto3" json:"payer_bank1,omitempty"`
-	Receiver1       string                 `protobuf:"bytes,7,opt,name=receiver1,proto3" json:"receiver1,omitempty"`
-	ReceiverInn     string                 `protobuf:"bytes,8,opt,name=receiver_inn,json=receiverInn,proto3" json:"receiver_inn,omitempty"`
-	ReceiverAccount string                 `protobuf:"bytes,9,opt,name=receiver_account,json=receiverAccount,proto3" json:"receiver_account,omitempty"`
-	ReceiverBank1   string                 `protobuf:"bytes,10,opt,name=receiver_bank1,json=receiverBank1,proto3" json:"receiver_bank1,omitempty"`
-	PaymentPurpose  string                 `protobuf:"bytes,11,opt,name=payment_purpose,json=paymentPurpose,proto3" json:"payment_purpose,omitempty"`
-	Debet           float64                `protobuf:"fixed64,12,opt,name=debet,proto3" json:"debet,omitempty"`
-	Credit          float64                `protobuf:"fixed64,13,opt,name=credit,proto3" json:"credit,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *DebtorPaymentsRequest_Item) Reset() {
-	*x = DebtorPaymentsRequest_Item{}
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DebtorPaymentsRequest_Item) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DebtorPaymentsRequest_Item) ProtoMessage() {}
-
-func (x *DebtorPaymentsRequest_Item) ProtoReflect() protoreflect.Message {
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DebtorPaymentsRequest_Item.ProtoReflect.Descriptor instead.
-func (*DebtorPaymentsRequest_Item) Descriptor() ([]byte, []int) {
-	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{4, 0}
-}
-
-func (x *DebtorPaymentsRequest_Item) GetData() string {
-	if x != nil {
-		return x.Data
-	}
-	return ""
-}
-
-func (x *DebtorPaymentsRequest_Item) GetNumber() string {
-	if x != nil {
-		return x.Number
-	}
-	return ""
-}
-
-func (x *DebtorPaymentsRequest_Item) GetPayer1() string {
-	if x != nil {
-		return x.Payer1
-	}
-	return ""
-}
-
-func (x *DebtorPaymentsRequest_Item) GetPayerInn() string {
-	if x != nil {
-		return x.PayerInn
-	}
-	return ""
-}
-
-func (x *DebtorPaymentsRequest_Item) GetPayerAccount() string {
-	if x != nil {
-		return x.PayerAccount
-	}
-	return ""
-}
-
-func (x *DebtorPaymentsRequest_Item) GetPayerBank1() string {
-	if x != nil {
-		return x.PayerBank1
-	}
-	return ""
-}
-
-func (x *DebtorPaymentsRequest_Item) GetReceiver1() string {
-	if x != nil {
-		return x.Receiver1
-	}
-	return ""
-}
-
-func (x *DebtorPaymentsRequest_Item) GetReceiverInn() string {
-	if x != nil {
-		return x.ReceiverInn
-	}
-	return ""
-}
-
-func (x *DebtorPaymentsRequest_Item) GetReceiverAccount() string {
-	if x != nil {
-		return x.ReceiverAccount
-	}
-	return ""
-}
-
-func (x *DebtorPaymentsRequest_Item) GetReceiverBank1() string {
-	if x != nil {
-		return x.ReceiverBank1
-	}
-	return ""
-}
-
-func (x *DebtorPaymentsRequest_Item) GetPaymentPurpose() string {
-	if x != nil {
-		return x.PaymentPurpose
-	}
-	return ""
-}
-
-func (x *DebtorPaymentsRequest_Item) GetDebet() float64 {
-	if x != nil {
-		return x.Debet
-	}
-	return 0
-}
-
-func (x *DebtorPaymentsRequest_Item) GetCredit() float64 {
-	if x != nil {
-		return x.Credit
-	}
-	return 0
-}
-
-type ReportPaymentsRequest_Item struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Bank           string                 `protobuf:"bytes,1,opt,name=bank,proto3" json:"bank,omitempty"`
-	Address        string                 `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
-	BankAccount    string                 `protobuf:"bytes,3,opt,name=bank_account,json=bankAccount,proto3" json:"bank_account,omitempty"`
-	Debet          float64                `protobuf:"fixed64,4,opt,name=debet,proto3" json:"debet,omitempty"`
-	IncomeDate     string                 `protobuf:"bytes,5,opt,name=income_date,json=incomeDate,proto3" json:"income_date,omitempty"`
-	Credit         float64                `protobuf:"fixed64,6,opt,name=credit,proto3" json:"credit,omitempty"`
-	WritenOffDate  string                 `protobuf:"bytes,7,opt,name=writen_off_date,json=writenOffDate,proto3" json:"writen_off_date,omitempty"`
-	PaymentPurpose string                 `protobuf:"bytes,8,opt,name=payment_purpose,json=paymentPurpose,proto3" json:"payment_purpose,omitempty"`
-	Name           string                 `protobuf:"bytes,9,opt,name=name,proto3" json:"name,omitempty"`
-	Type           string                 `protobuf:"bytes,10,opt,name=type,proto3" json:"type,omitempty"`
-	Data           string                 `protobuf:"bytes,11,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *ReportPaymentsRequest_Item) Reset() {
-	*x = ReportPaymentsRequest_Item{}
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReportPaymentsRequest_Item) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReportPaymentsRequest_Item) ProtoMessage() {}
-
-func (x *ReportPaymentsRequest_Item) ProtoReflect() protoreflect.Message {
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReportPaymentsRequest_Item.ProtoReflect.Descriptor instead.
-func (*ReportPaymentsRequest_Item) Descriptor() ([]byte, []int) {
-	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{5, 0}
-}
-
-func (x *ReportPaymentsRequest_Item) GetBank() string {
-	if x != nil {
-		return x.Bank
-	}
-	return ""
-}
-
-func (x *ReportPaymentsRequest_Item) GetAddress() string {
-	if x != nil {
-		return x.Address
-	}
-	return ""
-}
-
-func (x *ReportPaymentsRequest_Item) GetBankAccount() string {
-	if x != nil {
-		return x.BankAccount
-	}
-	return ""
-}
-
-func (x *ReportPaymentsRequest_Item) GetDebet() float64 {
-	if x != nil {
-		return x.Debet
-	}
-	return 0
-}
-
-func (x *ReportPaymentsRequest_Item) GetIncomeDate() string {
-	if x != nil {
-		return x.IncomeDate
-	}
-	return ""
-}
-
-func (x *ReportPaymentsRequest_Item) GetCredit() float64 {
-	if x != nil {
-		return x.Credit
-	}
-	return 0
-}
-
-func (x *ReportPaymentsRequest_Item) GetWritenOffDate() string {
-	if x != nil {
-		return x.WritenOffDate
-	}
-	return ""
-}
-
-func (x *ReportPaymentsRequest_Item) GetPaymentPurpose() string {
-	if x != nil {
-		return x.PaymentPurpose
-	}
-	return ""
-}
-
-func (x *ReportPaymentsRequest_Item) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *ReportPaymentsRequest_Item) GetType() string {
-	if x != nil {
-		return x.Type
-	}
-	return ""
-}
-
-func (x *ReportPaymentsRequest_Item) GetData() string {
-	if x != nil {
-		return x.Data
-	}
-	return ""
 }
 
 type InitiatorPaymentsRequest_Item struct {
@@ -986,7 +605,7 @@ type InitiatorPaymentsRequest_Item struct {
 
 func (x *InitiatorPaymentsRequest_Item) Reset() {
 	*x = InitiatorPaymentsRequest_Item{}
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[11]
+	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -998,7 +617,7 @@ func (x *InitiatorPaymentsRequest_Item) String() string {
 func (*InitiatorPaymentsRequest_Item) ProtoMessage() {}
 
 func (x *InitiatorPaymentsRequest_Item) ProtoReflect() protoreflect.Message {
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[11]
+	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1011,7 +630,7 @@ func (x *InitiatorPaymentsRequest_Item) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InitiatorPaymentsRequest_Item.ProtoReflect.Descriptor instead.
 func (*InitiatorPaymentsRequest_Item) Descriptor() ([]byte, []int) {
-	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{6, 0}
+	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{4, 0}
 }
 
 func (x *InitiatorPaymentsRequest_Item) GetData() string {
@@ -1133,7 +752,7 @@ type CostWithDebtors_Item struct {
 
 func (x *CostWithDebtors_Item) Reset() {
 	*x = CostWithDebtors_Item{}
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[12]
+	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1145,7 +764,7 @@ func (x *CostWithDebtors_Item) String() string {
 func (*CostWithDebtors_Item) ProtoMessage() {}
 
 func (x *CostWithDebtors_Item) ProtoReflect() protoreflect.Message {
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[12]
+	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1158,7 +777,7 @@ func (x *CostWithDebtors_Item) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CostWithDebtors_Item.ProtoReflect.Descriptor instead.
 func (*CostWithDebtors_Item) Descriptor() ([]byte, []int) {
-	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{7, 0}
+	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{5, 0}
 }
 
 func (x *CostWithDebtors_Item) GetId() uint64 {
@@ -1265,7 +884,7 @@ type ProjectsAndDebtors_Item struct {
 
 func (x *ProjectsAndDebtors_Item) Reset() {
 	*x = ProjectsAndDebtors_Item{}
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[13]
+	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1277,7 +896,7 @@ func (x *ProjectsAndDebtors_Item) String() string {
 func (*ProjectsAndDebtors_Item) ProtoMessage() {}
 
 func (x *ProjectsAndDebtors_Item) ProtoReflect() protoreflect.Message {
-	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[13]
+	mi := &file_api_excel_gen_excel_gen_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1290,7 +909,7 @@ func (x *ProjectsAndDebtors_Item) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProjectsAndDebtors_Item.ProtoReflect.Descriptor instead.
 func (*ProjectsAndDebtors_Item) Descriptor() ([]byte, []int) {
-	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{8, 0}
+	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{6, 0}
 }
 
 func (x *ProjectsAndDebtors_Item) GetId() uint64 {
@@ -1347,7 +966,7 @@ const file_api_excel_gen_excel_gen_proto_rawDesc = "" +
 	"\atask_id\x18\x01 \x01(\x04R\x06taskId\x12)\n" +
 	"\x06status\x18\x02 \x01(\x0e2\x11.excel_gen.StatusR\x06status\"0\n" +
 	"\x15ExcelGenStatusRequest\x12\x17\n" +
-	"\atask_id\x18\x01 \x01(\x04R\x06taskId\"\xf9\x04\n" +
+	"\atask_id\x18\x01 \x01(\x04R\x06taskId\"\xdf\x03\n" +
 	"\x13ExcelGeneralRequest\x12\x1c\n" +
 	"\atask_id\x18\x01 \x01(\x03H\x01R\x06taskId\x88\x01\x01\x12+\n" +
 	"\x04data\x18\x02 \x01(\v2\x17.google.protobuf.StructR\x04data\x12\x1a\n" +
@@ -1358,48 +977,12 @@ const file_api_excel_gen_excel_gen_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12H\n" +
 	"\x11cost_with_debtors\x18\x06 \x01(\v2\x1a.excel_gen.CostWithDebtorsH\x00R\x0fcostWithDebtors\x12Q\n" +
-	"\x14projects_and_debtors\x18\a \x01(\v2\x1d.excel_gen.ProjectsAndDebtorsH\x00R\x12projectsAndDebtors\x12K\n" +
-	"\x0fdebtor_payments\x18\b \x01(\v2 .excel_gen.DebtorPaymentsRequestH\x00R\x0edebtorPayments\x12K\n" +
-	"\x0freport_payments\x18\t \x01(\v2 .excel_gen.ReportPaymentsRequestH\x00R\x0ereportPayments\x12T\n" +
+	"\x14projects_and_debtors\x18\a \x01(\v2\x1d.excel_gen.ProjectsAndDebtorsH\x00R\x12projectsAndDebtors\x12T\n" +
 	"\x12initiator_payments\x18\n" +
 	" \x01(\v2#.excel_gen.InitiatorPaymentsRequestH\x00R\x11initiatorPaymentsB\a\n" +
 	"\x05itemsB\n" +
 	"\n" +
-	"\b_task_id\"\xee\x03\n" +
-	"\x15DebtorPaymentsRequest\x12;\n" +
-	"\x05items\x18\x01 \x03(\v2%.excel_gen.DebtorPaymentsRequest.ItemR\x05items\x1a\x97\x03\n" +
-	"\x04Item\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\tR\x04data\x12\x16\n" +
-	"\x06number\x18\x02 \x01(\tR\x06number\x12\x16\n" +
-	"\x06payer1\x18\x03 \x01(\tR\x06payer1\x12\x1b\n" +
-	"\tpayer_inn\x18\x04 \x01(\tR\bpayerInn\x12#\n" +
-	"\rpayer_account\x18\x05 \x01(\tR\fpayerAccount\x12\x1f\n" +
-	"\vpayer_bank1\x18\x06 \x01(\tR\n" +
-	"payerBank1\x12\x1c\n" +
-	"\treceiver1\x18\a \x01(\tR\treceiver1\x12!\n" +
-	"\freceiver_inn\x18\b \x01(\tR\vreceiverInn\x12)\n" +
-	"\x10receiver_account\x18\t \x01(\tR\x0freceiverAccount\x12%\n" +
-	"\x0ereceiver_bank1\x18\n" +
-	" \x01(\tR\rreceiverBank1\x12'\n" +
-	"\x0fpayment_purpose\x18\v \x01(\tR\x0epaymentPurpose\x12\x14\n" +
-	"\x05debet\x18\f \x01(\x01R\x05debet\x12\x16\n" +
-	"\x06credit\x18\r \x01(\x01R\x06credit\"\x8a\x03\n" +
-	"\x15ReportPaymentsRequest\x12;\n" +
-	"\x05items\x18\x01 \x03(\v2%.excel_gen.ReportPaymentsRequest.ItemR\x05items\x1a\xb3\x02\n" +
-	"\x04Item\x12\x12\n" +
-	"\x04bank\x18\x01 \x01(\tR\x04bank\x12\x18\n" +
-	"\aaddress\x18\x02 \x01(\tR\aaddress\x12!\n" +
-	"\fbank_account\x18\x03 \x01(\tR\vbankAccount\x12\x14\n" +
-	"\x05debet\x18\x04 \x01(\x01R\x05debet\x12\x1f\n" +
-	"\vincome_date\x18\x05 \x01(\tR\n" +
-	"incomeDate\x12\x16\n" +
-	"\x06credit\x18\x06 \x01(\x01R\x06credit\x12&\n" +
-	"\x0fwriten_off_date\x18\a \x01(\tR\rwritenOffDate\x12'\n" +
-	"\x0fpayment_purpose\x18\b \x01(\tR\x0epaymentPurpose\x12\x12\n" +
-	"\x04name\x18\t \x01(\tR\x04name\x12\x12\n" +
-	"\x04type\x18\n" +
-	" \x01(\tR\x04type\x12\x12\n" +
-	"\x04data\x18\v \x01(\tR\x04data\"\xfb\x03\n" +
+	"\b_task_id\"\xfb\x03\n" +
 	"\x18InitiatorPaymentsRequest\x12>\n" +
 	"\x05items\x18\x01 \x03(\v2(.excel_gen.InitiatorPaymentsRequest.ItemR\x05items\x1a\x9e\x03\n" +
 	"\x04Item\x12\x12\n" +
@@ -1457,12 +1040,13 @@ const file_api_excel_gen_excel_gen_proto_rawDesc = "" +
 	"\aINVALID\x10\x01\x12\x0e\n" +
 	"\n" +
 	"PROCESSING\x10\x02\x12\r\n" +
-	"\tPROCESSED\x10\x03*V\n" +
+	"\tPROCESSED\x10\x03*l\n" +
 	"\x04Type\x12\x10\n" +
 	"\fCALCULATIONS\x10\x00\x12\x15\n" +
 	"\x11CALCULATIONS_SUMS\x10\x01\x12\b\n" +
 	"\x04COST\x10\x02\x12\x1b\n" +
-	"\x17DEBTORS_PAYMENTS_REPORT\x10\x032\xf2\x01\n" +
+	"\x17DEBTORS_PAYMENTS_REPORT\x10\x03\x12\x14\n" +
+	"\x10DEBTORS_PAYMENTS\x10\x042\xf2\x01\n" +
 	"\x0fExcelGenService\x12N\n" +
 	"\x0fGeneralGenerate\x12\x1e.excel_gen.ExcelGeneralRequest\x1a\x1b.excel_gen.ExcelGenResponse\x12C\n" +
 	"\bGenerate\x12\x1a.excel_gen.ExcelGenRequest\x1a\x1b.excel_gen.ExcelGenResponse\x12J\n" +
@@ -1482,7 +1066,7 @@ func file_api_excel_gen_excel_gen_proto_rawDescGZIP() []byte {
 
 var (
 	file_api_excel_gen_excel_gen_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-	file_api_excel_gen_excel_gen_proto_msgTypes  = make([]protoimpl.MessageInfo, 14)
+	file_api_excel_gen_excel_gen_proto_msgTypes  = make([]protoimpl.MessageInfo, 10)
 	file_api_excel_gen_excel_gen_proto_goTypes   = []any{
 		(Status)(0),                           // 0: excel_gen.Status
 		(Type)(0),                             // 1: excel_gen.Type
@@ -1490,47 +1074,39 @@ var (
 		(*ExcelGenResponse)(nil),              // 3: excel_gen.ExcelGenResponse
 		(*ExcelGenStatusRequest)(nil),         // 4: excel_gen.ExcelGenStatusRequest
 		(*ExcelGeneralRequest)(nil),           // 5: excel_gen.ExcelGeneralRequest
-		(*DebtorPaymentsRequest)(nil),         // 6: excel_gen.DebtorPaymentsRequest
-		(*ReportPaymentsRequest)(nil),         // 7: excel_gen.ReportPaymentsRequest
-		(*InitiatorPaymentsRequest)(nil),      // 8: excel_gen.InitiatorPaymentsRequest
-		(*CostWithDebtors)(nil),               // 9: excel_gen.CostWithDebtors
-		(*ProjectsAndDebtors)(nil),            // 10: excel_gen.ProjectsAndDebtors
-		(*DebtorPaymentsRequest_Item)(nil),    // 11: excel_gen.DebtorPaymentsRequest.Item
-		(*ReportPaymentsRequest_Item)(nil),    // 12: excel_gen.ReportPaymentsRequest.Item
-		(*InitiatorPaymentsRequest_Item)(nil), // 13: excel_gen.InitiatorPaymentsRequest.Item
-		(*CostWithDebtors_Item)(nil),          // 14: excel_gen.CostWithDebtors.Item
-		(*ProjectsAndDebtors_Item)(nil),       // 15: excel_gen.ProjectsAndDebtors.Item
-		(*timestamppb.Timestamp)(nil),         // 16: google.protobuf.Timestamp
-		(*structpb.Struct)(nil),               // 17: google.protobuf.Struct
+		(*InitiatorPaymentsRequest)(nil),      // 6: excel_gen.InitiatorPaymentsRequest
+		(*CostWithDebtors)(nil),               // 7: excel_gen.CostWithDebtors
+		(*ProjectsAndDebtors)(nil),            // 8: excel_gen.ProjectsAndDebtors
+		(*InitiatorPaymentsRequest_Item)(nil), // 9: excel_gen.InitiatorPaymentsRequest.Item
+		(*CostWithDebtors_Item)(nil),          // 10: excel_gen.CostWithDebtors.Item
+		(*ProjectsAndDebtors_Item)(nil),       // 11: excel_gen.ProjectsAndDebtors.Item
+		(*timestamppb.Timestamp)(nil),         // 12: google.protobuf.Timestamp
+		(*structpb.Struct)(nil),               // 13: google.protobuf.Struct
 	}
 )
 var file_api_excel_gen_excel_gen_proto_depIdxs = []int32{
 	1,  // 0: excel_gen.ExcelGenRequest.type:type_name -> excel_gen.Type
-	16, // 1: excel_gen.ExcelGenRequest.created_at:type_name -> google.protobuf.Timestamp
+	12, // 1: excel_gen.ExcelGenRequest.created_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: excel_gen.ExcelGenResponse.status:type_name -> excel_gen.Status
-	17, // 3: excel_gen.ExcelGeneralRequest.data:type_name -> google.protobuf.Struct
-	16, // 4: excel_gen.ExcelGeneralRequest.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 5: excel_gen.ExcelGeneralRequest.cost_with_debtors:type_name -> excel_gen.CostWithDebtors
-	10, // 6: excel_gen.ExcelGeneralRequest.projects_and_debtors:type_name -> excel_gen.ProjectsAndDebtors
-	6,  // 7: excel_gen.ExcelGeneralRequest.debtor_payments:type_name -> excel_gen.DebtorPaymentsRequest
-	7,  // 8: excel_gen.ExcelGeneralRequest.report_payments:type_name -> excel_gen.ReportPaymentsRequest
-	8,  // 9: excel_gen.ExcelGeneralRequest.initiator_payments:type_name -> excel_gen.InitiatorPaymentsRequest
-	11, // 10: excel_gen.DebtorPaymentsRequest.items:type_name -> excel_gen.DebtorPaymentsRequest.Item
-	12, // 11: excel_gen.ReportPaymentsRequest.items:type_name -> excel_gen.ReportPaymentsRequest.Item
-	13, // 12: excel_gen.InitiatorPaymentsRequest.items:type_name -> excel_gen.InitiatorPaymentsRequest.Item
-	14, // 13: excel_gen.CostWithDebtors.items:type_name -> excel_gen.CostWithDebtors.Item
-	15, // 14: excel_gen.ProjectsAndDebtors.items:type_name -> excel_gen.ProjectsAndDebtors.Item
-	5,  // 15: excel_gen.ExcelGenService.GeneralGenerate:input_type -> excel_gen.ExcelGeneralRequest
-	2,  // 16: excel_gen.ExcelGenService.Generate:input_type -> excel_gen.ExcelGenRequest
-	4,  // 17: excel_gen.ExcelGenService.GetStatus:input_type -> excel_gen.ExcelGenStatusRequest
-	3,  // 18: excel_gen.ExcelGenService.GeneralGenerate:output_type -> excel_gen.ExcelGenResponse
-	3,  // 19: excel_gen.ExcelGenService.Generate:output_type -> excel_gen.ExcelGenResponse
-	3,  // 20: excel_gen.ExcelGenService.GetStatus:output_type -> excel_gen.ExcelGenResponse
-	18, // [18:21] is the sub-list for method output_type
-	15, // [15:18] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	13, // 3: excel_gen.ExcelGeneralRequest.data:type_name -> google.protobuf.Struct
+	12, // 4: excel_gen.ExcelGeneralRequest.created_at:type_name -> google.protobuf.Timestamp
+	7,  // 5: excel_gen.ExcelGeneralRequest.cost_with_debtors:type_name -> excel_gen.CostWithDebtors
+	8,  // 6: excel_gen.ExcelGeneralRequest.projects_and_debtors:type_name -> excel_gen.ProjectsAndDebtors
+	6,  // 7: excel_gen.ExcelGeneralRequest.initiator_payments:type_name -> excel_gen.InitiatorPaymentsRequest
+	9,  // 8: excel_gen.InitiatorPaymentsRequest.items:type_name -> excel_gen.InitiatorPaymentsRequest.Item
+	10, // 9: excel_gen.CostWithDebtors.items:type_name -> excel_gen.CostWithDebtors.Item
+	11, // 10: excel_gen.ProjectsAndDebtors.items:type_name -> excel_gen.ProjectsAndDebtors.Item
+	5,  // 11: excel_gen.ExcelGenService.GeneralGenerate:input_type -> excel_gen.ExcelGeneralRequest
+	2,  // 12: excel_gen.ExcelGenService.Generate:input_type -> excel_gen.ExcelGenRequest
+	4,  // 13: excel_gen.ExcelGenService.GetStatus:input_type -> excel_gen.ExcelGenStatusRequest
+	3,  // 14: excel_gen.ExcelGenService.GeneralGenerate:output_type -> excel_gen.ExcelGenResponse
+	3,  // 15: excel_gen.ExcelGenService.Generate:output_type -> excel_gen.ExcelGenResponse
+	3,  // 16: excel_gen.ExcelGenService.GetStatus:output_type -> excel_gen.ExcelGenResponse
+	14, // [14:17] is the sub-list for method output_type
+	11, // [11:14] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_api_excel_gen_excel_gen_proto_init() }
@@ -1541,8 +1117,6 @@ func file_api_excel_gen_excel_gen_proto_init() {
 	file_api_excel_gen_excel_gen_proto_msgTypes[3].OneofWrappers = []any{
 		(*ExcelGeneralRequest_CostWithDebtors)(nil),
 		(*ExcelGeneralRequest_ProjectsAndDebtors)(nil),
-		(*ExcelGeneralRequest_DebtorPayments)(nil),
-		(*ExcelGeneralRequest_ReportPayments)(nil),
 		(*ExcelGeneralRequest_InitiatorPayments)(nil),
 	}
 	type x struct{}
@@ -1551,7 +1125,7 @@ func file_api_excel_gen_excel_gen_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_excel_gen_excel_gen_proto_rawDesc), len(file_api_excel_gen_excel_gen_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   14,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
