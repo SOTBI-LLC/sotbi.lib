@@ -20,7 +20,7 @@ enum Type {
 
 message ExcelGenRequest {
   Type type = 1;
-  sint64 user = 2;
+  uint64 user = 2;
   string email = 3 [deprecated = true];
   google.protobuf.Timestamp created_at = 4;
   repeated string recipients = 5;

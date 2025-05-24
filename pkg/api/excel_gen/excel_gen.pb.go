@@ -131,7 +131,7 @@ func (Type) EnumDescriptor() ([]byte, []int) {
 type ExcelGenRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Type  Type                   `protobuf:"varint,1,opt,name=type,proto3,enum=excel_gen.Type" json:"type,omitempty"`
-	User  int64                  `protobuf:"zigzag64,2,opt,name=user,proto3" json:"user,omitempty"`
+	User  uint64                 `protobuf:"varint,2,opt,name=user,proto3" json:"user,omitempty"`
 	// Deprecated: Marked as deprecated in api/excel_gen/excel_gen.proto.
 	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -178,7 +178,7 @@ func (x *ExcelGenRequest) GetType() Type {
 	return Type_CALCULATIONS
 }
 
-func (x *ExcelGenRequest) GetUser() int64 {
+func (x *ExcelGenRequest) GetUser() uint64 {
 	if x != nil {
 		return x.User
 	}
@@ -1335,7 +1335,7 @@ const file_api_excel_gen_excel_gen_proto_rawDesc = "" +
 	"\x1dapi/excel_gen/excel_gen.proto\x12\texcel_gen\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xd3\x01\n" +
 	"\x0fExcelGenRequest\x12#\n" +
 	"\x04type\x18\x01 \x01(\x0e2\x0f.excel_gen.TypeR\x04type\x12\x12\n" +
-	"\x04user\x18\x02 \x01(\x12R\x04user\x12\x18\n" +
+	"\x04user\x18\x02 \x01(\x04R\x04user\x12\x18\n" +
 	"\x05email\x18\x03 \x01(\tB\x02\x18\x01R\x05email\x129\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x1e\n" +
