@@ -19,6 +19,7 @@ type SlogLogger struct {
 
 func New(level string) *SlogLogger {
 	var l slog.Level
+
 	var lvl logger.LogLevel
 
 	switch strings.ToLower(level) {
@@ -53,6 +54,7 @@ func New(level string) *SlogLogger {
 func (l *SlogLogger) LogMode(level logger.LogLevel) logger.Interface {
 	newLogger := *l
 	newLogger.logLevel = level
+
 	return &newLogger
 }
 
@@ -74,7 +76,12 @@ func (l *SlogLogger) Error(ctx context.Context, msg string, data ...any) {
 	}
 }
 
-func (l *SlogLogger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
+func (l *SlogLogger) Trace(
+	ctx context.Context,
+	begin time.Time,
+	fc func() (string, int64),
+	err error,
+) {
 	if l.logLevel <= logger.Silent {
 		return
 	}

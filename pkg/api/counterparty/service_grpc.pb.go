@@ -8,6 +8,7 @@ package counterparty
 
 import (
 	context "context"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -270,42 +271,55 @@ type UnimplementedCounterpartiesServer struct{}
 func (UnimplementedCounterpartiesServer) GetCounterparties(context.Context, *emptypb.Empty) (*CounterpartiesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCounterparties not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) CreateCounterparty(context.Context, *AddCounterpartyRequest) (*Counterparty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCounterparty not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) GetCounterpartiesStream(*emptypb.Empty, grpc.ServerStreamingServer[Counterparty]) error {
 	return status.Errorf(codes.Unimplemented, "method GetCounterpartiesStream not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) GetCounterpartyByID(context.Context, *CounterpartyID) (*Counterparty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCounterpartyByID not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) ArchiveCounterparty(context.Context, *CounterpartyID) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ArchiveCounterparty not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) UpdateCounterparty(context.Context, *UpdateCounterpartyRequest) (*Counterparty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCounterparty not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) GetBankDetailsByCounterpartyID(context.Context, *CounterpartyID) (*BankDetailsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBankDetailsByCounterpartyID not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) UpdateBankDetails(context.Context, *UpdateBankDetailsRequest) (*BankDetailsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBankDetails not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) GetEmployeesByCounterpartyID(context.Context, *CounterpartyID) (*EmployeesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEmployeesByCounterpartyID not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) GetEmployeesByUserID(context.Context, *UserID) (*EmployeesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEmployeesByUserID not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) UpdateEmployees(context.Context, *UpdateEmployeesRequest) (*EmployeesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEmployees not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) UpdateEmployeesByUserID(context.Context, *UpdateEmployeesRequest) (*EmployeesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEmployeesByUserID not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) GetRules(context.Context, *emptypb.Empty) (*AuthMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRules not implemented")
 }
+
 func (UnimplementedCounterpartiesServer) UpdateRules(context.Context, *AuthMessage) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRules not implemented")
 }
