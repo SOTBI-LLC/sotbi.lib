@@ -1,6 +1,7 @@
 package onec
 
 type PaymentDocument struct {
+	DocumentType           string  `mapstructure:"СекцияДокумент,omitempty"       json:"document_type,omitempty"`
 	Number                 string  `mapstructure:"Номер"                          json:"number,omitempty"`
 	Data                   string  `mapstructure:"Дата"                           json:"date,omitempty"`
 	WrittenOffDate         string  `mapstructure:"ДатаСписано,omitempty"          json:"written_off_date,omitempty"`

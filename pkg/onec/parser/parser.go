@@ -2,6 +2,7 @@ package parser
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -79,7 +80,15 @@ func (p *ExchangeFile) read(file io.Reader) error {
 			inSectionType = 2
 
 		case strings.HasPrefix(line, "СекцияДокумент"):
+			parts := strings.SplitN(line, "=", 2)
+			docType := ""
+
+			if len(parts) == 2 {
+				docType = parts[1]
+			}
+
 			currentSection = make(map[string]string)
+			currentSection["СекцияДокумент"] = docType
 			p.paymentDocuments = append(p.paymentDocuments, currentSection)
 			inSectionType = 3
 
@@ -108,7 +117,7 @@ func (p *ExchangeFile) read(file io.Reader) error {
 	}
 
 	if err := scanner.Err(); err != nil {
-		if scanner.Err() == bufio.ErrTooLong {
+		if errors.Is(err, bufio.ErrTooLong) {
 			return fmt.Errorf("file is too long")
 		}
 
