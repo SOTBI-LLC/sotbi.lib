@@ -84,6 +84,7 @@ const (
 	Type_COST                    Type = 2
 	Type_DEBTORS_PAYMENTS_REPORT Type = 3
 	Type_DEBTORS_PAYMENTS        Type = 4
+	Type_INITIATOR_PAYMENTS      Type = 5
 )
 
 // Enum value maps for Type.
@@ -94,6 +95,7 @@ var (
 		2: "COST",
 		3: "DEBTORS_PAYMENTS_REPORT",
 		4: "DEBTORS_PAYMENTS",
+		5: "INITIATOR_PAYMENTS",
 	}
 	Type_value = map[string]int32{
 		"CALCULATIONS":            0,
@@ -101,6 +103,7 @@ var (
 		"COST":                    2,
 		"DEBTORS_PAYMENTS_REPORT": 3,
 		"DEBTORS_PAYMENTS":        4,
+		"INITIATOR_PAYMENTS":      5,
 	}
 )
 
@@ -1040,13 +1043,14 @@ const file_api_excel_gen_excel_gen_proto_rawDesc = "" +
 	"\aINVALID\x10\x01\x12\x0e\n" +
 	"\n" +
 	"PROCESSING\x10\x02\x12\r\n" +
-	"\tPROCESSED\x10\x03*l\n" +
+	"\tPROCESSED\x10\x03*\x84\x01\n" +
 	"\x04Type\x12\x10\n" +
 	"\fCALCULATIONS\x10\x00\x12\x15\n" +
 	"\x11CALCULATIONS_SUMS\x10\x01\x12\b\n" +
 	"\x04COST\x10\x02\x12\x1b\n" +
 	"\x17DEBTORS_PAYMENTS_REPORT\x10\x03\x12\x14\n" +
-	"\x10DEBTORS_PAYMENTS\x10\x042\xf2\x01\n" +
+	"\x10DEBTORS_PAYMENTS\x10\x04\x12\x16\n" +
+	"\x12INITIATOR_PAYMENTS\x10\x052\xf2\x01\n" +
 	"\x0fExcelGenService\x12N\n" +
 	"\x0fGeneralGenerate\x12\x1e.excel_gen.ExcelGeneralRequest\x1a\x1b.excel_gen.ExcelGenResponse\x12C\n" +
 	"\bGenerate\x12\x1a.excel_gen.ExcelGenRequest\x1a\x1b.excel_gen.ExcelGenResponse\x12J\n" +

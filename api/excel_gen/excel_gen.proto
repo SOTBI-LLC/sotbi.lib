@@ -17,6 +17,7 @@ enum Type {
   COST = 2;
   DEBTORS_PAYMENTS_REPORT = 3;
   DEBTORS_PAYMENTS = 4;
+  INITIATOR_PAYMENTS = 5;
 }
 
 message ExcelGenRequest {
