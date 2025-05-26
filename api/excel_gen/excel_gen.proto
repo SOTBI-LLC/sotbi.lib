@@ -15,11 +15,14 @@ enum Type {
   CALCULATIONS = 0;
   CALCULATIONS_SUMS = 1;
   COST = 2;
+  DEBTORS_PAYMENTS_REPORT = 3;
+  DEBTORS_PAYMENTS = 4;
+  INITIATOR_PAYMENTS = 5;
 }
 
 message ExcelGenRequest {
   Type type = 1;
-  sint32 user = 2;
+  uint64 user = 2;
   string email = 3 [deprecated = true];
   google.protobuf.Timestamp created_at = 4;
   repeated string recipients = 5;
@@ -44,46 +47,8 @@ message ExcelGeneralRequest {
   oneof items {
     CostWithDebtors cost_with_debtors = 6;
     ProjectsAndDebtors projects_and_debtors = 7;
-    DebtorPaymentsRequest debtor_payments = 8;
-    ReportPaymentsRequest report_payments = 9;
     InitiatorPaymentsRequest initiator_payments = 10;
   }
-}
-
-message DebtorPaymentsRequest {
-  message Item {
-    string data = 1;
-    string number = 2;
-    string payer1 = 3;
-    string payer_inn = 4;
-    string payer_account = 5;
-    string payer_bank1 = 6;
-    string receiver1 = 7;
-    string receiver_inn = 8;
-    string receiver_account = 9;
-    string receiver_bank1 = 10;
-    string payment_purpose = 11;
-    double debet = 12;
-    double credit = 13;
-  }
-  repeated Item items = 1;
-}
-
-message ReportPaymentsRequest {
-  message Item {
-    string bank = 1;
-    string address = 2;
-    string bank_account = 3;
-    double debet = 4;
-    string income_date = 5;
-    double credit = 6;
-    string writen_off_date = 7;
-    string payment_purpose = 8;
-    string name = 9;
-    string type = 10;
-    string data = 11;
-  }
-  repeated Item items = 1;
 }
 
 message InitiatorPaymentsRequest {
