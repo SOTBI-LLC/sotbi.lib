@@ -1054,7 +1054,7 @@ const file_api_excel_gen_excel_gen_proto_rawDesc = "" +
 	"\x0fExcelGenService\x12N\n" +
 	"\x0fGeneralGenerate\x12\x1e.excel_gen.ExcelGeneralRequest\x1a\x1b.excel_gen.ExcelGenResponse\x12C\n" +
 	"\bGenerate\x12\x1a.excel_gen.ExcelGenRequest\x1a\x1b.excel_gen.ExcelGenResponse\x12J\n" +
-	"\tGetStatus\x12 .excel_gen.ExcelGenStatusRequest\x1a\x1b.excel_gen.ExcelGenResponseB)Z'github.com/COTBU/sotbisrv/api/excel_genb\x06proto3"
+	"\tGetStatus\x12 .excel_gen.ExcelGenStatusRequest\x1a\x1b.excel_gen.ExcelGenResponseB.Z,github.com/COTBU/sotbi.lib/pkg/api/excel_genb\x06proto3"
 
 var (
 	file_api_excel_gen_excel_gen_proto_rawDescOnce sync.Once

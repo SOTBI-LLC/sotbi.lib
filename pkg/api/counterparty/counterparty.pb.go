@@ -738,7 +738,7 @@ const file_counterparty_counterparty_proto_rawDesc = "" +
 	"\t_ContactsB\b\n" +
 	"\x06_EmailB\x06\n" +
 	"\x04_CEOB\x12\n" +
-	"\x10_ChiefAccountantB,Z*github.com/COTBU/sotbisrv/api/counterpartyb\x06proto3"
+	"\x10_ChiefAccountantB1Z/github.com/COTBU/sotbi.lib/pkg/api/counterpartyb\x06proto3"
 
 var (
 	file_counterparty_counterparty_proto_rawDescOnce sync.Once

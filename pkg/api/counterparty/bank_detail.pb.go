@@ -322,7 +322,7 @@ const file_counterparty_bank_detail_proto_rawDesc = "" +
 	"\x05_CityB\v\n" +
 	"\t_LocationB\f\n" +
 	"\n" +
-	"_CloseDateB,Z*github.com/COTBU/sotbisrv/api/counterpartyb\x06proto3"
+	"_CloseDateB1Z/github.com/COTBU/sotbi.lib/pkg/api/counterpartyb\x06proto3"
 
 var (
 	file_counterparty_bank_detail_proto_rawDescOnce sync.Once
