@@ -1,6 +1,6 @@
 syntax = "proto3";
 package counterparty;
-option go_package = "github.com/COTBU/sotbisrv/api/counterparty";
+option go_package = "github.com/COTBU/sotbi.lib/pkg/api/counterparty";
 
 import "google/protobuf/timestamp.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";

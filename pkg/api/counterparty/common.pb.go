@@ -72,7 +72,7 @@ const file_counterparty_common_proto_rawDesc = "" +
 	"\n" +
 	"\x19counterparty/common.proto\x12\fcounterparty\" \n" +
 	"\x0eCounterpartyID\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02idB,Z*github.com/COTBU/sotbisrv/api/counterpartyb\x06proto3"
+	"\x02id\x18\x01 \x01(\x03R\x02idB1Z/github.com/COTBU/sotbi.lib/pkg/api/counterpartyb\x06proto3"
 
 var (
 	file_counterparty_common_proto_rawDescOnce sync.Once

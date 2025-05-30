@@ -274,7 +274,7 @@ const file_counterparty_service_proto_rawDesc = "" +
 	"\x0fUpdateEmployees\x12$.counterparty.UpdateEmployeesRequest\x1a\x1f.counterparty.EmployeesResponse\"8\x82\xd3\xe4\x93\x022:\x01*b\temployees\x1a\"/api/counterparties/{id}/employees\x12\x9a\x01\n" +
 	"\x17UpdateEmployeesByUserID\x12$.counterparty.UpdateEmployeesRequest\x1a\x1f.counterparty.EmployeesResponse\"8\x82\xd3\xe4\x93\x022:\x01*b\temployees\x1a\"/api/counterparties/employees/{id}\x12`\n" +
 	"\bGetRules\x12\x16.google.protobuf.Empty\x1a\x19.counterparty.AuthMessage\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/api/counterparties/rules\x12f\n" +
-	"\vUpdateRules\x12\x19.counterparty.AuthMessage\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\x1a\x19/api/counterparties/rulesB,Z*github.com/COTBU/sotbisrv/api/counterpartyb\x06proto3"
+	"\vUpdateRules\x12\x19.counterparty.AuthMessage\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\x1a\x19/api/counterparties/rulesB1Z/github.com/COTBU/sotbi.lib/pkg/api/counterpartyb\x06proto3"
 
 var (
 	file_counterparty_service_proto_rawDescOnce sync.Once

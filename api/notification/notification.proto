@@ -1,7 +1,7 @@
 syntax = "proto3";
 // edition = "2023";
 package notification;
-option go_package = "sotbisrv/api/notification";
+option go_package = "github.com/COTBU/sotbi.lib/pkg/notification";
 // import "api/validate/validate.proto";
 import "google/protobuf/descriptor.proto";
 

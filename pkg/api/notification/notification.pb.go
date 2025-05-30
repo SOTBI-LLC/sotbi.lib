@@ -170,7 +170,7 @@ const file_api_notification_notification_proto_rawDesc = "" +
 	"objectName*+\n" +
 	"\x10NotificationType\x12\t\n" +
 	"\x05EMAIL\x10\x00\x12\f\n" +
-	"\bTELEGRAM\x10\x01B\x1bZ\x19sotbisrv/api/notificationb\x06proto3"
+	"\bTELEGRAM\x10\x01B-Z+github.com/COTBU/sotbi.lib/pkg/notificationb\x06proto3"
 
 var (
 	file_api_notification_notification_proto_rawDescOnce sync.Once

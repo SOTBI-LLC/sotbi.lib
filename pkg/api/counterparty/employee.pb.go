@@ -441,7 +441,7 @@ const file_counterparty_employee_proto_rawDesc = "" +
 	"\temployees\x18\n" +
 	" \x03(\v2\x16.counterparty.EmployeeR\temployees\"1\n" +
 	"\x06UserID\x12'\n" +
-	"\auser_id\x18\x01 \x01(\x03B\x12\x92A\f\x9a\x02\x01\x03\xa2\x02\x05int64\xe0A\x02R\x02idB,Z*github.com/COTBU/sotbisrv/api/counterpartyb\x06proto3"
+	"\auser_id\x18\x01 \x01(\x03B\x12\x92A\f\x9a\x02\x01\x03\xa2\x02\x05int64\xe0A\x02R\x02idB1Z/github.com/COTBU/sotbi.lib/pkg/api/counterpartyb\x06proto3"
 
 var (
 	file_counterparty_employee_proto_rawDescOnce sync.Once
