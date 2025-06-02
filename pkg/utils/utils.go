@@ -139,3 +139,47 @@ func GetInterval(qp url.Values) (start, end time.Time, err error) {
 
 	return start, end, nil
 }
+
+// Param2Array func - convert queryParam string to uint array.
+func Param2Array(str []string) (res []uint64, err error) {
+	var v []string
+	if len(str) > 1 {
+		v = str
+	} else {
+		v = strings.Split(str[0], ",")
+	}
+
+	res = make([]uint64, len(v))
+
+	for i, val := range v {
+		j, err := strconv.ParseUint(val, 10, 64)
+		if err != nil {
+			return res, err
+		}
+
+		res[i] = j
+	}
+
+	return res, nil
+}
+
+// GetSetIDFromQuery func.
+func GetSetIDFromQuery(qp url.Values, param string) (set []uint64, err error) {
+	if val, ok := qp[param]; ok && len(val) > 0 && val[0] != "" {
+		set, err = Param2Array(val)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return set, nil
+}
+
+func GetQueryParam(qp url.Values, param string) ([]string, bool) {
+	val, ok := qp[param]
+	if ok && len(val) > 0 && val[0] != "" {
+		return val, true
+	}
+
+	return nil, false
+}
