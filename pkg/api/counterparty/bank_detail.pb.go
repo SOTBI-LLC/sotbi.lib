@@ -7,14 +7,13 @@
 package counterparty
 
 import (
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
-
 	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
 )
 
 const (
@@ -336,15 +335,13 @@ func file_counterparty_bank_detail_proto_rawDescGZIP() []byte {
 	return file_counterparty_bank_detail_proto_rawDescData
 }
 
-var (
-	file_counterparty_bank_detail_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
-	file_counterparty_bank_detail_proto_goTypes  = []any{
-		(*BankDetailsResponse)(nil),      // 0: counterparty.BankDetailsResponse
-		(*UpdateBankDetailsRequest)(nil), // 1: counterparty.UpdateBankDetailsRequest
-		(*BankDetail)(nil),               // 2: counterparty.BankDetail
-		(*timestamppb.Timestamp)(nil),    // 3: google.protobuf.Timestamp
-	}
-)
+var file_counterparty_bank_detail_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_counterparty_bank_detail_proto_goTypes = []any{
+	(*BankDetailsResponse)(nil),      // 0: counterparty.BankDetailsResponse
+	(*UpdateBankDetailsRequest)(nil), // 1: counterparty.UpdateBankDetailsRequest
+	(*BankDetail)(nil),               // 2: counterparty.BankDetail
+	(*timestamppb.Timestamp)(nil),    // 3: google.protobuf.Timestamp
+}
 var file_counterparty_bank_detail_proto_depIdxs = []int32{
 	2, // 0: counterparty.BankDetailsResponse.bank_details:type_name -> counterparty.BankDetail
 	2, // 1: counterparty.UpdateBankDetailsRequest.bank_details:type_name -> counterparty.BankDetail

@@ -9,13 +9,12 @@
 package onec
 
 import (
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
-
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/descriptorpb"
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
 )
 
 const (
@@ -1414,21 +1413,19 @@ func file_api_onec_omec_proto_rawDescGZIP() []byte {
 	return file_api_onec_omec_proto_rawDescData
 }
 
-var (
-	file_api_onec_omec_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-	file_api_onec_omec_proto_msgTypes  = make([]protoimpl.MessageInfo, 8)
-	file_api_onec_omec_proto_goTypes   = []any{
-		(CustomerType)(0),            // 0: onec.CustomerType
-		(*ParseRequest)(nil),         // 1: onec.ParseRequest
-		(*ParseResponse)(nil),        // 2: onec.ParseResponse
-		(*ExchangeFileHeader)(nil),   // 3: onec.ExchangeFileHeader
-		(*ExchangeFile)(nil),         // 4: onec.ExchangeFile
-		(*AccountBalanceEvent)(nil),  // 5: onec.AccountBalanceEvent
-		(*AccountBalance)(nil),       // 6: onec.AccountBalance
-		(*PaymentDocumentEvent)(nil), // 7: onec.PaymentDocumentEvent
-		(*PaymentDocument)(nil),      // 8: onec.PaymentDocument
-	}
-)
+var file_api_onec_omec_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_api_onec_omec_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_api_onec_omec_proto_goTypes = []any{
+	(CustomerType)(0),            // 0: onec.CustomerType
+	(*ParseRequest)(nil),         // 1: onec.ParseRequest
+	(*ParseResponse)(nil),        // 2: onec.ParseResponse
+	(*ExchangeFileHeader)(nil),   // 3: onec.ExchangeFileHeader
+	(*ExchangeFile)(nil),         // 4: onec.ExchangeFile
+	(*AccountBalanceEvent)(nil),  // 5: onec.AccountBalanceEvent
+	(*AccountBalance)(nil),       // 6: onec.AccountBalance
+	(*PaymentDocumentEvent)(nil), // 7: onec.PaymentDocumentEvent
+	(*PaymentDocument)(nil),      // 8: onec.PaymentDocument
+}
 var file_api_onec_omec_proto_depIdxs = []int32{
 	0, // 0: onec.ParseRequest.customer_type:type_name -> onec.CustomerType
 	3, // 1: onec.ParseResponse.file:type_name -> onec.ExchangeFileHeader

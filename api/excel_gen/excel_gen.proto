@@ -14,10 +14,12 @@ enum Status {
 enum Type {
   CALCULATIONS = 0;
   CALCULATIONS_SUMS = 1;
-  COST = 2;
+  COSTS = 2;
   DEBTORS_PAYMENTS_REPORT = 3;
   DEBTORS_PAYMENTS = 4;
   INITIATOR_PAYMENTS = 5;
+  SUBORDINATE_COSTS = 6;
+  COSTS_SUMS = 7;
 }
 
 message ExcelGenRequest {

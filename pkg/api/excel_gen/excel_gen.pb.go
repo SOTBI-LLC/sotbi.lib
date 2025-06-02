@@ -7,14 +7,13 @@
 package excel_gen
 
 import (
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
-
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	structpb "google.golang.org/protobuf/types/known/structpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
 )
 
 const (
@@ -81,10 +80,12 @@ type Type int32
 const (
 	Type_CALCULATIONS            Type = 0
 	Type_CALCULATIONS_SUMS       Type = 1
-	Type_COST                    Type = 2
+	Type_COSTS                   Type = 2
 	Type_DEBTORS_PAYMENTS_REPORT Type = 3
 	Type_DEBTORS_PAYMENTS        Type = 4
 	Type_INITIATOR_PAYMENTS      Type = 5
+	Type_SUBORDINATE_COSTS       Type = 6
+	Type_COSTS_SUMS              Type = 7
 )
 
 // Enum value maps for Type.
@@ -92,18 +93,22 @@ var (
 	Type_name = map[int32]string{
 		0: "CALCULATIONS",
 		1: "CALCULATIONS_SUMS",
-		2: "COST",
+		2: "COSTS",
 		3: "DEBTORS_PAYMENTS_REPORT",
 		4: "DEBTORS_PAYMENTS",
 		5: "INITIATOR_PAYMENTS",
+		6: "SUBORDINATE_COSTS",
+		7: "COSTS_SUMS",
 	}
 	Type_value = map[string]int32{
 		"CALCULATIONS":            0,
 		"CALCULATIONS_SUMS":       1,
-		"COST":                    2,
+		"COSTS":                   2,
 		"DEBTORS_PAYMENTS_REPORT": 3,
 		"DEBTORS_PAYMENTS":        4,
 		"INITIATOR_PAYMENTS":      5,
+		"SUBORDINATE_COSTS":       6,
+		"COSTS_SUMS":              7,
 	}
 )
 
@@ -1043,14 +1048,17 @@ const file_api_excel_gen_excel_gen_proto_rawDesc = "" +
 	"\aINVALID\x10\x01\x12\x0e\n" +
 	"\n" +
 	"PROCESSING\x10\x02\x12\r\n" +
-	"\tPROCESSED\x10\x03*\x84\x01\n" +
+	"\tPROCESSED\x10\x03*\xac\x01\n" +
 	"\x04Type\x12\x10\n" +
 	"\fCALCULATIONS\x10\x00\x12\x15\n" +
-	"\x11CALCULATIONS_SUMS\x10\x01\x12\b\n" +
-	"\x04COST\x10\x02\x12\x1b\n" +
+	"\x11CALCULATIONS_SUMS\x10\x01\x12\t\n" +
+	"\x05COSTS\x10\x02\x12\x1b\n" +
 	"\x17DEBTORS_PAYMENTS_REPORT\x10\x03\x12\x14\n" +
 	"\x10DEBTORS_PAYMENTS\x10\x04\x12\x16\n" +
-	"\x12INITIATOR_PAYMENTS\x10\x052\xf2\x01\n" +
+	"\x12INITIATOR_PAYMENTS\x10\x05\x12\x15\n" +
+	"\x11SUBORDINATE_COSTS\x10\x06\x12\x0e\n" +
+	"\n" +
+	"COSTS_SUMS\x10\a2\xf2\x01\n" +
 	"\x0fExcelGenService\x12N\n" +
 	"\x0fGeneralGenerate\x12\x1e.excel_gen.ExcelGeneralRequest\x1a\x1b.excel_gen.ExcelGenResponse\x12C\n" +
 	"\bGenerate\x12\x1a.excel_gen.ExcelGenRequest\x1a\x1b.excel_gen.ExcelGenResponse\x12J\n" +
@@ -1068,26 +1076,24 @@ func file_api_excel_gen_excel_gen_proto_rawDescGZIP() []byte {
 	return file_api_excel_gen_excel_gen_proto_rawDescData
 }
 
-var (
-	file_api_excel_gen_excel_gen_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-	file_api_excel_gen_excel_gen_proto_msgTypes  = make([]protoimpl.MessageInfo, 10)
-	file_api_excel_gen_excel_gen_proto_goTypes   = []any{
-		(Status)(0),                           // 0: excel_gen.Status
-		(Type)(0),                             // 1: excel_gen.Type
-		(*ExcelGenRequest)(nil),               // 2: excel_gen.ExcelGenRequest
-		(*ExcelGenResponse)(nil),              // 3: excel_gen.ExcelGenResponse
-		(*ExcelGenStatusRequest)(nil),         // 4: excel_gen.ExcelGenStatusRequest
-		(*ExcelGeneralRequest)(nil),           // 5: excel_gen.ExcelGeneralRequest
-		(*InitiatorPaymentsRequest)(nil),      // 6: excel_gen.InitiatorPaymentsRequest
-		(*CostWithDebtors)(nil),               // 7: excel_gen.CostWithDebtors
-		(*ProjectsAndDebtors)(nil),            // 8: excel_gen.ProjectsAndDebtors
-		(*InitiatorPaymentsRequest_Item)(nil), // 9: excel_gen.InitiatorPaymentsRequest.Item
-		(*CostWithDebtors_Item)(nil),          // 10: excel_gen.CostWithDebtors.Item
-		(*ProjectsAndDebtors_Item)(nil),       // 11: excel_gen.ProjectsAndDebtors.Item
-		(*timestamppb.Timestamp)(nil),         // 12: google.protobuf.Timestamp
-		(*structpb.Struct)(nil),               // 13: google.protobuf.Struct
-	}
-)
+var file_api_excel_gen_excel_gen_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_api_excel_gen_excel_gen_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_api_excel_gen_excel_gen_proto_goTypes = []any{
+	(Status)(0),                           // 0: excel_gen.Status
+	(Type)(0),                             // 1: excel_gen.Type
+	(*ExcelGenRequest)(nil),               // 2: excel_gen.ExcelGenRequest
+	(*ExcelGenResponse)(nil),              // 3: excel_gen.ExcelGenResponse
+	(*ExcelGenStatusRequest)(nil),         // 4: excel_gen.ExcelGenStatusRequest
+	(*ExcelGeneralRequest)(nil),           // 5: excel_gen.ExcelGeneralRequest
+	(*InitiatorPaymentsRequest)(nil),      // 6: excel_gen.InitiatorPaymentsRequest
+	(*CostWithDebtors)(nil),               // 7: excel_gen.CostWithDebtors
+	(*ProjectsAndDebtors)(nil),            // 8: excel_gen.ProjectsAndDebtors
+	(*InitiatorPaymentsRequest_Item)(nil), // 9: excel_gen.InitiatorPaymentsRequest.Item
+	(*CostWithDebtors_Item)(nil),          // 10: excel_gen.CostWithDebtors.Item
+	(*ProjectsAndDebtors_Item)(nil),       // 11: excel_gen.ProjectsAndDebtors.Item
+	(*timestamppb.Timestamp)(nil),         // 12: google.protobuf.Timestamp
+	(*structpb.Struct)(nil),               // 13: google.protobuf.Struct
+}
 var file_api_excel_gen_excel_gen_proto_depIdxs = []int32{
 	1,  // 0: excel_gen.ExcelGenRequest.type:type_name -> excel_gen.Type
 	12, // 1: excel_gen.ExcelGenRequest.created_at:type_name -> google.protobuf.Timestamp
