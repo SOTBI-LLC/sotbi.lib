@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"gorm.io/gorm"
+
+	"github.com/COTBU/sotbi.lib/pkg/times"
 )
 
 func MakeWhere(
@@ -86,4 +88,54 @@ func MakeWhere(
 	}
 
 	return tbl
+}
+
+// GetInterval func.
+func GetInterval(qp url.Values) (start, end time.Time, err error) {
+	location := times.GetMoscowLocation()
+	// по умолчанию выборка с начала месяца
+	start = time.Now()
+	start = time.Date(start.Year(), start.Month(), 1, 0, 0, 0, 0, location)
+
+	end = time.Date(start.Year(), start.Month(), start.Day(), 23, 59, 59, 0, location)
+	end = end.AddDate(0, 1, -1)
+
+	if val, ok := qp["start"]; ok && len(val) > 0 && val[0] != "" {
+		start, err = time.Parse("2006-01-02 MST", val[0]+times.MSK)
+		if err != nil {
+			return
+		}
+	}
+
+	if val, ok := qp["end"]; ok && len(val) > 0 && val[0] != "" {
+		end, err = time.Parse("2006-01-02 MST", val[0]+times.MSK)
+		if err != nil {
+			return
+		}
+	}
+
+	if val, ok := qp["filterModel"]; ok && len(val) > 0 && val[0] != "" {
+		var filterModel FilterModel
+
+		filterModel, err = ParseJSONToFilterModel(val[0])
+		if err != nil {
+			return
+		}
+
+		if len(filterModel) == 0 {
+			return
+		}
+
+		start, err = time.Parse("2006-01-02 15:04:05 MST", *filterModel["date"].DateFrom+times.MSK)
+		if err != nil {
+			return
+		}
+
+		end, err = time.Parse("2006-01-02 15:04:05  MST", *filterModel["date"].DateTo+times.MSK)
+		if err != nil {
+			return
+		}
+	}
+
+	return start, end, nil
 }
