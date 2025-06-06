@@ -138,7 +138,8 @@ func (x *ParseRequest) GetCustomerType() CustomerType {
 type ParseResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Уникальный идентификатор запроса
-	RequestId []byte `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	RequestId    []byte       `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	CustomerType CustomerType `protobuf:"varint,2,opt,name=customer_type,json=customerType,proto3,enum=onec.CustomerType" json:"customer_type,omitempty"`
 	// Types that are valid to be assigned to Item:
 	//
 	//	*ParseResponse_File
@@ -186,6 +187,13 @@ func (x *ParseResponse) GetRequestId() []byte {
 	return nil
 }
 
+func (x *ParseResponse) GetCustomerType() CustomerType {
+	if x != nil {
+		return x.CustomerType
+	}
+	return CustomerType_DEBTOR
+}
+
 func (x *ParseResponse) GetItem() isParseResponse_Item {
 	if x != nil {
 		return x.Item
@@ -193,7 +201,7 @@ func (x *ParseResponse) GetItem() isParseResponse_Item {
 	return nil
 }
 
-func (x *ParseResponse) GetFile() *ExchangeFileHeader {
+func (x *ParseResponse) GetFile() *ExchangeFile {
 	if x != nil {
 		if x, ok := x.Item.(*ParseResponse_File); ok {
 			return x.File
@@ -202,7 +210,7 @@ func (x *ParseResponse) GetFile() *ExchangeFileHeader {
 	return nil
 }
 
-func (x *ParseResponse) GetBalance() *AccountBalanceEvent {
+func (x *ParseResponse) GetBalance() *AccountBalance {
 	if x != nil {
 		if x, ok := x.Item.(*ParseResponse_Balance); ok {
 			return x.Balance
@@ -211,7 +219,7 @@ func (x *ParseResponse) GetBalance() *AccountBalanceEvent {
 	return nil
 }
 
-func (x *ParseResponse) GetDocument() *PaymentDocumentEvent {
+func (x *ParseResponse) GetDocument() *PaymentDocument {
 	if x != nil {
 		if x, ok := x.Item.(*ParseResponse_Document); ok {
 			return x.Document
@@ -225,15 +233,15 @@ type isParseResponse_Item interface {
 }
 
 type ParseResponse_File struct {
-	File *ExchangeFileHeader `protobuf:"bytes,2,opt,name=file,proto3,oneof"`
+	File *ExchangeFile `protobuf:"bytes,3,opt,name=file,proto3,oneof"`
 }
 
 type ParseResponse_Balance struct {
-	Balance *AccountBalanceEvent `protobuf:"bytes,3,opt,name=balance,proto3,oneof"`
+	Balance *AccountBalance `protobuf:"bytes,5,opt,name=balance,proto3,oneof"`
 }
 
 type ParseResponse_Document struct {
-	Document *PaymentDocumentEvent `protobuf:"bytes,4,opt,name=document,proto3,oneof"`
+	Document *PaymentDocument `protobuf:"bytes,6,opt,name=document,proto3,oneof"`
 }
 
 func (*ParseResponse_File) isParseResponse_Item() {}
@@ -241,58 +249,6 @@ func (*ParseResponse_File) isParseResponse_Item() {}
 func (*ParseResponse_Balance) isParseResponse_Item() {}
 
 func (*ParseResponse_Document) isParseResponse_Item() {}
-
-type ExchangeFileHeader struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RequestId     []byte                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
-	File          *ExchangeFile          `protobuf:"bytes,2,opt,name=file,proto3" json:"file,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ExchangeFileHeader) Reset() {
-	*x = ExchangeFileHeader{}
-	mi := &file_api_onec_omec_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ExchangeFileHeader) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ExchangeFileHeader) ProtoMessage() {}
-
-func (x *ExchangeFileHeader) ProtoReflect() protoreflect.Message {
-	mi := &file_api_onec_omec_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExchangeFileHeader.ProtoReflect.Descriptor instead.
-func (*ExchangeFileHeader) Descriptor() ([]byte, []int) {
-	return file_api_onec_omec_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *ExchangeFileHeader) GetRequestId() []byte {
-	if x != nil {
-		return x.RequestId
-	}
-	return nil
-}
-
-func (x *ExchangeFileHeader) GetFile() *ExchangeFile {
-	if x != nil {
-		return x.File
-	}
-	return nil
-}
 
 // ExchangeFile holds the metadata of a 1C-ClientBank exchange file.
 type ExchangeFile struct {
@@ -321,7 +277,7 @@ type ExchangeFile struct {
 
 func (x *ExchangeFile) Reset() {
 	*x = ExchangeFile{}
-	mi := &file_api_onec_omec_proto_msgTypes[3]
+	mi := &file_api_onec_omec_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -333,7 +289,7 @@ func (x *ExchangeFile) String() string {
 func (*ExchangeFile) ProtoMessage() {}
 
 func (x *ExchangeFile) ProtoReflect() protoreflect.Message {
-	mi := &file_api_onec_omec_proto_msgTypes[3]
+	mi := &file_api_onec_omec_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -346,7 +302,7 @@ func (x *ExchangeFile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExchangeFile.ProtoReflect.Descriptor instead.
 func (*ExchangeFile) Descriptor() ([]byte, []int) {
-	return file_api_onec_omec_proto_rawDescGZIP(), []int{3}
+	return file_api_onec_omec_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ExchangeFile) GetFormatVer() float32 {
@@ -412,58 +368,6 @@ func (x *ExchangeFile) GetAccount() []string {
 	return nil
 }
 
-type AccountBalanceEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
-	Balance       *AccountBalance        `protobuf:"bytes,2,opt,name=balance,proto3" json:"balance,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AccountBalanceEvent) Reset() {
-	*x = AccountBalanceEvent{}
-	mi := &file_api_onec_omec_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AccountBalanceEvent) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AccountBalanceEvent) ProtoMessage() {}
-
-func (x *AccountBalanceEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_api_onec_omec_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AccountBalanceEvent.ProtoReflect.Descriptor instead.
-func (*AccountBalanceEvent) Descriptor() ([]byte, []int) {
-	return file_api_onec_omec_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *AccountBalanceEvent) GetRequestId() string {
-	if x != nil {
-		return x.RequestId
-	}
-	return ""
-}
-
-func (x *AccountBalanceEvent) GetBalance() *AccountBalance {
-	if x != nil {
-		return x.Balance
-	}
-	return nil
-}
-
 // AccountBalance represents opening and closing balances for an account.
 type AccountBalance struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -487,7 +391,7 @@ type AccountBalance struct {
 
 func (x *AccountBalance) Reset() {
 	*x = AccountBalance{}
-	mi := &file_api_onec_omec_proto_msgTypes[5]
+	mi := &file_api_onec_omec_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -499,7 +403,7 @@ func (x *AccountBalance) String() string {
 func (*AccountBalance) ProtoMessage() {}
 
 func (x *AccountBalance) ProtoReflect() protoreflect.Message {
-	mi := &file_api_onec_omec_proto_msgTypes[5]
+	mi := &file_api_onec_omec_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -512,7 +416,7 @@ func (x *AccountBalance) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AccountBalance.ProtoReflect.Descriptor instead.
 func (*AccountBalance) Descriptor() ([]byte, []int) {
-	return file_api_onec_omec_proto_rawDescGZIP(), []int{5}
+	return file_api_onec_omec_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *AccountBalance) GetStartDate() string {
@@ -562,66 +466,6 @@ func (x *AccountBalance) GetFinalBalance() float64 {
 		return x.FinalBalance
 	}
 	return 0
-}
-
-type PaymentDocumentEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileId        string                 `protobuf:"bytes,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
-	BalanceId     string                 `protobuf:"bytes,2,opt,name=balance_id,json=balanceId,proto3" json:"balance_id,omitempty"` // ссылка на конкретный AccountBalance
-	Doc           *PaymentDocument       `protobuf:"bytes,3,opt,name=doc,proto3" json:"doc,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PaymentDocumentEvent) Reset() {
-	*x = PaymentDocumentEvent{}
-	mi := &file_api_onec_omec_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PaymentDocumentEvent) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PaymentDocumentEvent) ProtoMessage() {}
-
-func (x *PaymentDocumentEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_api_onec_omec_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PaymentDocumentEvent.ProtoReflect.Descriptor instead.
-func (*PaymentDocumentEvent) Descriptor() ([]byte, []int) {
-	return file_api_onec_omec_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *PaymentDocumentEvent) GetFileId() string {
-	if x != nil {
-		return x.FileId
-	}
-	return ""
-}
-
-func (x *PaymentDocumentEvent) GetBalanceId() string {
-	if x != nil {
-		return x.BalanceId
-	}
-	return ""
-}
-
-func (x *PaymentDocumentEvent) GetDoc() *PaymentDocument {
-	if x != nil {
-		return x.Doc
-	}
-	return nil
 }
 
 // PaymentDocument представляет одну запись документа обмена.
@@ -748,7 +592,7 @@ type PaymentDocument struct {
 
 func (x *PaymentDocument) Reset() {
 	*x = PaymentDocument{}
-	mi := &file_api_onec_omec_proto_msgTypes[7]
+	mi := &file_api_onec_omec_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -760,7 +604,7 @@ func (x *PaymentDocument) String() string {
 func (*PaymentDocument) ProtoMessage() {}
 
 func (x *PaymentDocument) ProtoReflect() protoreflect.Message {
-	mi := &file_api_onec_omec_proto_msgTypes[7]
+	mi := &file_api_onec_omec_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -773,7 +617,7 @@ func (x *PaymentDocument) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaymentDocument.ProtoReflect.Descriptor instead.
 func (*PaymentDocument) Descriptor() ([]byte, []int) {
-	return file_api_onec_omec_proto_rawDescGZIP(), []int{7}
+	return file_api_onec_omec_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *PaymentDocument) GetDocumentType() string {
@@ -1240,18 +1084,15 @@ const file_api_onec_omec_proto_rawDesc = "" +
 	"\n" +
 	"request_id\x18\x01 \x01(\fR\trequestId\x12\x19\n" +
 	"\bfile_url\x18\x02 \x01(\tR\afileUrl\x127\n" +
-	"\rcustomer_type\x18\x03 \x01(\x0e2\x12.onec.CustomerTypeR\fcustomerType\"\xd7\x01\n" +
+	"\rcustomer_type\x18\x03 \x01(\x0e2\x12.onec.CustomerTypeR\fcustomerType\"\x80\x02\n" +
 	"\rParseResponse\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\fR\trequestId\x12.\n" +
-	"\x04file\x18\x02 \x01(\v2\x18.onec.ExchangeFileHeaderH\x00R\x04file\x125\n" +
-	"\abalance\x18\x03 \x01(\v2\x19.onec.AccountBalanceEventH\x00R\abalance\x128\n" +
-	"\bdocument\x18\x04 \x01(\v2\x1a.onec.PaymentDocumentEventH\x00R\bdocumentB\x06\n" +
-	"\x04item\"[\n" +
-	"\x12ExchangeFileHeader\x12\x1d\n" +
-	"\n" +
-	"request_id\x18\x01 \x01(\fR\trequestId\x12&\n" +
-	"\x04file\x18\x02 \x01(\v2\x12.onec.ExchangeFileR\x04file\"\x97\x02\n" +
+	"request_id\x18\x01 \x01(\fR\trequestId\x127\n" +
+	"\rcustomer_type\x18\x02 \x01(\x0e2\x12.onec.CustomerTypeR\fcustomerType\x12(\n" +
+	"\x04file\x18\x03 \x01(\v2\x12.onec.ExchangeFileH\x00R\x04file\x120\n" +
+	"\abalance\x18\x05 \x01(\v2\x14.onec.AccountBalanceH\x00R\abalance\x123\n" +
+	"\bdocument\x18\x06 \x01(\v2\x15.onec.PaymentDocumentH\x00R\bdocumentB\x06\n" +
+	"\x04item\"\x97\x02\n" +
 	"\fExchangeFile\x12\x1d\n" +
 	"\n" +
 	"format_ver\x18\x01 \x01(\x02R\tformatVer\x12\x1a\n" +
@@ -1263,11 +1104,7 @@ const file_api_onec_omec_proto_rawDesc = "" +
 	"\n" +
 	"start_date\x18\a \x01(\tR\tstartDate\x12\x19\n" +
 	"\bend_date\x18\b \x01(\tR\aendDate\x12\x18\n" +
-	"\aaccount\x18\t \x03(\tR\aaccount\"d\n" +
-	"\x13AccountBalanceEvent\x12\x1d\n" +
-	"\n" +
-	"request_id\x18\x01 \x01(\tR\trequestId\x12.\n" +
-	"\abalance\x18\x02 \x01(\v2\x14.onec.AccountBalanceR\abalance\"\xe7\x01\n" +
+	"\aaccount\x18\t \x03(\tR\aaccount\"\xe7\x01\n" +
 	"\x0eAccountBalance\x12\x1d\n" +
 	"\n" +
 	"start_date\x18\x01 \x01(\tR\tstartDate\x12\x19\n" +
@@ -1276,12 +1113,7 @@ const file_api_onec_omec_proto_rawDesc = "" +
 	"\x0finitial_balance\x18\x04 \x01(\x01R\x0einitialBalance\x12\x16\n" +
 	"\x06income\x18\x05 \x01(\x01R\x06income\x12\x1b\n" +
 	"\twrite_off\x18\x06 \x01(\x01R\bwriteOff\x12#\n" +
-	"\rfinal_balance\x18\a \x01(\x01R\ffinalBalance\"w\n" +
-	"\x14PaymentDocumentEvent\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\tR\x06fileId\x12\x1d\n" +
-	"\n" +
-	"balance_id\x18\x02 \x01(\tR\tbalanceId\x12'\n" +
-	"\x03doc\x18\x03 \x01(\v2\x15.onec.PaymentDocumentR\x03doc\"\xe4\x19\n" +
+	"\rfinal_balance\x18\a \x01(\x01R\ffinalBalance\"\xe4\x19\n" +
 	"\x0fPaymentDocument\x12#\n" +
 	"\rdocument_type\x18\x01 \x01(\tR\fdocumentType\x12\x16\n" +
 	"\x06number\x18\x02 \x01(\tR\x06number\x12\x12\n" +
@@ -1416,32 +1248,27 @@ func file_api_onec_omec_proto_rawDescGZIP() []byte {
 
 var (
 	file_api_onec_omec_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-	file_api_onec_omec_proto_msgTypes  = make([]protoimpl.MessageInfo, 8)
+	file_api_onec_omec_proto_msgTypes  = make([]protoimpl.MessageInfo, 5)
 	file_api_onec_omec_proto_goTypes   = []any{
-		(CustomerType)(0),            // 0: onec.CustomerType
-		(*ParseRequest)(nil),         // 1: onec.ParseRequest
-		(*ParseResponse)(nil),        // 2: onec.ParseResponse
-		(*ExchangeFileHeader)(nil),   // 3: onec.ExchangeFileHeader
-		(*ExchangeFile)(nil),         // 4: onec.ExchangeFile
-		(*AccountBalanceEvent)(nil),  // 5: onec.AccountBalanceEvent
-		(*AccountBalance)(nil),       // 6: onec.AccountBalance
-		(*PaymentDocumentEvent)(nil), // 7: onec.PaymentDocumentEvent
-		(*PaymentDocument)(nil),      // 8: onec.PaymentDocument
+		(CustomerType)(0),       // 0: onec.CustomerType
+		(*ParseRequest)(nil),    // 1: onec.ParseRequest
+		(*ParseResponse)(nil),   // 2: onec.ParseResponse
+		(*ExchangeFile)(nil),    // 3: onec.ExchangeFile
+		(*AccountBalance)(nil),  // 4: onec.AccountBalance
+		(*PaymentDocument)(nil), // 5: onec.PaymentDocument
 	}
 )
 var file_api_onec_omec_proto_depIdxs = []int32{
 	0, // 0: onec.ParseRequest.customer_type:type_name -> onec.CustomerType
-	3, // 1: onec.ParseResponse.file:type_name -> onec.ExchangeFileHeader
-	5, // 2: onec.ParseResponse.balance:type_name -> onec.AccountBalanceEvent
-	7, // 3: onec.ParseResponse.document:type_name -> onec.PaymentDocumentEvent
-	4, // 4: onec.ExchangeFileHeader.file:type_name -> onec.ExchangeFile
-	6, // 5: onec.AccountBalanceEvent.balance:type_name -> onec.AccountBalance
-	8, // 6: onec.PaymentDocumentEvent.doc:type_name -> onec.PaymentDocument
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	0, // 1: onec.ParseResponse.customer_type:type_name -> onec.CustomerType
+	3, // 2: onec.ParseResponse.file:type_name -> onec.ExchangeFile
+	4, // 3: onec.ParseResponse.balance:type_name -> onec.AccountBalance
+	5, // 4: onec.ParseResponse.document:type_name -> onec.PaymentDocument
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_api_onec_omec_proto_init() }
@@ -1454,14 +1281,14 @@ func file_api_onec_omec_proto_init() {
 		(*ParseResponse_Balance)(nil),
 		(*ParseResponse_Document)(nil),
 	}
-	file_api_onec_omec_proto_msgTypes[7].OneofWrappers = []any{}
+	file_api_onec_omec_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_onec_omec_proto_rawDesc), len(file_api_onec_omec_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   8,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

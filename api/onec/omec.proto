@@ -23,141 +23,126 @@ message ParseRequest {
 message ParseResponse {
   // Уникальный идентификатор запроса
   bytes request_id = 1;
+  CustomerType customer_type = 2;
   oneof item {
-    ExchangeFileHeader file = 2;
-    AccountBalanceEvent balance = 3;
-    PaymentDocumentEvent document = 4;
+    ExchangeFile file = 3;
+    AccountBalance balance = 5;
+    PaymentDocument document = 6;
   }
-}
-
-message ExchangeFileHeader {
-  bytes request_id = 1;
-  ExchangeFile file   = 2;
 }
 
 // ExchangeFile holds the metadata of a 1C-ClientBank exchange file.
 message ExchangeFile {
   // ВерсияФормата
-  float format_ver    = 1;
+  float format_ver = 1;
   // Кодировка
-  string encoding     = 2;
+  string encoding = 2;
   // Отправитель
-  string sender       = 3;
+  string sender = 3;
   // Получатель
-  string receiver     = 4;
+  string receiver = 4;
   // ДатаСоздания (DD.MM.YYYY)
   string created_date = 5;
   // ВремяСоздания (HH:MM:SS)
   string created_time = 6;
   // ДатаНачала (DD.MM.YYYY)
-  string start_date   = 7;
+  string start_date = 7;
   // ДатаКонца (DD.MM.YYYY)
-  string end_date     = 8;
+  string end_date = 8;
   // РасчСчет — список расчётных счетов
   repeated string account = 9;
-}
-
-message AccountBalanceEvent {
-  string request_id = 1;
-  AccountBalance balance = 2;
 }
 
 // AccountBalance represents opening and closing balances for an account.
 message AccountBalance {
   // ДатаНачала (DD.MM.YYYY)
-  string start_date      = 1;
+  string start_date = 1;
   // ДатаКонца (DD.MM.YYYY)
-  string end_date        = 2;
+  string end_date = 2;
   // РасчСчет
-  string account         = 3;
+  string account = 3;
   // НачальныйОстаток
   double initial_balance = 4;
   // ВсегоПоступило
-  double income          = 5;
+  double income = 5;
   // ВсегоСписано
-  double write_off       = 6;
+  double write_off = 6;
   // КонечныйОстаток
-  double final_balance   = 7;
-}
-
-message PaymentDocumentEvent {
-  string file_id    = 1;
-  string balance_id = 2;       // ссылка на конкретный AccountBalance
-  PaymentDocument doc  = 3;
+  double final_balance = 7;
 }
 
 // PaymentDocument представляет одну запись документа обмена.
 message PaymentDocument {
   // СекцияДокумент
-  string document_type            = 1;
+  string document_type = 1;
   // Номер
-  string number                   = 2;
+  string number = 2;
   // Дата
-  string date                     = 3;
+  string date = 3;
   // ДатаСписано
-  string written_off_date         = 4;
+  string written_off_date = 4;
   // ДатаПоступило
-  string income_date              = 5;
+  string income_date = 5;
   // Сумма
-  double summ                     = 6;
+  double summ = 6;
   // КвитанцияДата
-  string rect_date                = 7;
+  string rect_date = 7;
   // КвитанцияВремя
-  string rect_time                = 8;
+  string rect_time = 8;
   // КвитанцияСодержание
-  string rect_content             = 9;
+  string rect_content = 9;
   // ПлательщикСчет
-  string payer_account            = 10;
+  string payer_account = 10;
   // Плательщик
-  string payer                    = 11;
+  string payer = 11;
   // ПлательщикИНН
-  string payer_inn                = 12;
+  string payer_inn = 12;
   // ПлательщикКПП
-  string payer_kpp                = 13;
+  string payer_kpp = 13;
   // Плательщик1…4
-  optional string payer1          = 14;
-  optional string payer2          = 15;
-  optional string payer3          = 16;
-  optional string payer4          = 17;
+  optional string payer1 = 14;
+  optional string payer2 = 15;
+  optional string payer3 = 16;
+  optional string payer4 = 17;
   // ПлательщикРасчСчет
-  string payer_current_account    = 18;
+  string payer_current_account = 18;
   // ПлательщикБанк1…2
-  string payer_bank1              = 19;
-  optional string payer_bank2     = 20;
+  string payer_bank1 = 19;
+  optional string payer_bank2 = 20;
   // ПлательщикБИК
-  string payer_bik                = 21;
+  string payer_bik = 21;
   // ПлательщикКорсчет
-  string payer_corr_account       = 22;
+  string payer_corr_account = 22;
   // ПолучательСчет
-  string receiver_account         = 23;
+  string receiver_account = 23;
   // Получатель
-  string receiver                 = 24;
+  string receiver = 24;
   // ПолучательИНН
-  string receiver_inn             = 25;
+  string receiver_inn = 25;
   // ПолучательКПП
-  string receiver_kpp             = 26;
+  string receiver_kpp = 26;
   // Получатель1…4
-  optional string receiver1       = 27;
-  optional string receiver2       = 28;
-  optional string receiver3       = 29;
-  optional string receiver4       = 30;
+  optional string receiver1 = 27;
+  optional string receiver2 = 28;
+  optional string receiver3 = 29;
+  optional string receiver4 = 30;
   // ПолучательРасчСчет
   string receiver_current_account = 31;
   // ПолучательБанк1…2
-  string receiver_bank1           = 32;
-  optional string receiver_bank2  = 33;
+  string receiver_bank1 = 32;
+  optional string receiver_bank2 = 33;
   // ПолучательБИК
-  string receiver_bik             = 34;
+  string receiver_bik = 34;
   // ПолучательКорсчет
-  string receiver_corr_account    = 35;
+  string receiver_corr_account = 35;
   // ВидПлатежа
-  optional string payment_type    = 36;
+  optional string payment_type = 36;
   // КодНазПлатежа
   optional string payment_purpose_code = 37;
   // Код (UIN)
-  optional string uin             = 38;
+  optional string uin = 38;
   // НазначениеПлатежа
-  string payment_purpose          = 39;
+  string payment_purpose = 39;
   // НазначениеПлатежа1…6
   optional string payment_purpose1 = 40;
   optional string payment_purpose2 = 41;
@@ -168,9 +153,9 @@ message PaymentDocument {
   // СтатусСоставителя
   optional string compiler_status = 46;
   // ОКАТО
-  optional string okato           = 47;
+  optional string okato = 47;
   // ПоказательКБК
-  optional string indicator_kbk   = 48;
+  optional string indicator_kbk = 48;
   // ПоказательОснования
   optional string indicator_basics = 49;
   // ПоказательПериода
@@ -178,29 +163,29 @@ message PaymentDocument {
   // ПоказательНомера
   optional string indicator_number = 51;
   // ПоказательДаты
-  optional string indicator_date  = 52;
+  optional string indicator_date = 52;
   // ПоказательТипа
-  optional string indicator_type  = 53;
+  optional string indicator_type = 53;
   // Очередность
-  optional uint32 priority        = 54;
+  optional uint32 priority = 54;
   // ВидОплаты
-  optional string defrayal_type   = 55;
+  optional string defrayal_type = 55;
   // СрокАкцепта
   optional string acceptance_term = 56;
   // ВидАккредитива
   optional string type_letter_credit = 57;
   // СрокПлатежа
-  optional string payment_term    = 58;
+  optional string payment_term = 58;
   // УсловиеОплаты1…3
   optional string payment_condition1 = 59;
   optional string payment_condition2 = 60;
   optional string payment_condition3 = 61;
   // ПлатежПоПредст
-  optional string payment_by      = 62;
+  optional string payment_by = 62;
   // ДополнУсловия
   optional string additional_terms = 63;
   // НомерСчетаПоставщика
   optional string supplier_account_number = 64;
   // ДатаОтсылкиДок
-  optional string document_sending_date  = 65;
+  optional string document_sending_date = 65;
 }
