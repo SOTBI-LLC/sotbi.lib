@@ -8,7 +8,7 @@ import (
 )
 
 func TestGetSuggestion(t *testing.T) {
-	suggestion := New(os.Getenv("API_KEY"))
+	suggestion := New(os.Getenv("DADATA_API_KEY"))
 	suggestions, err := suggestion.Get("7707083893")
 
 	require.NoError(t, err)
