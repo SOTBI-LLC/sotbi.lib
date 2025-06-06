@@ -8,6 +8,7 @@ package excel_gen
 
 import (
 	context "context"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -91,9 +92,11 @@ type UnimplementedExcelGenServiceServer struct{}
 func (UnimplementedExcelGenServiceServer) GeneralGenerate(context.Context, *ExcelGeneralRequest) (*ExcelGenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GeneralGenerate not implemented")
 }
+
 func (UnimplementedExcelGenServiceServer) Generate(context.Context, *ExcelGenRequest) (*ExcelGenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Generate not implemented")
 }
+
 func (UnimplementedExcelGenServiceServer) GetStatus(context.Context, *ExcelGenStatusRequest) (*ExcelGenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
 }

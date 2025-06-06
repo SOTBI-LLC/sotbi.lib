@@ -7,14 +7,15 @@
 package counterparty
 
 import (
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
+
 	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
 )
 
 const (
@@ -454,15 +455,17 @@ func file_counterparty_employee_proto_rawDescGZIP() []byte {
 	return file_counterparty_employee_proto_rawDescData
 }
 
-var file_counterparty_employee_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_counterparty_employee_proto_goTypes = []any{
-	(*EmployeesResponse)(nil),      // 0: counterparty.EmployeesResponse
-	(*Employee)(nil),               // 1: counterparty.Employee
-	(*AddEmployeeRequest)(nil),     // 2: counterparty.AddEmployeeRequest
-	(*UpdateEmployeesRequest)(nil), // 3: counterparty.UpdateEmployeesRequest
-	(*UserID)(nil),                 // 4: counterparty.UserID
-	(*timestamppb.Timestamp)(nil),  // 5: google.protobuf.Timestamp
-}
+var (
+	file_counterparty_employee_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+	file_counterparty_employee_proto_goTypes  = []any{
+		(*EmployeesResponse)(nil),      // 0: counterparty.EmployeesResponse
+		(*Employee)(nil),               // 1: counterparty.Employee
+		(*AddEmployeeRequest)(nil),     // 2: counterparty.AddEmployeeRequest
+		(*UpdateEmployeesRequest)(nil), // 3: counterparty.UpdateEmployeesRequest
+		(*UserID)(nil),                 // 4: counterparty.UserID
+		(*timestamppb.Timestamp)(nil),  // 5: google.protobuf.Timestamp
+	}
+)
 var file_counterparty_employee_proto_depIdxs = []int32{
 	1, // 0: counterparty.EmployeesResponse.employees:type_name -> counterparty.Employee
 	5, // 1: counterparty.Employee.Start:type_name -> google.protobuf.Timestamp

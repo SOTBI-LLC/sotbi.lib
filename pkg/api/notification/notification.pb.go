@@ -9,12 +9,13 @@
 package notification
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/descriptorpb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	_ "google.golang.org/protobuf/types/descriptorpb"
 )
 
 const (
@@ -183,12 +184,14 @@ func file_api_notification_notification_proto_rawDescGZIP() []byte {
 	return file_api_notification_notification_proto_rawDescData
 }
 
-var file_api_notification_notification_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_api_notification_notification_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
-var file_api_notification_notification_proto_goTypes = []any{
-	(NotificationType)(0), // 0: notification.NotificationType
-	(*Notification)(nil),  // 1: notification.Notification
-}
+var (
+	file_api_notification_notification_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+	file_api_notification_notification_proto_msgTypes  = make([]protoimpl.MessageInfo, 1)
+	file_api_notification_notification_proto_goTypes   = []any{
+		(NotificationType)(0), // 0: notification.NotificationType
+		(*Notification)(nil),  // 1: notification.Notification
+	}
+)
 var file_api_notification_notification_proto_depIdxs = []int32{
 	0, // 0: notification.Notification.type:type_name -> notification.NotificationType
 	1, // [1:1] is the sub-list for method output_type

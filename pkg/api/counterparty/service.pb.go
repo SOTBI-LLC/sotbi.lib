@@ -7,13 +7,14 @@
 package counterparty
 
 import (
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
+
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
 )
 
 const (
@@ -287,24 +288,26 @@ func file_counterparty_service_proto_rawDescGZIP() []byte {
 	return file_counterparty_service_proto_rawDescData
 }
 
-var file_counterparty_service_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_counterparty_service_proto_goTypes = []any{
-	(*Headers)(nil),                   // 0: counterparty.Headers
-	(*Request)(nil),                   // 1: counterparty.Request
-	(*Rules)(nil),                     // 2: counterparty.Rules
-	(*AuthMessage)(nil),               // 3: counterparty.AuthMessage
-	(*emptypb.Empty)(nil),             // 4: google.protobuf.Empty
-	(*AddCounterpartyRequest)(nil),    // 5: counterparty.AddCounterpartyRequest
-	(*CounterpartyID)(nil),            // 6: counterparty.CounterpartyID
-	(*UpdateCounterpartyRequest)(nil), // 7: counterparty.UpdateCounterpartyRequest
-	(*UpdateBankDetailsRequest)(nil),  // 8: counterparty.UpdateBankDetailsRequest
-	(*UserID)(nil),                    // 9: counterparty.UserID
-	(*UpdateEmployeesRequest)(nil),    // 10: counterparty.UpdateEmployeesRequest
-	(*CounterpartiesResponse)(nil),    // 11: counterparty.CounterpartiesResponse
-	(*Counterparty)(nil),              // 12: counterparty.Counterparty
-	(*BankDetailsResponse)(nil),       // 13: counterparty.BankDetailsResponse
-	(*EmployeesResponse)(nil),         // 14: counterparty.EmployeesResponse
-}
+var (
+	file_counterparty_service_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+	file_counterparty_service_proto_goTypes  = []any{
+		(*Headers)(nil),                   // 0: counterparty.Headers
+		(*Request)(nil),                   // 1: counterparty.Request
+		(*Rules)(nil),                     // 2: counterparty.Rules
+		(*AuthMessage)(nil),               // 3: counterparty.AuthMessage
+		(*emptypb.Empty)(nil),             // 4: google.protobuf.Empty
+		(*AddCounterpartyRequest)(nil),    // 5: counterparty.AddCounterpartyRequest
+		(*CounterpartyID)(nil),            // 6: counterparty.CounterpartyID
+		(*UpdateCounterpartyRequest)(nil), // 7: counterparty.UpdateCounterpartyRequest
+		(*UpdateBankDetailsRequest)(nil),  // 8: counterparty.UpdateBankDetailsRequest
+		(*UserID)(nil),                    // 9: counterparty.UserID
+		(*UpdateEmployeesRequest)(nil),    // 10: counterparty.UpdateEmployeesRequest
+		(*CounterpartiesResponse)(nil),    // 11: counterparty.CounterpartiesResponse
+		(*Counterparty)(nil),              // 12: counterparty.Counterparty
+		(*BankDetailsResponse)(nil),       // 13: counterparty.BankDetailsResponse
+		(*EmployeesResponse)(nil),         // 14: counterparty.EmployeesResponse
+	}
+)
 var file_counterparty_service_proto_depIdxs = []int32{
 	0,  // 0: counterparty.Request.Headers:type_name -> counterparty.Headers
 	1,  // 1: counterparty.Rules.request:type_name -> counterparty.Request
