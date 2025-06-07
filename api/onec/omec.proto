@@ -4,6 +4,7 @@ package onec;
 option go_package = "github.com/COTBU/sotbi.lib/api/onec";
 // import "api/validate/validate.proto";
 import "google/protobuf/descriptor.proto";
+import "google/protobuf/timestamp.proto";
 
 // Определение перечисления CustomerType
 enum CustomerType {
