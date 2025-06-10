@@ -114,6 +114,8 @@ func NewConsumer[T proto.Message](
 		opts.GroupID,
 		"topic",
 		customOpts.topic,
+		"fetchMaxWait",
+		customOpts.fetchMaxWait,
 	)
 
 	return &consumer[T]{

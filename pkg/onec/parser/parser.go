@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"sync"
 
 	"github.com/mitchellh/mapstructure"
 	"golang.org/x/text/encoding/charmap"
@@ -18,6 +19,7 @@ type ExchangeFile struct {
 	exchangeFile     map[string]string
 	accountBalance   []map[string]string
 	paymentDocuments []map[string]string
+	mu               sync.Mutex
 }
 
 var _ onec.Parser = (*ExchangeFile)(nil)
@@ -139,6 +141,8 @@ func (p *ExchangeFile) convertFile() (*onec.ExchangeFile, error) {
 		return nil, fmt.Errorf("error creating new mapstructure decoder: %w", err)
 	}
 
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	if err := decoder.Decode(p.exchangeFile); err != nil {
 		return nil, fmt.Errorf("error while decoding ExchangeFile: %w", err)
 	}
