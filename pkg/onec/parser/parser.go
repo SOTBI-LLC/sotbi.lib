@@ -131,7 +131,7 @@ func (p *ExchangeFile) convertFile() (onec.ExchangeFile, error) {
 	var exFile onec.ExchangeFile
 	config := &mapstructure.DecoderConfig{
 		WeaklyTypedInput: true,
-		Result:           exFile,
+		Result:           &exFile,
 	}
 
 	decoder, err := mapstructure.NewDecoder(config)
