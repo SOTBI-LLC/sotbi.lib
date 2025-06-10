@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	"sync"
 
 	"github.com/mitchellh/mapstructure"
 	"golang.org/x/text/encoding/charmap"
@@ -19,7 +18,6 @@ type ExchangeFile struct {
 	exchangeFile     map[string]string
 	accountBalance   []map[string]string
 	paymentDocuments []map[string]string
-	mu               sync.Mutex
 }
 
 var _ onec.Parser = (*ExchangeFile)(nil)
@@ -45,7 +43,7 @@ func (p *ExchangeFile) Scan(file io.Reader) (onec.Result, error) {
 	}
 
 	return onec.Result{
-		ExchangeFile:     *exFile,
+		ExchangeFile:     exFile,
 		Remainings:       rem,
 		PaymentDocuments: pd,
 	}, nil
@@ -66,9 +64,6 @@ func (p *ExchangeFile) read(file io.Reader) error {
 		currentSection map[string]string
 		inSectionType  int
 	)
-
-	p.mu.Lock()
-	defer p.mu.Unlock()
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -132,23 +127,23 @@ func (p *ExchangeFile) read(file io.Reader) error {
 	return nil
 }
 
-func (p *ExchangeFile) convertFile() (*onec.ExchangeFile, error) {
+func (p *ExchangeFile) convertFile() (onec.ExchangeFile, error) {
 	var exFile onec.ExchangeFile
 	config := &mapstructure.DecoderConfig{
 		WeaklyTypedInput: true,
-		Result:           &exFile,
+		Result:           exFile,
 	}
 
 	decoder, err := mapstructure.NewDecoder(config)
 	if err != nil {
-		return nil, fmt.Errorf("error creating new mapstructure decoder: %w", err)
+		return exFile, fmt.Errorf("error creating new mapstructure decoder: %w", err)
 	}
 
 	if err := decoder.Decode(p.exchangeFile); err != nil {
-		return nil, fmt.Errorf("error while decoding ExchangeFile: %w", err)
+		return exFile, fmt.Errorf("error while decoding ExchangeFile: %w", err)
 	}
 
-	return &exFile, nil
+	return exFile, nil
 }
 
 func (p *ExchangeFile) convertAccountBalance() ([]onec.AccountBalance, error) {
