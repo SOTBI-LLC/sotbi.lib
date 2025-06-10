@@ -24,27 +24,27 @@ type ExchangeFile struct {
 
 var _ onec.Parser = (*ExchangeFile)(nil)
 
-func (p *ExchangeFile) Scan(file io.Reader) (*onec.Result, error) {
+func (p *ExchangeFile) Scan(file io.Reader) (onec.Result, error) {
 	if err := p.read(p.convertFileEncoding(file)); err != nil {
-		return nil, err
+		return onec.Result{}, err
 	}
 
 	exFile, err := p.convertFile()
 	if err != nil {
-		return nil, err
+		return onec.Result{}, err
 	}
 
 	rem, err := p.convertAccountBalance()
 	if err != nil {
-		return nil, err
+		return onec.Result{}, err
 	}
 
 	pd, err := p.convertPaymentDocuments()
 	if err != nil {
-		return nil, err
+		return onec.Result{}, err
 	}
 
-	return &onec.Result{
+	return onec.Result{
 		ExchangeFile:     *exFile,
 		Remainings:       rem,
 		PaymentDocuments: pd,

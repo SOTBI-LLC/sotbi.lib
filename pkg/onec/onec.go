@@ -11,5 +11,5 @@ type Result struct {
 }
 
 type Parser interface {
-	Scan(io.Reader) (*Result, error)
+	Scan(io.Reader) (Result, error)
 }
