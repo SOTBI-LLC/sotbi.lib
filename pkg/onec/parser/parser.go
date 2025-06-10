@@ -67,6 +67,9 @@ func (p *ExchangeFile) read(file io.Reader) error {
 		inSectionType  int
 	)
 
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	for scanner.Scan() {
 		line := scanner.Text()
 
@@ -141,8 +144,6 @@ func (p *ExchangeFile) convertFile() (*onec.ExchangeFile, error) {
 		return nil, fmt.Errorf("error creating new mapstructure decoder: %w", err)
 	}
 
-	p.mu.Lock()
-	defer p.mu.Unlock()
 	if err := decoder.Decode(p.exchangeFile); err != nil {
 		return nil, fmt.Errorf("error while decoding ExchangeFile: %w", err)
 	}
