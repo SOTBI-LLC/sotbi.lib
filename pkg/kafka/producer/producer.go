@@ -73,6 +73,7 @@ type ProducerOptions struct {
 	writeBackoffMin time.Duration
 	writeBackoffMax time.Duration
 	batchBytes      int64
+	compression     Compression
 }
 
 func newProducer[T proto.Message](
@@ -85,6 +86,7 @@ func newProducer[T proto.Message](
 	opts.maxAttempts = defaultMaxAttempts
 	opts.writeBackoffMin = defaultWriteBackoffMin
 	opts.writeBackoffMax = defaultWriteBackoffMax
+	opts.compression = defaultCompression
 
 	for _, opt := range optFunc {
 		opt(opts)
@@ -122,6 +124,7 @@ func newProducer[T proto.Message](
 			WriteBackoffMin: opts.writeBackoffMin,
 			WriteBackoffMax: opts.writeBackoffMax,
 			BatchBytes:      opts.batchBytes,
+			Compression:     kafka.Compression(opts.compression),
 		},
 		schemaRegistry: opts.schemaRegistry,
 		cluster:        cluster,

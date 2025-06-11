@@ -17,6 +17,16 @@ const (
 	RequireAll  RequiredAcks = -1
 )
 
+type Compression int8
+
+const (
+	None   Compression = 0
+	Gzip   Compression = 1
+	Snappy Compression = 2
+	Lz4    Compression = 3
+	Zstd   Compression = 4
+)
+
 const (
 	defaultBatchTimeout    = 10 * time.Millisecond
 	maxBatchTimeout        = 200 * time.Millisecond
@@ -24,6 +34,7 @@ const (
 	defaultMaxAttempts     = 3
 	defaultWriteBackoffMin = 100 * time.Millisecond //nolint:revive
 	defaultWriteBackoffMax = 1 * time.Second        //nolint:revive
+	defaultCompression     = 0
 )
 
 // WithRequiredAcks
@@ -33,6 +44,18 @@ const (
 func WithRequiredAcks(requiredAcks RequiredAcks) func(opts *ProducerOptions) {
 	return func(opts *ProducerOptions) {
 		opts.requiredAcks = requiredAcks
+	}
+}
+
+// WithCompression
+// None - без сжатия.
+// Gzip - сжатие с помощью алгоритма Gzip.
+// Snappy - сжатие с помощью алгоритма Snappy.
+// Lz4 - сжатие с помощью алгоритма LZ4.
+// Zstd - сжатие с помощью алгоритма Zstandard.
+func WithCompression(сompression Compression) func(opts *ProducerOptions) {
+	return func(opts *ProducerOptions) {
+		opts.compression = сompression
 	}
 }
 
