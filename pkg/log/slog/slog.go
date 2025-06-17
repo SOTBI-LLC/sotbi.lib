@@ -2,6 +2,7 @@ package slog
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"os"
 	"strings"
@@ -45,5 +46,5 @@ func (l Logger) Fatal(message string, args ...any) {
 }
 
 func (l Logger) Printf(message string, args ...any) {
-	l.Log(context.Background(), slog.LevelError, message, args...)
+	l.Log(context.Background(), slog.LevelError, fmt.Sprintf(message, args...))
 }
