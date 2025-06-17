@@ -57,7 +57,7 @@ func NewConsumer[T proto.Message](
 	customOpts := &kafkaFuncOpts{
 		minBytes:       1e3,
 		maxBytes:       10e6,
-		fetchMaxWait:   10*time.Second,
+		fetchMaxWait:   10 * time.Second,
 		commitInterval: 0,
 		dialerTimeout:  time.Second,
 	}
@@ -93,6 +93,7 @@ func NewConsumer[T proto.Message](
 	readerConfig := kafka.ReaderConfig{
 		Brokers:               opts.Brokers,
 		Topic:                 customOpts.topic,
+		GroupID:               opts.GroupID,
 		WatchPartitionChanges: true,
 		StartOffset:           startOffset,
 		ErrorLogger:           customOpts.logger,
@@ -103,7 +104,7 @@ func NewConsumer[T proto.Message](
 		CommitInterval:        customOpts.commitInterval,
 		ReadBackoffMin:        100 * time.Millisecond,
 		ReadBackoffMax:        1 * time.Second,
-    MaxAttempts:    MaxAttempts,
+		MaxAttempts:           MaxAttempts,
 	}
 
 	r := kafka.NewReader(readerConfig)
