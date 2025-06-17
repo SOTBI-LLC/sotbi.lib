@@ -9,7 +9,7 @@ type PaymentDocument struct {
 	Summ                   float64 `mapstructure:"Сумма"                          json:"summ"`
 	RectDate               *string `mapstructure:"КвитанцияДата,omitempty"        json:"rect_date,omitempty"`
 	RectTime               *string `mapstructure:"КвитанцияВремя,omitempty"       json:"rect_time,omitempty"`
-	RectContent            string  `mapstructure:"КвитанцияСодержание"            json:"rect_content,omitempty"`
+	RectContent            *string `mapstructure:"КвитанцияСодержание,omitempty"  json:"rect_content,omitempty"`
 	PayerAccount           string  `mapstructure:"ПлательщикСчет"                 json:"payer_account,omitempty"`
 	Payer                  string  `mapstructure:"Плательщик"                     json:"payer,omitempty"`
 	PayerINN               string  `mapstructure:"ПлательщикИНН"                  json:"payer_inn,omitempty"`
