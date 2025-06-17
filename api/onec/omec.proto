@@ -85,7 +85,7 @@ message PaymentDocument {
   // Сумма
   double summ = 6;
   // КвитанцияДата + КвитанцияВремя (DD.MM.YYYY HH:MM:SS)
-  optional string rect_datetime = 7;
+  optional google.protobuf.Timestamp rect_datetime = 7;
   // КвитанцияСодержание
   optional string rect_content = 9;
   // ПлательщикСчет

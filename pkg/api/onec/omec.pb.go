@@ -475,7 +475,7 @@ type PaymentDocument struct {
 	// Сумма
 	Summ float64 `protobuf:"fixed64,6,opt,name=summ,proto3" json:"summ,omitempty"`
 	// КвитанцияДата + КвитанцияВремя (DD.MM.YYYY HH:MM:SS)
-	RectDatetime *string `protobuf:"bytes,7,opt,name=rect_datetime,json=rectDatetime,proto3,oneof" json:"rect_datetime,omitempty"`
+	RectDatetime *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=rect_datetime,json=rectDatetime,proto3,oneof" json:"rect_datetime,omitempty"`
 	// КвитанцияСодержание
 	RectContent *string `protobuf:"bytes,9,opt,name=rect_content,json=rectContent,proto3,oneof" json:"rect_content,omitempty"`
 	// ПлательщикСчет
@@ -651,11 +651,11 @@ func (x *PaymentDocument) GetSumm() float64 {
 	return 0
 }
 
-func (x *PaymentDocument) GetRectDatetime() string {
-	if x != nil && x.RectDatetime != nil {
-		return *x.RectDatetime
+func (x *PaymentDocument) GetRectDatetime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RectDatetime
 	}
-	return ""
+	return nil
 }
 
 func (x *PaymentDocument) GetRectContent() string {
@@ -1094,7 +1094,7 @@ const file_api_onec_omec_proto_rawDesc = "" +
 	"\x0finitial_balance\x18\x04 \x01(\x01R\x0einitialBalance\x12\x16\n" +
 	"\x06income\x18\x05 \x01(\x01R\x06income\x12\x1b\n" +
 	"\twrite_off\x18\x06 \x01(\x01R\bwriteOff\x12#\n" +
-	"\rfinal_balance\x18\a \x01(\x01R\ffinalBalance\"\xc4\x1b\n" +
+	"\rfinal_balance\x18\a \x01(\x01R\ffinalBalance\"\xe0\x1b\n" +
 	"\x0fPaymentDocument\x12#\n" +
 	"\rdocument_type\x18\x01 \x01(\tR\fdocumentType\x12\x16\n" +
 	"\x06number\x18\x02 \x01(\tR\x06number\x12.\n" +
@@ -1102,8 +1102,8 @@ const file_api_onec_omec_proto_rawDesc = "" +
 	"\x10written_off_date\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\x0ewrittenOffDate\x88\x01\x01\x12@\n" +
 	"\vincome_date\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\n" +
 	"incomeDate\x88\x01\x01\x12\x12\n" +
-	"\x04summ\x18\x06 \x01(\x01R\x04summ\x12(\n" +
-	"\rrect_datetime\x18\a \x01(\tH\x02R\frectDatetime\x88\x01\x01\x12&\n" +
+	"\x04summ\x18\x06 \x01(\x01R\x04summ\x12D\n" +
+	"\rrect_datetime\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x02R\frectDatetime\x88\x01\x01\x12&\n" +
 	"\frect_content\x18\t \x01(\tH\x03R\vrectContent\x88\x01\x01\x12#\n" +
 	"\rpayer_account\x18\n" +
 	" \x01(\tR\fpayerAccount\x12\x14\n" +
@@ -1259,11 +1259,12 @@ var file_api_onec_omec_proto_depIdxs = []int32{
 	6,  // 10: onec.PaymentDocument.date:type_name -> google.protobuf.Timestamp
 	6,  // 11: onec.PaymentDocument.written_off_date:type_name -> google.protobuf.Timestamp
 	6,  // 12: onec.PaymentDocument.income_date:type_name -> google.protobuf.Timestamp
-	13, // [13:13] is the sub-list for method output_type
-	13, // [13:13] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	6,  // 13: onec.PaymentDocument.rect_datetime:type_name -> google.protobuf.Timestamp
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_api_onec_omec_proto_init() }
