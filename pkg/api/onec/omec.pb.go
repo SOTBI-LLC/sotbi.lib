@@ -254,7 +254,7 @@ func (*ParseResponse_Document) isParseResponse_Item() {}
 type ExchangeFile struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ВерсияФормата
-	FormatVer float32 `protobuf:"fixed32,1,opt,name=format_ver,json=formatVer,proto3" json:"format_ver,omitempty"`
+	FormatVer string `protobuf:"bytes,1,opt,name=format_ver,json=formatVer,proto3" json:"format_ver,omitempty"`
 	// Кодировка
 	Encoding string `protobuf:"bytes,2,opt,name=encoding,proto3" json:"encoding,omitempty"`
 	// Отправитель
@@ -303,11 +303,11 @@ func (*ExchangeFile) Descriptor() ([]byte, []int) {
 	return file_api_onec_omec_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ExchangeFile) GetFormatVer() float32 {
+func (x *ExchangeFile) GetFormatVer() string {
 	if x != nil {
 		return x.FormatVer
 	}
-	return 0
+	return ""
 }
 
 func (x *ExchangeFile) GetEncoding() string {
@@ -1077,7 +1077,7 @@ const file_api_onec_omec_proto_rawDesc = "" +
 	"\x04item\"\xd0\x02\n" +
 	"\fExchangeFile\x12\x1d\n" +
 	"\n" +
-	"format_ver\x18\x01 \x01(\x02R\tformatVer\x12\x1a\n" +
+	"format_ver\x18\x01 \x01(\tR\tformatVer\x12\x1a\n" +
 	"\bencoding\x18\x02 \x01(\tR\bencoding\x12\x16\n" +
 	"\x06sender\x18\x03 \x01(\tR\x06sender\x12\x1a\n" +
 	"\breceiver\x18\x04 \x01(\tR\breceiver\x12E\n" +

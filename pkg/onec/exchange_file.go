@@ -1,7 +1,7 @@
 package onec
 
 type ExchangeFile struct {
-	FormatVer   float32  `mapstructure:"ВерсияФормата,omitempty" json:"format_ver"`
+	FormatVer   string   `mapstructure:"ВерсияФормата,omitempty" json:"format_ver"`
 	Encoding    string   `mapstructure:"Кодировка,omitempty"     json:"encoding"`
 	Sender      string   `mapstructure:"Отправитель,omitempty"   json:"sender"`
 	Receiver    string   `mapstructure:"Получатель,omitempty"    json:"receiver"`

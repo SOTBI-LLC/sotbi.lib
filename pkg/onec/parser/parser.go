@@ -56,7 +56,7 @@ func (*ExchangeFile) convertFileEncoding(file io.Reader) io.Reader {
 func (p *ExchangeFile) read(file io.Reader) error {
 	scanner := bufio.NewScanner(file)
 
-	const maxCapacity = 1024 * 1024 * 20 // 20MB эмпирический размер на файл 40 МБ
+	const maxCapacity = 1024 * 1024 * 40 // 40MB эмпирический размер на файл
 	buf := make([]byte, 0, maxCapacity)
 	scanner.Buffer(buf, maxCapacity)
 

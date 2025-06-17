@@ -35,7 +35,7 @@ message ParseResponse {
 // ExchangeFile holds the metadata of a 1C-ClientBank exchange file.
 message ExchangeFile {
   // ВерсияФормата
-  float format_ver = 1;
+  string format_ver = 1;
   // Кодировка
   string encoding = 2;
   // Отправитель
