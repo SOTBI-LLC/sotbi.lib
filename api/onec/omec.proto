@@ -42,14 +42,12 @@ message ExchangeFile {
   string sender = 3;
   // Получатель
   string receiver = 4;
-  // ДатаСоздания (DD.MM.YYYY)
-  string created_date = 5;
-  // ВремяСоздания (HH:MM:SS)
-  string created_time = 6;
+  // ДатаСоздания (DD.MM.YYYY HH:MM:SS)
+  google.protobuf.Timestamp created_datetime = 5;
   // ДатаНачала (DD.MM.YYYY)
-  string start_date = 7;
+  google.protobuf.Timestamp start_date = 7;
   // ДатаКонца (DD.MM.YYYY)
-  string end_date = 8;
+  google.protobuf.Timestamp end_date = 8;
   // РасчСчет — список расчётных счетов
   repeated string account = 9;
 }
@@ -57,9 +55,9 @@ message ExchangeFile {
 // AccountBalance represents opening and closing balances for an account.
 message AccountBalance {
   // ДатаНачала (DD.MM.YYYY)
-  string start_date = 1;
+  google.protobuf.Timestamp start_date = 1;
   // ДатаКонца (DD.MM.YYYY)
-  string end_date = 2;
+  google.protobuf.Timestamp end_date = 2;
   // РасчСчет
   string account = 3;
   // НачальныйОстаток
@@ -79,19 +77,17 @@ message PaymentDocument {
   // Номер
   string number = 2;
   // Дата
-  string date = 3;
+  google.protobuf.Timestamp date = 3;
   // ДатаСписано
-  string written_off_date = 4;
+  optional google.protobuf.Timestamp written_off_date = 4;
   // ДатаПоступило
-  string income_date = 5;
+  optional google.protobuf.Timestamp income_date = 5;
   // Сумма
   double summ = 6;
-  // КвитанцияДата
-  string rect_date = 7;
-  // КвитанцияВремя
-  string rect_time = 8;
+  // КвитанцияДата + КвитанцияВремя (DD.MM.YYYY HH:MM:SS)
+  optional string rect_datetime = 7;
   // КвитанцияСодержание
-  string rect_content = 9;
+  optional string rect_content = 9;
   // ПлательщикСчет
   string payer_account = 10;
   // Плательщик
@@ -99,7 +95,7 @@ message PaymentDocument {
   // ПлательщикИНН
   string payer_inn = 12;
   // ПлательщикКПП
-  string payer_kpp = 13;
+  optional string payer_kpp = 13;
   // Плательщик1…4
   optional string payer1 = 14;
   optional string payer2 = 15;
@@ -113,7 +109,7 @@ message PaymentDocument {
   // ПлательщикБИК
   string payer_bik = 21;
   // ПлательщикКорсчет
-  string payer_corr_account = 22;
+  optional string payer_corr_account = 22;
   // ПолучательСчет
   string receiver_account = 23;
   // Получатель
@@ -121,7 +117,7 @@ message PaymentDocument {
   // ПолучательИНН
   string receiver_inn = 25;
   // ПолучательКПП
-  string receiver_kpp = 26;
+  optional string receiver_kpp = 26;
   // Получатель1…4
   optional string receiver1 = 27;
   optional string receiver2 = 28;
