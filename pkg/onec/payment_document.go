@@ -13,7 +13,7 @@ type PaymentDocument struct {
 	PayerAccount           string  `mapstructure:"ПлательщикСчет"                 json:"payer_account,omitempty"`
 	Payer                  string  `mapstructure:"Плательщик"                     json:"payer,omitempty"`
 	PayerINN               string  `mapstructure:"ПлательщикИНН"                  json:"payer_inn,omitempty"`
-	PayerKPP               string  `mapstructure:"ПлательщикКПП"                  json:"payer_kpp,omitempty"`
+	PayerKPP               *string `mapstructure:"ПлательщикКПП,omitempty"        json:"payer_kpp,omitempty"`
 	Payer1                 *string `mapstructure:"Плательщик1"                    json:"payer1,omitempty"`
 	Payer2                 *string `mapstructure:"Плательщик2,omitempty"          json:"payer2,omitempty"`
 	Payer3                 *string `mapstructure:"Плательщик3,omitempty"          json:"payer3,omitempty"`
@@ -26,7 +26,7 @@ type PaymentDocument struct {
 	ReceiverAccount        string  `mapstructure:"ПолучательСчет"                 json:"receiver_account,omitempty"`
 	Receiver               string  `mapstructure:"Получатель"                     json:"receiver,omitempty"`
 	ReceiverINN            string  `mapstructure:"ПолучательИНН"                  json:"receiver_inn,omitempty"`
-	ReceiverKPP            string  `mapstructure:"ПолучательКПП"                  json:"receiver_kpp,omitempty"`
+	ReceiverKPP            *string `mapstructure:"ПолучательКПП,omitempty"        json:"receiver_kpp,omitempty"`
 	Receiver1              *string `mapstructure:"Получатель1,omitempty"          json:"receiver1,omitempty"`
 	Receiver2              *string `mapstructure:"Получатель2,omitempty"          json:"receiver2,omitempty"`
 	Receiver3              *string `mapstructure:"Получатель3,omitempty"          json:"receiver3,omitempty"`
