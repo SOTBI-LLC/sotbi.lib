@@ -1,45 +1,45 @@
 package onec
 
 type PaymentDocument struct {
-	DocumentType           string  `mapstructure:"СекцияДокумент,omitempty"       json:"document_type,omitempty"`
+	DocumentType           string  `mapstructure:"СекцияДокумент"                 json:"document_type,omitempty"`
 	Number                 string  `mapstructure:"Номер"                          json:"number,omitempty"`
 	Data                   string  `mapstructure:"Дата"                           json:"date,omitempty"`
-	WrittenOffDate         string  `mapstructure:"ДатаСписано,omitempty"          json:"written_off_date,omitempty"`
-	IncomeDate             string  `mapstructure:"ДатаПоступило,omitempty"        json:"income_date,omitempty"`
-	Summ                   float64 `mapstructure:"Сумма,omitempty"                json:"summ"`
-	RectDate               string  `mapstructure:"КвитанцияДата,omitempty"        json:"rect_date,omitempty"`
-	RectTime               string  `mapstructure:"КвитанцияВремя,omitempty"       json:"rect_time,omitempty"`
-	RectContent            string  `mapstructure:"КвитанцияСодержание,omitempty"  json:"rect_content,omitempty"`
-	PayerAccount           string  `mapstructure:"ПлательщикСчет,omitempty"       json:"payer_account,omitempty"`
-	Payer                  string  `mapstructure:"Плательщик,omitempty"           json:"payer,omitempty"`
-	PayerINN               string  `mapstructure:"ПлательщикИНН,omitempty"        json:"payer_inn,omitempty"`
-	PayerKPP               string  `mapstructure:"ПлательщикКПП,omitempty"        json:"payer_kpp,omitempty"`
-	Payer1                 *string `mapstructure:"Плательщик1,omitempty"          json:"payer1,omitempty"`
+	WrittenOffDate         *string `mapstructure:"ДатаСписано,omitempty"          json:"written_off_date,omitempty"`
+	IncomeDate             *string `mapstructure:"ДатаПоступило,omitempty"        json:"income_date,omitempty"`
+	Summ                   float64 `mapstructure:"Сумма"                          json:"summ"`
+	RectDate               *string `mapstructure:"КвитанцияДата,omitempty"        json:"rect_date,omitempty"`
+	RectTime               *string `mapstructure:"КвитанцияВремя,omitempty"       json:"rect_time,omitempty"`
+	RectContent            string  `mapstructure:"КвитанцияСодержание"            json:"rect_content,omitempty"`
+	PayerAccount           string  `mapstructure:"ПлательщикСчет"                 json:"payer_account,omitempty"`
+	Payer                  string  `mapstructure:"Плательщик"                     json:"payer,omitempty"`
+	PayerINN               string  `mapstructure:"ПлательщикИНН"                  json:"payer_inn,omitempty"`
+	PayerKPP               string  `mapstructure:"ПлательщикКПП"                  json:"payer_kpp,omitempty"`
+	Payer1                 *string `mapstructure:"Плательщик1"                    json:"payer1,omitempty"`
 	Payer2                 *string `mapstructure:"Плательщик2,omitempty"          json:"payer2,omitempty"`
 	Payer3                 *string `mapstructure:"Плательщик3,omitempty"          json:"payer3,omitempty"`
 	Payer4                 *string `mapstructure:"Плательщик4,omitempty"          json:"payer4,omitempty"`
-	PayerCurrentAccount    string  `mapstructure:"ПлательщикРасчСчет,omitempty"   json:"payer_current_account,omitempty"`
-	PayerBank1             string  `mapstructure:"ПлательщикБанк1,omitempty"      json:"payer_bank1,omitempty"`
+	PayerCurrentAccount    string  `mapstructure:"ПлательщикРасчСчет"             json:"payer_current_account,omitempty"`
+	PayerBank1             string  `mapstructure:"ПлательщикБанк1"                json:"payer_bank1,omitempty"`
 	PayerBank2             *string `mapstructure:"ПлательщикБанк2,omitempty"      json:"payer_bank2,omitempty"`
-	PayerBIK               string  `mapstructure:"ПлательщикБИК,omitempty"        json:"payer_bik,omitempty"`
-	PayerCorrAccount       string  `mapstructure:"ПлательщикКорсчет,omitempty"    json:"payer_corr_account,omitempty"`
-	ReceiverAccount        string  `mapstructure:"ПолучательСчет,omitempty"       json:"receiver_account,omitempty"`
-	Receiver               string  `mapstructure:"Получатель,omitempty"           json:"receiver,omitempty"`
-	ReceiverINN            string  `mapstructure:"ПолучательИНН,omitempty"        json:"receiver_inn,omitempty"`
-	ReceiverKPP            string  `mapstructure:"ПолучательКПП,omitempty"        json:"receiver_kpp,omitempty"`
+	PayerBIK               string  `mapstructure:"ПлательщикБИК"                  json:"payer_bik,omitempty"`
+	PayerCorrAccount       string  `mapstructure:"ПлательщикКорсчет"              json:"payer_corr_account,omitempty"`
+	ReceiverAccount        string  `mapstructure:"ПолучательСчет"                 json:"receiver_account,omitempty"`
+	Receiver               string  `mapstructure:"Получатель"                     json:"receiver,omitempty"`
+	ReceiverINN            string  `mapstructure:"ПолучательИНН"                  json:"receiver_inn,omitempty"`
+	ReceiverKPP            string  `mapstructure:"ПолучательКПП"                  json:"receiver_kpp,omitempty"`
 	Receiver1              *string `mapstructure:"Получатель1,omitempty"          json:"receiver1,omitempty"`
 	Receiver2              *string `mapstructure:"Получатель2,omitempty"          json:"receiver2,omitempty"`
 	Receiver3              *string `mapstructure:"Получатель3,omitempty"          json:"receiver3,omitempty"`
 	Receiver4              *string `mapstructure:"Получатель4,omitempty"          json:"receiver4,omitempty"`
-	ReceiverCurrentAccount string  `mapstructure:"ПолучательРасчСчет,omitempty"   json:"receiver_current_account,omitempty"` //nolint:lll
-	ReceiverBank1          string  `mapstructure:"ПолучательБанк1,omitempty"      json:"receiver_bank1,omitempty"`
+	ReceiverCurrentAccount string  `mapstructure:"ПолучательРасчСчет"             json:"receiver_current_account,omitempty"` //nolint:lll
+	ReceiverBank1          string  `mapstructure:"ПолучательБанк1"                json:"receiver_bank1,omitempty"`
 	ReceiverBank2          *string `mapstructure:"ПолучательБанк2,omitempty"      json:"receiver_bank2,omitempty"`
-	ReceiverBIK            string  `mapstructure:"ПолучательБИК,omitempty"        json:"receiver_bik,omitempty"`
-	ReceiverCorrAccount    string  `mapstructure:"ПолучательКорсчет,omitempty"    json:"receiver_corr_account,omitempty"`
+	ReceiverBIK            string  `mapstructure:"ПолучательБИК"                  json:"receiver_bik,omitempty"`
+	ReceiverCorrAccount    string  `mapstructure:"ПолучательКорсчет"              json:"receiver_corr_account,omitempty"`
 	PaymentType            *string `mapstructure:"ВидПлатежа,omitempty"           json:"payment_type,omitempty"`
 	PaymentPurposeCode     *string `mapstructure:"КодНазПлатежа,omitempty"        json:"payment_purpose_code,omitempty"`
 	UIN                    *string `mapstructure:"Код,omitempty"                  json:"uin,omitempty"`
-	PaymentPurpose         string  `mapstructure:"НазначениеПлатежа,omitempty"    json:"payment_purpose,omitempty"`
+	PaymentPurpose         string  `mapstructure:"НазначениеПлатежа"              json:"payment_purpose,omitempty"`
 	PaymentPurpose1        *string `mapstructure:"НазначениеПлатежа1,omitempty"   json:"payment_purpose1,omitempty"`
 	PaymentPurpose2        *string `mapstructure:"НазначениеПлатежа2,omitempty"   json:"payment_purpose2,omitempty"`
 	PaymentPurpose3        *string `mapstructure:"НазначениеПлатежа3,omitempty"   json:"payment_purpose3,omitempty"`

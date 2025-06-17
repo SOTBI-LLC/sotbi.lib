@@ -109,7 +109,7 @@ message PaymentDocument {
   // ПлательщикБИК
   string payer_bik = 21;
   // ПлательщикКорсчет
-  optional string payer_corr_account = 22;
+  string payer_corr_account = 22;
   // ПолучательСчет
   string receiver_account = 23;
   // Получатель

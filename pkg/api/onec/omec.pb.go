@@ -499,7 +499,7 @@ type PaymentDocument struct {
 	// ПлательщикБИК
 	PayerBik string `protobuf:"bytes,21,opt,name=payer_bik,json=payerBik,proto3" json:"payer_bik,omitempty"`
 	// ПлательщикКорсчет
-	PayerCorrAccount *string `protobuf:"bytes,22,opt,name=payer_corr_account,json=payerCorrAccount,proto3,oneof" json:"payer_corr_account,omitempty"`
+	PayerCorrAccount string `protobuf:"bytes,22,opt,name=payer_corr_account,json=payerCorrAccount,proto3" json:"payer_corr_account,omitempty"`
 	// ПолучательСчет
 	ReceiverAccount string `protobuf:"bytes,23,opt,name=receiver_account,json=receiverAccount,proto3" json:"receiver_account,omitempty"`
 	// Получатель
@@ -750,8 +750,8 @@ func (x *PaymentDocument) GetPayerBik() string {
 }
 
 func (x *PaymentDocument) GetPayerCorrAccount() string {
-	if x != nil && x.PayerCorrAccount != nil {
-		return *x.PayerCorrAccount
+	if x != nil {
+		return x.PayerCorrAccount
 	}
 	return ""
 }
@@ -1094,7 +1094,7 @@ const file_api_onec_omec_proto_rawDesc = "" +
 	"\x0finitial_balance\x18\x04 \x01(\x01R\x0einitialBalance\x12\x16\n" +
 	"\x06income\x18\x05 \x01(\x01R\x06income\x12\x1b\n" +
 	"\twrite_off\x18\x06 \x01(\x01R\bwriteOff\x12#\n" +
-	"\rfinal_balance\x18\a \x01(\x01R\ffinalBalance\"\xe0\x1b\n" +
+	"\rfinal_balance\x18\a \x01(\x01R\ffinalBalance\"\xc4\x1b\n" +
 	"\x0fPaymentDocument\x12#\n" +
 	"\rdocument_type\x18\x01 \x01(\tR\fdocumentType\x12\x16\n" +
 	"\x06number\x18\x02 \x01(\tR\x06number\x12.\n" +
@@ -1119,53 +1119,53 @@ const file_api_onec_omec_proto_rawDesc = "" +
 	"payerBank1\x12$\n" +
 	"\vpayer_bank2\x18\x14 \x01(\tH\tR\n" +
 	"payerBank2\x88\x01\x01\x12\x1b\n" +
-	"\tpayer_bik\x18\x15 \x01(\tR\bpayerBik\x121\n" +
-	"\x12payer_corr_account\x18\x16 \x01(\tH\n" +
-	"R\x10payerCorrAccount\x88\x01\x01\x12)\n" +
+	"\tpayer_bik\x18\x15 \x01(\tR\bpayerBik\x12,\n" +
+	"\x12payer_corr_account\x18\x16 \x01(\tR\x10payerCorrAccount\x12)\n" +
 	"\x10receiver_account\x18\x17 \x01(\tR\x0freceiverAccount\x12\x1a\n" +
 	"\breceiver\x18\x18 \x01(\tR\breceiver\x12!\n" +
 	"\freceiver_inn\x18\x19 \x01(\tR\vreceiverInn\x12&\n" +
-	"\freceiver_kpp\x18\x1a \x01(\tH\vR\vreceiverKpp\x88\x01\x01\x12!\n" +
-	"\treceiver1\x18\x1b \x01(\tH\fR\treceiver1\x88\x01\x01\x12!\n" +
-	"\treceiver2\x18\x1c \x01(\tH\rR\treceiver2\x88\x01\x01\x12!\n" +
-	"\treceiver3\x18\x1d \x01(\tH\x0eR\treceiver3\x88\x01\x01\x12!\n" +
-	"\treceiver4\x18\x1e \x01(\tH\x0fR\treceiver4\x88\x01\x01\x128\n" +
+	"\freceiver_kpp\x18\x1a \x01(\tH\n" +
+	"R\vreceiverKpp\x88\x01\x01\x12!\n" +
+	"\treceiver1\x18\x1b \x01(\tH\vR\treceiver1\x88\x01\x01\x12!\n" +
+	"\treceiver2\x18\x1c \x01(\tH\fR\treceiver2\x88\x01\x01\x12!\n" +
+	"\treceiver3\x18\x1d \x01(\tH\rR\treceiver3\x88\x01\x01\x12!\n" +
+	"\treceiver4\x18\x1e \x01(\tH\x0eR\treceiver4\x88\x01\x01\x128\n" +
 	"\x18receiver_current_account\x18\x1f \x01(\tR\x16receiverCurrentAccount\x12%\n" +
 	"\x0ereceiver_bank1\x18  \x01(\tR\rreceiverBank1\x12*\n" +
-	"\x0ereceiver_bank2\x18! \x01(\tH\x10R\rreceiverBank2\x88\x01\x01\x12!\n" +
+	"\x0ereceiver_bank2\x18! \x01(\tH\x0fR\rreceiverBank2\x88\x01\x01\x12!\n" +
 	"\freceiver_bik\x18\" \x01(\tR\vreceiverBik\x122\n" +
 	"\x15receiver_corr_account\x18# \x01(\tR\x13receiverCorrAccount\x12&\n" +
-	"\fpayment_type\x18$ \x01(\tH\x11R\vpaymentType\x88\x01\x01\x125\n" +
-	"\x14payment_purpose_code\x18% \x01(\tH\x12R\x12paymentPurposeCode\x88\x01\x01\x12\x15\n" +
-	"\x03uin\x18& \x01(\tH\x13R\x03uin\x88\x01\x01\x12'\n" +
+	"\fpayment_type\x18$ \x01(\tH\x10R\vpaymentType\x88\x01\x01\x125\n" +
+	"\x14payment_purpose_code\x18% \x01(\tH\x11R\x12paymentPurposeCode\x88\x01\x01\x12\x15\n" +
+	"\x03uin\x18& \x01(\tH\x12R\x03uin\x88\x01\x01\x12'\n" +
 	"\x0fpayment_purpose\x18' \x01(\tR\x0epaymentPurpose\x12.\n" +
-	"\x10payment_purpose1\x18( \x01(\tH\x14R\x0fpaymentPurpose1\x88\x01\x01\x12.\n" +
-	"\x10payment_purpose2\x18) \x01(\tH\x15R\x0fpaymentPurpose2\x88\x01\x01\x12.\n" +
-	"\x10payment_purpose3\x18* \x01(\tH\x16R\x0fpaymentPurpose3\x88\x01\x01\x12.\n" +
-	"\x10payment_purpose4\x18+ \x01(\tH\x17R\x0fpaymentPurpose4\x88\x01\x01\x12.\n" +
-	"\x10payment_purpose5\x18, \x01(\tH\x18R\x0fpaymentPurpose5\x88\x01\x01\x12.\n" +
-	"\x10payment_purpose6\x18- \x01(\tH\x19R\x0fpaymentPurpose6\x88\x01\x01\x12,\n" +
-	"\x0fcompiler_status\x18. \x01(\tH\x1aR\x0ecompilerStatus\x88\x01\x01\x12\x19\n" +
-	"\x05okato\x18/ \x01(\tH\x1bR\x05okato\x88\x01\x01\x12(\n" +
-	"\rindicator_kbk\x180 \x01(\tH\x1cR\findicatorKbk\x88\x01\x01\x12.\n" +
-	"\x10indicator_basics\x181 \x01(\tH\x1dR\x0findicatorBasics\x88\x01\x01\x12.\n" +
-	"\x10indicator_period\x182 \x01(\tH\x1eR\x0findicatorPeriod\x88\x01\x01\x12.\n" +
-	"\x10indicator_number\x183 \x01(\tH\x1fR\x0findicatorNumber\x88\x01\x01\x12*\n" +
-	"\x0eindicator_date\x184 \x01(\tH R\rindicatorDate\x88\x01\x01\x12*\n" +
-	"\x0eindicator_type\x185 \x01(\tH!R\rindicatorType\x88\x01\x01\x12\x1f\n" +
-	"\bpriority\x186 \x01(\rH\"R\bpriority\x88\x01\x01\x12(\n" +
-	"\rdefrayal_type\x187 \x01(\tH#R\fdefrayalType\x88\x01\x01\x12,\n" +
-	"\x0facceptance_term\x188 \x01(\tH$R\x0eacceptanceTerm\x88\x01\x01\x121\n" +
-	"\x12type_letter_credit\x189 \x01(\tH%R\x10typeLetterCredit\x88\x01\x01\x12&\n" +
-	"\fpayment_term\x18: \x01(\tH&R\vpaymentTerm\x88\x01\x01\x122\n" +
-	"\x12payment_condition1\x18; \x01(\tH'R\x11paymentCondition1\x88\x01\x01\x122\n" +
-	"\x12payment_condition2\x18< \x01(\tH(R\x11paymentCondition2\x88\x01\x01\x122\n" +
-	"\x12payment_condition3\x18= \x01(\tH)R\x11paymentCondition3\x88\x01\x01\x12\"\n" +
+	"\x10payment_purpose1\x18( \x01(\tH\x13R\x0fpaymentPurpose1\x88\x01\x01\x12.\n" +
+	"\x10payment_purpose2\x18) \x01(\tH\x14R\x0fpaymentPurpose2\x88\x01\x01\x12.\n" +
+	"\x10payment_purpose3\x18* \x01(\tH\x15R\x0fpaymentPurpose3\x88\x01\x01\x12.\n" +
+	"\x10payment_purpose4\x18+ \x01(\tH\x16R\x0fpaymentPurpose4\x88\x01\x01\x12.\n" +
+	"\x10payment_purpose5\x18, \x01(\tH\x17R\x0fpaymentPurpose5\x88\x01\x01\x12.\n" +
+	"\x10payment_purpose6\x18- \x01(\tH\x18R\x0fpaymentPurpose6\x88\x01\x01\x12,\n" +
+	"\x0fcompiler_status\x18. \x01(\tH\x19R\x0ecompilerStatus\x88\x01\x01\x12\x19\n" +
+	"\x05okato\x18/ \x01(\tH\x1aR\x05okato\x88\x01\x01\x12(\n" +
+	"\rindicator_kbk\x180 \x01(\tH\x1bR\findicatorKbk\x88\x01\x01\x12.\n" +
+	"\x10indicator_basics\x181 \x01(\tH\x1cR\x0findicatorBasics\x88\x01\x01\x12.\n" +
+	"\x10indicator_period\x182 \x01(\tH\x1dR\x0findicatorPeriod\x88\x01\x01\x12.\n" +
+	"\x10indicator_number\x183 \x01(\tH\x1eR\x0findicatorNumber\x88\x01\x01\x12*\n" +
+	"\x0eindicator_date\x184 \x01(\tH\x1fR\rindicatorDate\x88\x01\x01\x12*\n" +
+	"\x0eindicator_type\x185 \x01(\tH R\rindicatorType\x88\x01\x01\x12\x1f\n" +
+	"\bpriority\x186 \x01(\rH!R\bpriority\x88\x01\x01\x12(\n" +
+	"\rdefrayal_type\x187 \x01(\tH\"R\fdefrayalType\x88\x01\x01\x12,\n" +
+	"\x0facceptance_term\x188 \x01(\tH#R\x0eacceptanceTerm\x88\x01\x01\x121\n" +
+	"\x12type_letter_credit\x189 \x01(\tH$R\x10typeLetterCredit\x88\x01\x01\x12&\n" +
+	"\fpayment_term\x18: \x01(\tH%R\vpaymentTerm\x88\x01\x01\x122\n" +
+	"\x12payment_condition1\x18; \x01(\tH&R\x11paymentCondition1\x88\x01\x01\x122\n" +
+	"\x12payment_condition2\x18< \x01(\tH'R\x11paymentCondition2\x88\x01\x01\x122\n" +
+	"\x12payment_condition3\x18= \x01(\tH(R\x11paymentCondition3\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"payment_by\x18> \x01(\tH*R\tpaymentBy\x88\x01\x01\x12.\n" +
-	"\x10additional_terms\x18? \x01(\tH+R\x0fadditionalTerms\x88\x01\x01\x12;\n" +
-	"\x17supplier_account_number\x18@ \x01(\tH,R\x15supplierAccountNumber\x88\x01\x01\x127\n" +
-	"\x15document_sending_date\x18A \x01(\tH-R\x13documentSendingDate\x88\x01\x01B\x13\n" +
+	"payment_by\x18> \x01(\tH)R\tpaymentBy\x88\x01\x01\x12.\n" +
+	"\x10additional_terms\x18? \x01(\tH*R\x0fadditionalTerms\x88\x01\x01\x12;\n" +
+	"\x17supplier_account_number\x18@ \x01(\tH+R\x15supplierAccountNumber\x88\x01\x01\x127\n" +
+	"\x15document_sending_date\x18A \x01(\tH,R\x13documentSendingDate\x88\x01\x01B\x13\n" +
 	"\x11_written_off_dateB\x0e\n" +
 	"\f_income_dateB\x10\n" +
 	"\x0e_rect_datetimeB\x0f\n" +
@@ -1176,8 +1176,7 @@ const file_api_onec_omec_proto_rawDesc = "" +
 	"\a_payer2B\t\n" +
 	"\a_payer3B\t\n" +
 	"\a_payer4B\x0e\n" +
-	"\f_payer_bank2B\x15\n" +
-	"\x13_payer_corr_accountB\x0f\n" +
+	"\f_payer_bank2B\x0f\n" +
 	"\r_receiver_kppB\f\n" +
 	"\n" +
 	"_receiver1B\f\n" +
