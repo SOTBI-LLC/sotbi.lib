@@ -22,28 +22,28 @@ type ExchangeFile struct {
 
 var _ onec.Parser = (*ExchangeFile)(nil)
 
-func (p *ExchangeFile) Scan(file io.Reader) (*onec.Result, error) {
+func (p *ExchangeFile) Scan(file io.Reader) (onec.Result, error) {
 	if err := p.read(p.convertFileEncoding(file)); err != nil {
-		return nil, err
+		return onec.Result{}, err
 	}
 
 	exFile, err := p.convertFile()
 	if err != nil {
-		return nil, err
+		return onec.Result{}, err
 	}
 
 	rem, err := p.convertAccountBalance()
 	if err != nil {
-		return nil, err
+		return onec.Result{}, err
 	}
 
 	pd, err := p.convertPaymentDocuments()
 	if err != nil {
-		return nil, err
+		return onec.Result{}, err
 	}
 
-	return &onec.Result{
-		ExchangeFile:     *exFile,
+	return onec.Result{
+		ExchangeFile:     exFile,
 		Remainings:       rem,
 		PaymentDocuments: pd,
 	}, nil
@@ -56,7 +56,7 @@ func (*ExchangeFile) convertFileEncoding(file io.Reader) io.Reader {
 func (p *ExchangeFile) read(file io.Reader) error {
 	scanner := bufio.NewScanner(file)
 
-	const maxCapacity = 1024 * 1024 * 20 // 20MB эмпирический размер на файл 40 МБ
+	const maxCapacity = 1024 * 1024 * 40 // 40MB эмпирический размер на файл
 	buf := make([]byte, 0, maxCapacity)
 	scanner.Buffer(buf, maxCapacity)
 
@@ -127,7 +127,7 @@ func (p *ExchangeFile) read(file io.Reader) error {
 	return nil
 }
 
-func (p *ExchangeFile) convertFile() (*onec.ExchangeFile, error) {
+func (p *ExchangeFile) convertFile() (onec.ExchangeFile, error) {
 	var exFile onec.ExchangeFile
 	config := &mapstructure.DecoderConfig{
 		WeaklyTypedInput: true,
@@ -136,14 +136,14 @@ func (p *ExchangeFile) convertFile() (*onec.ExchangeFile, error) {
 
 	decoder, err := mapstructure.NewDecoder(config)
 	if err != nil {
-		return nil, fmt.Errorf("error creating new mapstructure decoder: %w", err)
+		return exFile, fmt.Errorf("error creating new mapstructure decoder: %w", err)
 	}
 
 	if err := decoder.Decode(p.exchangeFile); err != nil {
-		return nil, fmt.Errorf("error while decoding ExchangeFile: %w", err)
+		return exFile, fmt.Errorf("error while decoding ExchangeFile: %w", err)
 	}
 
-	return &exFile, nil
+	return exFile, nil
 }
 
 func (p *ExchangeFile) convertAccountBalance() ([]onec.AccountBalance, error) {

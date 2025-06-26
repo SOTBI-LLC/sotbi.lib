@@ -12,6 +12,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/descriptorpb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -137,7 +138,8 @@ func (x *ParseRequest) GetCustomerType() CustomerType {
 type ParseResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Уникальный идентификатор запроса
-	RequestId []byte `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	RequestId    []byte       `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	CustomerType CustomerType `protobuf:"varint,2,opt,name=customer_type,json=customerType,proto3,enum=onec.CustomerType" json:"customer_type,omitempty"`
 	// Types that are valid to be assigned to Item:
 	//
 	//	*ParseResponse_File
@@ -185,6 +187,13 @@ func (x *ParseResponse) GetRequestId() []byte {
 	return nil
 }
 
+func (x *ParseResponse) GetCustomerType() CustomerType {
+	if x != nil {
+		return x.CustomerType
+	}
+	return CustomerType_DEBTOR
+}
+
 func (x *ParseResponse) GetItem() isParseResponse_Item {
 	if x != nil {
 		return x.Item
@@ -192,7 +201,7 @@ func (x *ParseResponse) GetItem() isParseResponse_Item {
 	return nil
 }
 
-func (x *ParseResponse) GetFile() *ExchangeFileHeader {
+func (x *ParseResponse) GetFile() *ExchangeFile {
 	if x != nil {
 		if x, ok := x.Item.(*ParseResponse_File); ok {
 			return x.File
@@ -201,7 +210,7 @@ func (x *ParseResponse) GetFile() *ExchangeFileHeader {
 	return nil
 }
 
-func (x *ParseResponse) GetBalance() *AccountBalanceEvent {
+func (x *ParseResponse) GetBalance() *AccountBalance {
 	if x != nil {
 		if x, ok := x.Item.(*ParseResponse_Balance); ok {
 			return x.Balance
@@ -210,7 +219,7 @@ func (x *ParseResponse) GetBalance() *AccountBalanceEvent {
 	return nil
 }
 
-func (x *ParseResponse) GetDocument() *PaymentDocumentEvent {
+func (x *ParseResponse) GetDocument() *PaymentDocument {
 	if x != nil {
 		if x, ok := x.Item.(*ParseResponse_Document); ok {
 			return x.Document
@@ -224,15 +233,15 @@ type isParseResponse_Item interface {
 }
 
 type ParseResponse_File struct {
-	File *ExchangeFileHeader `protobuf:"bytes,2,opt,name=file,proto3,oneof"`
+	File *ExchangeFile `protobuf:"bytes,3,opt,name=file,proto3,oneof"`
 }
 
 type ParseResponse_Balance struct {
-	Balance *AccountBalanceEvent `protobuf:"bytes,3,opt,name=balance,proto3,oneof"`
+	Balance *AccountBalance `protobuf:"bytes,5,opt,name=balance,proto3,oneof"`
 }
 
 type ParseResponse_Document struct {
-	Document *PaymentDocumentEvent `protobuf:"bytes,4,opt,name=document,proto3,oneof"`
+	Document *PaymentDocument `protobuf:"bytes,6,opt,name=document,proto3,oneof"`
 }
 
 func (*ParseResponse_File) isParseResponse_Item() {}
@@ -241,77 +250,23 @@ func (*ParseResponse_Balance) isParseResponse_Item() {}
 
 func (*ParseResponse_Document) isParseResponse_Item() {}
 
-type ExchangeFileHeader struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RequestId     []byte                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
-	File          *ExchangeFile          `protobuf:"bytes,2,opt,name=file,proto3" json:"file,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ExchangeFileHeader) Reset() {
-	*x = ExchangeFileHeader{}
-	mi := &file_api_onec_omec_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ExchangeFileHeader) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ExchangeFileHeader) ProtoMessage() {}
-
-func (x *ExchangeFileHeader) ProtoReflect() protoreflect.Message {
-	mi := &file_api_onec_omec_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExchangeFileHeader.ProtoReflect.Descriptor instead.
-func (*ExchangeFileHeader) Descriptor() ([]byte, []int) {
-	return file_api_onec_omec_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *ExchangeFileHeader) GetRequestId() []byte {
-	if x != nil {
-		return x.RequestId
-	}
-	return nil
-}
-
-func (x *ExchangeFileHeader) GetFile() *ExchangeFile {
-	if x != nil {
-		return x.File
-	}
-	return nil
-}
-
 // ExchangeFile holds the metadata of a 1C-ClientBank exchange file.
 type ExchangeFile struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ВерсияФормата
-	FormatVer float32 `protobuf:"fixed32,1,opt,name=format_ver,json=formatVer,proto3" json:"format_ver,omitempty"`
+	FormatVer string `protobuf:"bytes,1,opt,name=format_ver,json=formatVer,proto3" json:"format_ver,omitempty"`
 	// Кодировка
 	Encoding string `protobuf:"bytes,2,opt,name=encoding,proto3" json:"encoding,omitempty"`
 	// Отправитель
 	Sender string `protobuf:"bytes,3,opt,name=sender,proto3" json:"sender,omitempty"`
 	// Получатель
 	Receiver string `protobuf:"bytes,4,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	// ДатаСоздания (DD.MM.YYYY)
-	CreatedDate string `protobuf:"bytes,5,opt,name=created_date,json=createdDate,proto3" json:"created_date,omitempty"`
-	// ВремяСоздания (HH:MM:SS)
-	CreatedTime string `protobuf:"bytes,6,opt,name=created_time,json=createdTime,proto3" json:"created_time,omitempty"`
+	// ДатаСоздания (DD.MM.YYYY HH:MM:SS)
+	CreatedDatetime *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_datetime,json=createdDatetime,proto3" json:"created_datetime,omitempty"`
 	// ДатаНачала (DD.MM.YYYY)
-	StartDate string `protobuf:"bytes,7,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
+	StartDate *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
 	// ДатаКонца (DD.MM.YYYY)
-	EndDate string `protobuf:"bytes,8,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
+	EndDate *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
 	// РасчСчет — список расчётных счетов
 	Account       []string `protobuf:"bytes,9,rep,name=account,proto3" json:"account,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -320,7 +275,7 @@ type ExchangeFile struct {
 
 func (x *ExchangeFile) Reset() {
 	*x = ExchangeFile{}
-	mi := &file_api_onec_omec_proto_msgTypes[3]
+	mi := &file_api_onec_omec_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -332,7 +287,7 @@ func (x *ExchangeFile) String() string {
 func (*ExchangeFile) ProtoMessage() {}
 
 func (x *ExchangeFile) ProtoReflect() protoreflect.Message {
-	mi := &file_api_onec_omec_proto_msgTypes[3]
+	mi := &file_api_onec_omec_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -345,14 +300,14 @@ func (x *ExchangeFile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExchangeFile.ProtoReflect.Descriptor instead.
 func (*ExchangeFile) Descriptor() ([]byte, []int) {
-	return file_api_onec_omec_proto_rawDescGZIP(), []int{3}
+	return file_api_onec_omec_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ExchangeFile) GetFormatVer() float32 {
+func (x *ExchangeFile) GetFormatVer() string {
 	if x != nil {
 		return x.FormatVer
 	}
-	return 0
+	return ""
 }
 
 func (x *ExchangeFile) GetEncoding() string {
@@ -376,32 +331,25 @@ func (x *ExchangeFile) GetReceiver() string {
 	return ""
 }
 
-func (x *ExchangeFile) GetCreatedDate() string {
+func (x *ExchangeFile) GetCreatedDatetime() *timestamppb.Timestamp {
 	if x != nil {
-		return x.CreatedDate
+		return x.CreatedDatetime
 	}
-	return ""
+	return nil
 }
 
-func (x *ExchangeFile) GetCreatedTime() string {
-	if x != nil {
-		return x.CreatedTime
-	}
-	return ""
-}
-
-func (x *ExchangeFile) GetStartDate() string {
+func (x *ExchangeFile) GetStartDate() *timestamppb.Timestamp {
 	if x != nil {
 		return x.StartDate
 	}
-	return ""
+	return nil
 }
 
-func (x *ExchangeFile) GetEndDate() string {
+func (x *ExchangeFile) GetEndDate() *timestamppb.Timestamp {
 	if x != nil {
 		return x.EndDate
 	}
-	return ""
+	return nil
 }
 
 func (x *ExchangeFile) GetAccount() []string {
@@ -411,65 +359,13 @@ func (x *ExchangeFile) GetAccount() []string {
 	return nil
 }
 
-type AccountBalanceEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
-	Balance       *AccountBalance        `protobuf:"bytes,2,opt,name=balance,proto3" json:"balance,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AccountBalanceEvent) Reset() {
-	*x = AccountBalanceEvent{}
-	mi := &file_api_onec_omec_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AccountBalanceEvent) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AccountBalanceEvent) ProtoMessage() {}
-
-func (x *AccountBalanceEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_api_onec_omec_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AccountBalanceEvent.ProtoReflect.Descriptor instead.
-func (*AccountBalanceEvent) Descriptor() ([]byte, []int) {
-	return file_api_onec_omec_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *AccountBalanceEvent) GetRequestId() string {
-	if x != nil {
-		return x.RequestId
-	}
-	return ""
-}
-
-func (x *AccountBalanceEvent) GetBalance() *AccountBalance {
-	if x != nil {
-		return x.Balance
-	}
-	return nil
-}
-
 // AccountBalance represents opening and closing balances for an account.
 type AccountBalance struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ДатаНачала (DD.MM.YYYY)
-	StartDate string `protobuf:"bytes,1,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
+	StartDate *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
 	// ДатаКонца (DD.MM.YYYY)
-	EndDate string `protobuf:"bytes,2,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
+	EndDate *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
 	// РасчСчет
 	Account string `protobuf:"bytes,3,opt,name=account,proto3" json:"account,omitempty"`
 	// НачальныйОстаток
@@ -486,7 +382,7 @@ type AccountBalance struct {
 
 func (x *AccountBalance) Reset() {
 	*x = AccountBalance{}
-	mi := &file_api_onec_omec_proto_msgTypes[5]
+	mi := &file_api_onec_omec_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -498,7 +394,7 @@ func (x *AccountBalance) String() string {
 func (*AccountBalance) ProtoMessage() {}
 
 func (x *AccountBalance) ProtoReflect() protoreflect.Message {
-	mi := &file_api_onec_omec_proto_msgTypes[5]
+	mi := &file_api_onec_omec_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -511,21 +407,21 @@ func (x *AccountBalance) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AccountBalance.ProtoReflect.Descriptor instead.
 func (*AccountBalance) Descriptor() ([]byte, []int) {
-	return file_api_onec_omec_proto_rawDescGZIP(), []int{5}
+	return file_api_onec_omec_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *AccountBalance) GetStartDate() string {
+func (x *AccountBalance) GetStartDate() *timestamppb.Timestamp {
 	if x != nil {
 		return x.StartDate
 	}
-	return ""
+	return nil
 }
 
-func (x *AccountBalance) GetEndDate() string {
+func (x *AccountBalance) GetEndDate() *timestamppb.Timestamp {
 	if x != nil {
 		return x.EndDate
 	}
-	return ""
+	return nil
 }
 
 func (x *AccountBalance) GetAccount() string {
@@ -563,66 +459,6 @@ func (x *AccountBalance) GetFinalBalance() float64 {
 	return 0
 }
 
-type PaymentDocumentEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileId        string                 `protobuf:"bytes,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
-	BalanceId     string                 `protobuf:"bytes,2,opt,name=balance_id,json=balanceId,proto3" json:"balance_id,omitempty"` // ссылка на конкретный AccountBalance
-	Doc           *PaymentDocument       `protobuf:"bytes,3,opt,name=doc,proto3" json:"doc,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PaymentDocumentEvent) Reset() {
-	*x = PaymentDocumentEvent{}
-	mi := &file_api_onec_omec_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PaymentDocumentEvent) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PaymentDocumentEvent) ProtoMessage() {}
-
-func (x *PaymentDocumentEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_api_onec_omec_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PaymentDocumentEvent.ProtoReflect.Descriptor instead.
-func (*PaymentDocumentEvent) Descriptor() ([]byte, []int) {
-	return file_api_onec_omec_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *PaymentDocumentEvent) GetFileId() string {
-	if x != nil {
-		return x.FileId
-	}
-	return ""
-}
-
-func (x *PaymentDocumentEvent) GetBalanceId() string {
-	if x != nil {
-		return x.BalanceId
-	}
-	return ""
-}
-
-func (x *PaymentDocumentEvent) GetDoc() *PaymentDocument {
-	if x != nil {
-		return x.Doc
-	}
-	return nil
-}
-
 // PaymentDocument представляет одну запись документа обмена.
 type PaymentDocument struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -631,19 +467,17 @@ type PaymentDocument struct {
 	// Номер
 	Number string `protobuf:"bytes,2,opt,name=number,proto3" json:"number,omitempty"`
 	// Дата
-	Date string `protobuf:"bytes,3,opt,name=date,proto3" json:"date,omitempty"`
+	Date *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=date,proto3" json:"date,omitempty"`
 	// ДатаСписано
-	WrittenOffDate string `protobuf:"bytes,4,opt,name=written_off_date,json=writtenOffDate,proto3" json:"written_off_date,omitempty"`
+	WrittenOffDate *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=written_off_date,json=writtenOffDate,proto3,oneof" json:"written_off_date,omitempty"`
 	// ДатаПоступило
-	IncomeDate string `protobuf:"bytes,5,opt,name=income_date,json=incomeDate,proto3" json:"income_date,omitempty"`
+	IncomeDate *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=income_date,json=incomeDate,proto3,oneof" json:"income_date,omitempty"`
 	// Сумма
 	Summ float64 `protobuf:"fixed64,6,opt,name=summ,proto3" json:"summ,omitempty"`
-	// КвитанцияДата
-	RectDate string `protobuf:"bytes,7,opt,name=rect_date,json=rectDate,proto3" json:"rect_date,omitempty"`
-	// КвитанцияВремя
-	RectTime string `protobuf:"bytes,8,opt,name=rect_time,json=rectTime,proto3" json:"rect_time,omitempty"`
+	// КвитанцияДата + КвитанцияВремя (DD.MM.YYYY HH:MM:SS)
+	RectDatetime *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=rect_datetime,json=rectDatetime,proto3,oneof" json:"rect_datetime,omitempty"`
 	// КвитанцияСодержание
-	RectContent string `protobuf:"bytes,9,opt,name=rect_content,json=rectContent,proto3" json:"rect_content,omitempty"`
+	RectContent *string `protobuf:"bytes,9,opt,name=rect_content,json=rectContent,proto3,oneof" json:"rect_content,omitempty"`
 	// ПлательщикСчет
 	PayerAccount string `protobuf:"bytes,10,opt,name=payer_account,json=payerAccount,proto3" json:"payer_account,omitempty"`
 	// Плательщик
@@ -651,7 +485,7 @@ type PaymentDocument struct {
 	// ПлательщикИНН
 	PayerInn string `protobuf:"bytes,12,opt,name=payer_inn,json=payerInn,proto3" json:"payer_inn,omitempty"`
 	// ПлательщикКПП
-	PayerKpp string `protobuf:"bytes,13,opt,name=payer_kpp,json=payerKpp,proto3" json:"payer_kpp,omitempty"`
+	PayerKpp *string `protobuf:"bytes,13,opt,name=payer_kpp,json=payerKpp,proto3,oneof" json:"payer_kpp,omitempty"`
 	// Плательщик1…4
 	Payer1 *string `protobuf:"bytes,14,opt,name=payer1,proto3,oneof" json:"payer1,omitempty"`
 	Payer2 *string `protobuf:"bytes,15,opt,name=payer2,proto3,oneof" json:"payer2,omitempty"`
@@ -673,7 +507,7 @@ type PaymentDocument struct {
 	// ПолучательИНН
 	ReceiverInn string `protobuf:"bytes,25,opt,name=receiver_inn,json=receiverInn,proto3" json:"receiver_inn,omitempty"`
 	// ПолучательКПП
-	ReceiverKpp string `protobuf:"bytes,26,opt,name=receiver_kpp,json=receiverKpp,proto3" json:"receiver_kpp,omitempty"`
+	ReceiverKpp *string `protobuf:"bytes,26,opt,name=receiver_kpp,json=receiverKpp,proto3,oneof" json:"receiver_kpp,omitempty"`
 	// Получатель1…4
 	Receiver1 *string `protobuf:"bytes,27,opt,name=receiver1,proto3,oneof" json:"receiver1,omitempty"`
 	Receiver2 *string `protobuf:"bytes,28,opt,name=receiver2,proto3,oneof" json:"receiver2,omitempty"`
@@ -747,7 +581,7 @@ type PaymentDocument struct {
 
 func (x *PaymentDocument) Reset() {
 	*x = PaymentDocument{}
-	mi := &file_api_onec_omec_proto_msgTypes[7]
+	mi := &file_api_onec_omec_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -759,7 +593,7 @@ func (x *PaymentDocument) String() string {
 func (*PaymentDocument) ProtoMessage() {}
 
 func (x *PaymentDocument) ProtoReflect() protoreflect.Message {
-	mi := &file_api_onec_omec_proto_msgTypes[7]
+	mi := &file_api_onec_omec_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -772,7 +606,7 @@ func (x *PaymentDocument) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaymentDocument.ProtoReflect.Descriptor instead.
 func (*PaymentDocument) Descriptor() ([]byte, []int) {
-	return file_api_onec_omec_proto_rawDescGZIP(), []int{7}
+	return file_api_onec_omec_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *PaymentDocument) GetDocumentType() string {
@@ -789,25 +623,25 @@ func (x *PaymentDocument) GetNumber() string {
 	return ""
 }
 
-func (x *PaymentDocument) GetDate() string {
+func (x *PaymentDocument) GetDate() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Date
 	}
-	return ""
+	return nil
 }
 
-func (x *PaymentDocument) GetWrittenOffDate() string {
+func (x *PaymentDocument) GetWrittenOffDate() *timestamppb.Timestamp {
 	if x != nil {
 		return x.WrittenOffDate
 	}
-	return ""
+	return nil
 }
 
-func (x *PaymentDocument) GetIncomeDate() string {
+func (x *PaymentDocument) GetIncomeDate() *timestamppb.Timestamp {
 	if x != nil {
 		return x.IncomeDate
 	}
-	return ""
+	return nil
 }
 
 func (x *PaymentDocument) GetSumm() float64 {
@@ -817,23 +651,16 @@ func (x *PaymentDocument) GetSumm() float64 {
 	return 0
 }
 
-func (x *PaymentDocument) GetRectDate() string {
+func (x *PaymentDocument) GetRectDatetime() *timestamppb.Timestamp {
 	if x != nil {
-		return x.RectDate
+		return x.RectDatetime
 	}
-	return ""
-}
-
-func (x *PaymentDocument) GetRectTime() string {
-	if x != nil {
-		return x.RectTime
-	}
-	return ""
+	return nil
 }
 
 func (x *PaymentDocument) GetRectContent() string {
-	if x != nil {
-		return x.RectContent
+	if x != nil && x.RectContent != nil {
+		return *x.RectContent
 	}
 	return ""
 }
@@ -860,8 +687,8 @@ func (x *PaymentDocument) GetPayerInn() string {
 }
 
 func (x *PaymentDocument) GetPayerKpp() string {
-	if x != nil {
-		return x.PayerKpp
+	if x != nil && x.PayerKpp != nil {
+		return *x.PayerKpp
 	}
 	return ""
 }
@@ -951,8 +778,8 @@ func (x *PaymentDocument) GetReceiverInn() string {
 }
 
 func (x *PaymentDocument) GetReceiverKpp() string {
-	if x != nil {
-		return x.ReceiverKpp
+	if x != nil && x.ReceiverKpp != nil {
+		return *x.ReceiverKpp
 	}
 	return ""
 }
@@ -1234,130 +1061,123 @@ var File_api_onec_omec_proto protoreflect.FileDescriptor
 
 const file_api_onec_omec_proto_rawDesc = "" +
 	"\n" +
-	"\x13api/onec/omec.proto\x12\x04onec\x1a google/protobuf/descriptor.proto\"\x81\x01\n" +
+	"\x13api/onec/omec.proto\x12\x04onec\x1a google/protobuf/descriptor.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x81\x01\n" +
 	"\fParseRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\fR\trequestId\x12\x19\n" +
 	"\bfile_url\x18\x02 \x01(\tR\afileUrl\x127\n" +
-	"\rcustomer_type\x18\x03 \x01(\x0e2\x12.onec.CustomerTypeR\fcustomerType\"\xd7\x01\n" +
+	"\rcustomer_type\x18\x03 \x01(\x0e2\x12.onec.CustomerTypeR\fcustomerType\"\x80\x02\n" +
 	"\rParseResponse\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\fR\trequestId\x12.\n" +
-	"\x04file\x18\x02 \x01(\v2\x18.onec.ExchangeFileHeaderH\x00R\x04file\x125\n" +
-	"\abalance\x18\x03 \x01(\v2\x19.onec.AccountBalanceEventH\x00R\abalance\x128\n" +
-	"\bdocument\x18\x04 \x01(\v2\x1a.onec.PaymentDocumentEventH\x00R\bdocumentB\x06\n" +
-	"\x04item\"[\n" +
-	"\x12ExchangeFileHeader\x12\x1d\n" +
-	"\n" +
-	"request_id\x18\x01 \x01(\fR\trequestId\x12&\n" +
-	"\x04file\x18\x02 \x01(\v2\x12.onec.ExchangeFileR\x04file\"\x97\x02\n" +
+	"request_id\x18\x01 \x01(\fR\trequestId\x127\n" +
+	"\rcustomer_type\x18\x02 \x01(\x0e2\x12.onec.CustomerTypeR\fcustomerType\x12(\n" +
+	"\x04file\x18\x03 \x01(\v2\x12.onec.ExchangeFileH\x00R\x04file\x120\n" +
+	"\abalance\x18\x05 \x01(\v2\x14.onec.AccountBalanceH\x00R\abalance\x123\n" +
+	"\bdocument\x18\x06 \x01(\v2\x15.onec.PaymentDocumentH\x00R\bdocumentB\x06\n" +
+	"\x04item\"\xd0\x02\n" +
 	"\fExchangeFile\x12\x1d\n" +
 	"\n" +
-	"format_ver\x18\x01 \x01(\x02R\tformatVer\x12\x1a\n" +
+	"format_ver\x18\x01 \x01(\tR\tformatVer\x12\x1a\n" +
 	"\bencoding\x18\x02 \x01(\tR\bencoding\x12\x16\n" +
 	"\x06sender\x18\x03 \x01(\tR\x06sender\x12\x1a\n" +
-	"\breceiver\x18\x04 \x01(\tR\breceiver\x12!\n" +
-	"\fcreated_date\x18\x05 \x01(\tR\vcreatedDate\x12!\n" +
-	"\fcreated_time\x18\x06 \x01(\tR\vcreatedTime\x12\x1d\n" +
+	"\breceiver\x18\x04 \x01(\tR\breceiver\x12E\n" +
+	"\x10created_datetime\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x0fcreatedDatetime\x129\n" +
 	"\n" +
-	"start_date\x18\a \x01(\tR\tstartDate\x12\x19\n" +
-	"\bend_date\x18\b \x01(\tR\aendDate\x12\x18\n" +
-	"\aaccount\x18\t \x03(\tR\aaccount\"d\n" +
-	"\x13AccountBalanceEvent\x12\x1d\n" +
+	"start_date\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tstartDate\x125\n" +
+	"\bend_date\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\aendDate\x12\x18\n" +
+	"\aaccount\x18\t \x03(\tR\aaccount\"\x9f\x02\n" +
+	"\x0eAccountBalance\x129\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\tR\trequestId\x12.\n" +
-	"\abalance\x18\x02 \x01(\v2\x14.onec.AccountBalanceR\abalance\"\xe7\x01\n" +
-	"\x0eAccountBalance\x12\x1d\n" +
-	"\n" +
-	"start_date\x18\x01 \x01(\tR\tstartDate\x12\x19\n" +
-	"\bend_date\x18\x02 \x01(\tR\aendDate\x12\x18\n" +
+	"start_date\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\tstartDate\x125\n" +
+	"\bend_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\aendDate\x12\x18\n" +
 	"\aaccount\x18\x03 \x01(\tR\aaccount\x12'\n" +
 	"\x0finitial_balance\x18\x04 \x01(\x01R\x0einitialBalance\x12\x16\n" +
 	"\x06income\x18\x05 \x01(\x01R\x06income\x12\x1b\n" +
 	"\twrite_off\x18\x06 \x01(\x01R\bwriteOff\x12#\n" +
-	"\rfinal_balance\x18\a \x01(\x01R\ffinalBalance\"w\n" +
-	"\x14PaymentDocumentEvent\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\tR\x06fileId\x12\x1d\n" +
-	"\n" +
-	"balance_id\x18\x02 \x01(\tR\tbalanceId\x12'\n" +
-	"\x03doc\x18\x03 \x01(\v2\x15.onec.PaymentDocumentR\x03doc\"\xe4\x19\n" +
+	"\rfinal_balance\x18\a \x01(\x01R\ffinalBalance\"\xc4\x1b\n" +
 	"\x0fPaymentDocument\x12#\n" +
 	"\rdocument_type\x18\x01 \x01(\tR\fdocumentType\x12\x16\n" +
-	"\x06number\x18\x02 \x01(\tR\x06number\x12\x12\n" +
-	"\x04date\x18\x03 \x01(\tR\x04date\x12(\n" +
-	"\x10written_off_date\x18\x04 \x01(\tR\x0ewrittenOffDate\x12\x1f\n" +
-	"\vincome_date\x18\x05 \x01(\tR\n" +
-	"incomeDate\x12\x12\n" +
-	"\x04summ\x18\x06 \x01(\x01R\x04summ\x12\x1b\n" +
-	"\trect_date\x18\a \x01(\tR\brectDate\x12\x1b\n" +
-	"\trect_time\x18\b \x01(\tR\brectTime\x12!\n" +
-	"\frect_content\x18\t \x01(\tR\vrectContent\x12#\n" +
+	"\x06number\x18\x02 \x01(\tR\x06number\x12.\n" +
+	"\x04date\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x04date\x12I\n" +
+	"\x10written_off_date\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\x0ewrittenOffDate\x88\x01\x01\x12@\n" +
+	"\vincome_date\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\n" +
+	"incomeDate\x88\x01\x01\x12\x12\n" +
+	"\x04summ\x18\x06 \x01(\x01R\x04summ\x12D\n" +
+	"\rrect_datetime\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x02R\frectDatetime\x88\x01\x01\x12&\n" +
+	"\frect_content\x18\t \x01(\tH\x03R\vrectContent\x88\x01\x01\x12#\n" +
 	"\rpayer_account\x18\n" +
 	" \x01(\tR\fpayerAccount\x12\x14\n" +
 	"\x05payer\x18\v \x01(\tR\x05payer\x12\x1b\n" +
-	"\tpayer_inn\x18\f \x01(\tR\bpayerInn\x12\x1b\n" +
-	"\tpayer_kpp\x18\r \x01(\tR\bpayerKpp\x12\x1b\n" +
-	"\x06payer1\x18\x0e \x01(\tH\x00R\x06payer1\x88\x01\x01\x12\x1b\n" +
-	"\x06payer2\x18\x0f \x01(\tH\x01R\x06payer2\x88\x01\x01\x12\x1b\n" +
-	"\x06payer3\x18\x10 \x01(\tH\x02R\x06payer3\x88\x01\x01\x12\x1b\n" +
-	"\x06payer4\x18\x11 \x01(\tH\x03R\x06payer4\x88\x01\x01\x122\n" +
+	"\tpayer_inn\x18\f \x01(\tR\bpayerInn\x12 \n" +
+	"\tpayer_kpp\x18\r \x01(\tH\x04R\bpayerKpp\x88\x01\x01\x12\x1b\n" +
+	"\x06payer1\x18\x0e \x01(\tH\x05R\x06payer1\x88\x01\x01\x12\x1b\n" +
+	"\x06payer2\x18\x0f \x01(\tH\x06R\x06payer2\x88\x01\x01\x12\x1b\n" +
+	"\x06payer3\x18\x10 \x01(\tH\aR\x06payer3\x88\x01\x01\x12\x1b\n" +
+	"\x06payer4\x18\x11 \x01(\tH\bR\x06payer4\x88\x01\x01\x122\n" +
 	"\x15payer_current_account\x18\x12 \x01(\tR\x13payerCurrentAccount\x12\x1f\n" +
 	"\vpayer_bank1\x18\x13 \x01(\tR\n" +
 	"payerBank1\x12$\n" +
-	"\vpayer_bank2\x18\x14 \x01(\tH\x04R\n" +
+	"\vpayer_bank2\x18\x14 \x01(\tH\tR\n" +
 	"payerBank2\x88\x01\x01\x12\x1b\n" +
 	"\tpayer_bik\x18\x15 \x01(\tR\bpayerBik\x12,\n" +
 	"\x12payer_corr_account\x18\x16 \x01(\tR\x10payerCorrAccount\x12)\n" +
 	"\x10receiver_account\x18\x17 \x01(\tR\x0freceiverAccount\x12\x1a\n" +
 	"\breceiver\x18\x18 \x01(\tR\breceiver\x12!\n" +
-	"\freceiver_inn\x18\x19 \x01(\tR\vreceiverInn\x12!\n" +
-	"\freceiver_kpp\x18\x1a \x01(\tR\vreceiverKpp\x12!\n" +
-	"\treceiver1\x18\x1b \x01(\tH\x05R\treceiver1\x88\x01\x01\x12!\n" +
-	"\treceiver2\x18\x1c \x01(\tH\x06R\treceiver2\x88\x01\x01\x12!\n" +
-	"\treceiver3\x18\x1d \x01(\tH\aR\treceiver3\x88\x01\x01\x12!\n" +
-	"\treceiver4\x18\x1e \x01(\tH\bR\treceiver4\x88\x01\x01\x128\n" +
+	"\freceiver_inn\x18\x19 \x01(\tR\vreceiverInn\x12&\n" +
+	"\freceiver_kpp\x18\x1a \x01(\tH\n" +
+	"R\vreceiverKpp\x88\x01\x01\x12!\n" +
+	"\treceiver1\x18\x1b \x01(\tH\vR\treceiver1\x88\x01\x01\x12!\n" +
+	"\treceiver2\x18\x1c \x01(\tH\fR\treceiver2\x88\x01\x01\x12!\n" +
+	"\treceiver3\x18\x1d \x01(\tH\rR\treceiver3\x88\x01\x01\x12!\n" +
+	"\treceiver4\x18\x1e \x01(\tH\x0eR\treceiver4\x88\x01\x01\x128\n" +
 	"\x18receiver_current_account\x18\x1f \x01(\tR\x16receiverCurrentAccount\x12%\n" +
 	"\x0ereceiver_bank1\x18  \x01(\tR\rreceiverBank1\x12*\n" +
-	"\x0ereceiver_bank2\x18! \x01(\tH\tR\rreceiverBank2\x88\x01\x01\x12!\n" +
+	"\x0ereceiver_bank2\x18! \x01(\tH\x0fR\rreceiverBank2\x88\x01\x01\x12!\n" +
 	"\freceiver_bik\x18\" \x01(\tR\vreceiverBik\x122\n" +
 	"\x15receiver_corr_account\x18# \x01(\tR\x13receiverCorrAccount\x12&\n" +
-	"\fpayment_type\x18$ \x01(\tH\n" +
-	"R\vpaymentType\x88\x01\x01\x125\n" +
-	"\x14payment_purpose_code\x18% \x01(\tH\vR\x12paymentPurposeCode\x88\x01\x01\x12\x15\n" +
-	"\x03uin\x18& \x01(\tH\fR\x03uin\x88\x01\x01\x12'\n" +
+	"\fpayment_type\x18$ \x01(\tH\x10R\vpaymentType\x88\x01\x01\x125\n" +
+	"\x14payment_purpose_code\x18% \x01(\tH\x11R\x12paymentPurposeCode\x88\x01\x01\x12\x15\n" +
+	"\x03uin\x18& \x01(\tH\x12R\x03uin\x88\x01\x01\x12'\n" +
 	"\x0fpayment_purpose\x18' \x01(\tR\x0epaymentPurpose\x12.\n" +
-	"\x10payment_purpose1\x18( \x01(\tH\rR\x0fpaymentPurpose1\x88\x01\x01\x12.\n" +
-	"\x10payment_purpose2\x18) \x01(\tH\x0eR\x0fpaymentPurpose2\x88\x01\x01\x12.\n" +
-	"\x10payment_purpose3\x18* \x01(\tH\x0fR\x0fpaymentPurpose3\x88\x01\x01\x12.\n" +
-	"\x10payment_purpose4\x18+ \x01(\tH\x10R\x0fpaymentPurpose4\x88\x01\x01\x12.\n" +
-	"\x10payment_purpose5\x18, \x01(\tH\x11R\x0fpaymentPurpose5\x88\x01\x01\x12.\n" +
-	"\x10payment_purpose6\x18- \x01(\tH\x12R\x0fpaymentPurpose6\x88\x01\x01\x12,\n" +
-	"\x0fcompiler_status\x18. \x01(\tH\x13R\x0ecompilerStatus\x88\x01\x01\x12\x19\n" +
-	"\x05okato\x18/ \x01(\tH\x14R\x05okato\x88\x01\x01\x12(\n" +
-	"\rindicator_kbk\x180 \x01(\tH\x15R\findicatorKbk\x88\x01\x01\x12.\n" +
-	"\x10indicator_basics\x181 \x01(\tH\x16R\x0findicatorBasics\x88\x01\x01\x12.\n" +
-	"\x10indicator_period\x182 \x01(\tH\x17R\x0findicatorPeriod\x88\x01\x01\x12.\n" +
-	"\x10indicator_number\x183 \x01(\tH\x18R\x0findicatorNumber\x88\x01\x01\x12*\n" +
-	"\x0eindicator_date\x184 \x01(\tH\x19R\rindicatorDate\x88\x01\x01\x12*\n" +
-	"\x0eindicator_type\x185 \x01(\tH\x1aR\rindicatorType\x88\x01\x01\x12\x1f\n" +
-	"\bpriority\x186 \x01(\rH\x1bR\bpriority\x88\x01\x01\x12(\n" +
-	"\rdefrayal_type\x187 \x01(\tH\x1cR\fdefrayalType\x88\x01\x01\x12,\n" +
-	"\x0facceptance_term\x188 \x01(\tH\x1dR\x0eacceptanceTerm\x88\x01\x01\x121\n" +
-	"\x12type_letter_credit\x189 \x01(\tH\x1eR\x10typeLetterCredit\x88\x01\x01\x12&\n" +
-	"\fpayment_term\x18: \x01(\tH\x1fR\vpaymentTerm\x88\x01\x01\x122\n" +
-	"\x12payment_condition1\x18; \x01(\tH R\x11paymentCondition1\x88\x01\x01\x122\n" +
-	"\x12payment_condition2\x18< \x01(\tH!R\x11paymentCondition2\x88\x01\x01\x122\n" +
-	"\x12payment_condition3\x18= \x01(\tH\"R\x11paymentCondition3\x88\x01\x01\x12\"\n" +
+	"\x10payment_purpose1\x18( \x01(\tH\x13R\x0fpaymentPurpose1\x88\x01\x01\x12.\n" +
+	"\x10payment_purpose2\x18) \x01(\tH\x14R\x0fpaymentPurpose2\x88\x01\x01\x12.\n" +
+	"\x10payment_purpose3\x18* \x01(\tH\x15R\x0fpaymentPurpose3\x88\x01\x01\x12.\n" +
+	"\x10payment_purpose4\x18+ \x01(\tH\x16R\x0fpaymentPurpose4\x88\x01\x01\x12.\n" +
+	"\x10payment_purpose5\x18, \x01(\tH\x17R\x0fpaymentPurpose5\x88\x01\x01\x12.\n" +
+	"\x10payment_purpose6\x18- \x01(\tH\x18R\x0fpaymentPurpose6\x88\x01\x01\x12,\n" +
+	"\x0fcompiler_status\x18. \x01(\tH\x19R\x0ecompilerStatus\x88\x01\x01\x12\x19\n" +
+	"\x05okato\x18/ \x01(\tH\x1aR\x05okato\x88\x01\x01\x12(\n" +
+	"\rindicator_kbk\x180 \x01(\tH\x1bR\findicatorKbk\x88\x01\x01\x12.\n" +
+	"\x10indicator_basics\x181 \x01(\tH\x1cR\x0findicatorBasics\x88\x01\x01\x12.\n" +
+	"\x10indicator_period\x182 \x01(\tH\x1dR\x0findicatorPeriod\x88\x01\x01\x12.\n" +
+	"\x10indicator_number\x183 \x01(\tH\x1eR\x0findicatorNumber\x88\x01\x01\x12*\n" +
+	"\x0eindicator_date\x184 \x01(\tH\x1fR\rindicatorDate\x88\x01\x01\x12*\n" +
+	"\x0eindicator_type\x185 \x01(\tH R\rindicatorType\x88\x01\x01\x12\x1f\n" +
+	"\bpriority\x186 \x01(\rH!R\bpriority\x88\x01\x01\x12(\n" +
+	"\rdefrayal_type\x187 \x01(\tH\"R\fdefrayalType\x88\x01\x01\x12,\n" +
+	"\x0facceptance_term\x188 \x01(\tH#R\x0eacceptanceTerm\x88\x01\x01\x121\n" +
+	"\x12type_letter_credit\x189 \x01(\tH$R\x10typeLetterCredit\x88\x01\x01\x12&\n" +
+	"\fpayment_term\x18: \x01(\tH%R\vpaymentTerm\x88\x01\x01\x122\n" +
+	"\x12payment_condition1\x18; \x01(\tH&R\x11paymentCondition1\x88\x01\x01\x122\n" +
+	"\x12payment_condition2\x18< \x01(\tH'R\x11paymentCondition2\x88\x01\x01\x122\n" +
+	"\x12payment_condition3\x18= \x01(\tH(R\x11paymentCondition3\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"payment_by\x18> \x01(\tH#R\tpaymentBy\x88\x01\x01\x12.\n" +
-	"\x10additional_terms\x18? \x01(\tH$R\x0fadditionalTerms\x88\x01\x01\x12;\n" +
-	"\x17supplier_account_number\x18@ \x01(\tH%R\x15supplierAccountNumber\x88\x01\x01\x127\n" +
-	"\x15document_sending_date\x18A \x01(\tH&R\x13documentSendingDate\x88\x01\x01B\t\n" +
+	"payment_by\x18> \x01(\tH)R\tpaymentBy\x88\x01\x01\x12.\n" +
+	"\x10additional_terms\x18? \x01(\tH*R\x0fadditionalTerms\x88\x01\x01\x12;\n" +
+	"\x17supplier_account_number\x18@ \x01(\tH+R\x15supplierAccountNumber\x88\x01\x01\x127\n" +
+	"\x15document_sending_date\x18A \x01(\tH,R\x13documentSendingDate\x88\x01\x01B\x13\n" +
+	"\x11_written_off_dateB\x0e\n" +
+	"\f_income_dateB\x10\n" +
+	"\x0e_rect_datetimeB\x0f\n" +
+	"\r_rect_contentB\f\n" +
+	"\n" +
+	"_payer_kppB\t\n" +
 	"\a_payer1B\t\n" +
 	"\a_payer2B\t\n" +
 	"\a_payer3B\t\n" +
 	"\a_payer4B\x0e\n" +
-	"\f_payer_bank2B\f\n" +
+	"\f_payer_bank2B\x0f\n" +
+	"\r_receiver_kppB\f\n" +
 	"\n" +
 	"_receiver1B\f\n" +
 	"\n" +
@@ -1414,31 +1234,36 @@ func file_api_onec_omec_proto_rawDescGZIP() []byte {
 }
 
 var file_api_onec_omec_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_api_onec_omec_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_api_onec_omec_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_api_onec_omec_proto_goTypes = []any{
-	(CustomerType)(0),            // 0: onec.CustomerType
-	(*ParseRequest)(nil),         // 1: onec.ParseRequest
-	(*ParseResponse)(nil),        // 2: onec.ParseResponse
-	(*ExchangeFileHeader)(nil),   // 3: onec.ExchangeFileHeader
-	(*ExchangeFile)(nil),         // 4: onec.ExchangeFile
-	(*AccountBalanceEvent)(nil),  // 5: onec.AccountBalanceEvent
-	(*AccountBalance)(nil),       // 6: onec.AccountBalance
-	(*PaymentDocumentEvent)(nil), // 7: onec.PaymentDocumentEvent
-	(*PaymentDocument)(nil),      // 8: onec.PaymentDocument
+	(CustomerType)(0),             // 0: onec.CustomerType
+	(*ParseRequest)(nil),          // 1: onec.ParseRequest
+	(*ParseResponse)(nil),         // 2: onec.ParseResponse
+	(*ExchangeFile)(nil),          // 3: onec.ExchangeFile
+	(*AccountBalance)(nil),        // 4: onec.AccountBalance
+	(*PaymentDocument)(nil),       // 5: onec.PaymentDocument
+	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
 }
 var file_api_onec_omec_proto_depIdxs = []int32{
-	0, // 0: onec.ParseRequest.customer_type:type_name -> onec.CustomerType
-	3, // 1: onec.ParseResponse.file:type_name -> onec.ExchangeFileHeader
-	5, // 2: onec.ParseResponse.balance:type_name -> onec.AccountBalanceEvent
-	7, // 3: onec.ParseResponse.document:type_name -> onec.PaymentDocumentEvent
-	4, // 4: onec.ExchangeFileHeader.file:type_name -> onec.ExchangeFile
-	6, // 5: onec.AccountBalanceEvent.balance:type_name -> onec.AccountBalance
-	8, // 6: onec.PaymentDocumentEvent.doc:type_name -> onec.PaymentDocument
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	0,  // 0: onec.ParseRequest.customer_type:type_name -> onec.CustomerType
+	0,  // 1: onec.ParseResponse.customer_type:type_name -> onec.CustomerType
+	3,  // 2: onec.ParseResponse.file:type_name -> onec.ExchangeFile
+	4,  // 3: onec.ParseResponse.balance:type_name -> onec.AccountBalance
+	5,  // 4: onec.ParseResponse.document:type_name -> onec.PaymentDocument
+	6,  // 5: onec.ExchangeFile.created_datetime:type_name -> google.protobuf.Timestamp
+	6,  // 6: onec.ExchangeFile.start_date:type_name -> google.protobuf.Timestamp
+	6,  // 7: onec.ExchangeFile.end_date:type_name -> google.protobuf.Timestamp
+	6,  // 8: onec.AccountBalance.start_date:type_name -> google.protobuf.Timestamp
+	6,  // 9: onec.AccountBalance.end_date:type_name -> google.protobuf.Timestamp
+	6,  // 10: onec.PaymentDocument.date:type_name -> google.protobuf.Timestamp
+	6,  // 11: onec.PaymentDocument.written_off_date:type_name -> google.protobuf.Timestamp
+	6,  // 12: onec.PaymentDocument.income_date:type_name -> google.protobuf.Timestamp
+	6,  // 13: onec.PaymentDocument.rect_datetime:type_name -> google.protobuf.Timestamp
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_api_onec_omec_proto_init() }
@@ -1451,14 +1276,14 @@ func file_api_onec_omec_proto_init() {
 		(*ParseResponse_Balance)(nil),
 		(*ParseResponse_Document)(nil),
 	}
-	file_api_onec_omec_proto_msgTypes[7].OneofWrappers = []any{}
+	file_api_onec_omec_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_onec_omec_proto_rawDesc), len(file_api_onec_omec_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   8,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
