@@ -22,7 +22,7 @@ func CreateFilter(fm filtering.FilterModel, prefix *string) []string {
 
 		switch t := safeDeref(f.FilterType); t {
 		case "set":
-			if where := setWhere(field, f.Values); where != "" {
+			if where := setWhere(field, *f.Values); where != "" {
 				out = append(out, where)
 			}
 		case "date":

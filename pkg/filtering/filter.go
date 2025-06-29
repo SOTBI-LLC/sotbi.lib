@@ -15,7 +15,7 @@ type Filter struct {
 	Type       *string    `json:"type,omitempty"`
 	FilterType *string    `json:"filterType,omitempty"`
 	Operator   *string    `json:"operator,omitempty"`
-	Values     *[]string  `json:"values,omitempty"`
+	Values     *[]*string `json:"values,omitempty"`
 	DateFrom   *string    `json:"dateFrom,omitempty"`
 	DateTo     *string    `json:"dateTo,omitempty"`
 	Filter     *any       `json:"filter,omitempty"`
