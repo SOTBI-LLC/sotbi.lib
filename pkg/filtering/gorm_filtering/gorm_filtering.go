@@ -79,10 +79,10 @@ func CreateFilter(ctx context.Context, tbl *gorm.DB, args ...string) *gorm.DB {
 					if nullExistInSet { // если null есть - то добавляем условие OR _ IS NULL
 						tbl = tbl.Where(
 							fmt.Sprintf("%s in (?) OR %s IS NULL", field, field),
-							*filter.Values,
+							&filter.Values,
 						)
 					} else {
-						tbl = tbl.Where(fmt.Sprintf("%s in (?)", field), *filter.Values)
+						tbl = tbl.Where(fmt.Sprintf("%s in (?)", field), filter.Values)
 					}
 				}
 			case "date":

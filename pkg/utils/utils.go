@@ -10,6 +10,8 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/COTBU/sotbi.lib/pkg/filtering"
+	"github.com/COTBU/sotbi.lib/pkg/filtering/gorm_filtering"
 	"github.com/COTBU/sotbi.lib/pkg/times"
 )
 
@@ -25,7 +27,7 @@ func MakeWhere(
 			tableName = "pd"
 		}
 
-		tbl = CreateFilter(ctx, tbl, val[0], tableName)
+		tbl = gorm_filtering.CreateFilter(ctx, tbl, val[0], tableName)
 	}
 
 	startStr, startParamFound := params["start"]
@@ -115,9 +117,9 @@ func GetInterval(qp url.Values) (start, end time.Time, err error) {
 	}
 
 	if val, ok := qp["filterModel"]; ok && len(val) > 0 && val[0] != "" {
-		var filterModel FilterModel
+		var filterModel filtering.FilterModel
 
-		filterModel, err = ParseJSONToFilterModel(val[0])
+		filterModel, err = filtering.ParseJSONToFilterModel(val[0])
 		if err != nil {
 			return
 		}

@@ -7,10 +7,9 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/COTBU/sotbi.lib/pkg/utils"
 	sq "github.com/Masterminds/squirrel"
 
-	"github.com/COTBU/excelgen/internal/usecase/repo/filtering"
+	"github.com/COTBU/sotbi.lib/pkg/filtering"
 )
 
 // CreateOrder func.
@@ -41,7 +40,7 @@ func CreateOrder(query sq.SelectBuilder, args ...string) sq.SelectBuilder {
 
 // CreateFilter func.
 func CreateFilter(ctx context.Context, query sq.SelectBuilder, args ...string) sq.SelectBuilder {
-	filterModel, err := utils.ParseJSONToFilterModel(args[0])
+	filterModel, err := filtering.ParseJSONToFilterModel(args[0])
 	if err != nil {
 		return query
 	}
@@ -53,7 +52,7 @@ func CreateFilter(ctx context.Context, query sq.SelectBuilder, args ...string) s
 	}
 
 	for field, filter := range filterModel {
-		if filter != (utils.Filter{}) {
+		if filter != (filtering.Filter{}) {
 			if !strings.Contains(field, ".") {
 				field = fmt.Sprintf("%s%s", prefix, field)
 			}
@@ -81,10 +80,10 @@ func CreateFilter(ctx context.Context, query sq.SelectBuilder, args ...string) s
 					if nullExistInSet { // если null есть - то добавляем условие OR _ IS NULL
 						query = query.Where(
 							fmt.Sprintf("%s in (?) OR %s IS NULL", field, field),
-							*filter.Values,
+							filter.Values,
 						)
 					} else {
-						query = query.Where(fmt.Sprintf("%s in (?)", field), *filter.Values)
+						query = query.Where(fmt.Sprintf("%s in (?)", field), filter.Values)
 					}
 				}
 			case "date":
@@ -112,7 +111,7 @@ func CreateFilter(ctx context.Context, query sq.SelectBuilder, args ...string) s
 	return query
 }
 
-func constructNumberWhere(query sq.SelectBuilder, field string, filter utils.Filter) sq.SelectBuilder {
+func constructNumberWhere(query sq.SelectBuilder, field string, filter filtering.Filter) sq.SelectBuilder {
 	operators := map[string]string{
 		"equals":             "%s = ?",
 		"notEqual":           "%s <> ?",
@@ -134,7 +133,7 @@ func constructNumberWhere(query sq.SelectBuilder, field string, filter utils.Fil
 	return query
 }
 
-func constructDateWhere(query sq.SelectBuilder, field, operator string, filters ...utils.Filter) sq.SelectBuilder {
+func constructDateWhere(query sq.SelectBuilder, field, operator string, filters ...filtering.Filter) sq.SelectBuilder {
 	var start1, start2 string
 	start1 = (*filters[0].DateFrom)[0:10]
 
@@ -183,7 +182,7 @@ func constructDateWhere(query sq.SelectBuilder, field, operator string, filters 
 	return query
 }
 
-func constructTextWhere(query sq.SelectBuilder, field, operator string, filters ...utils.Filter) sq.SelectBuilder {
+func constructTextWhere(query sq.SelectBuilder, field, operator string, filters ...filtering.Filter) sq.SelectBuilder {
 	operators := map[string]string{
 		"equals":      "lower(%s) = ?",
 		"notEqual":    "lower(%s) <> ?",
