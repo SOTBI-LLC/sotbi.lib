@@ -69,7 +69,7 @@ func CreateFilter(ctx context.Context, tbl *gorm.DB, args ...string) *gorm.DB {
 					nullExistInSet := false
 
 					for _, val := range *filter.Values {
-						if val == "" {
+						if val == nil || *val == "" {
 							nullExistInSet = true
 
 							break

@@ -154,3 +154,25 @@ func sliceDate(src *string) string {
 
 	return (*src)[:10]
 }
+
+// CreateOrder builds SQL ORDER BY clauses from the sort model.
+// "prefix" is applied to fields without a dot ("owner.field" remains unchanged).
+// Pass empty string for no prefix.
+func CreateOrder(sm *filtering.SortModel, prefix string) []string {
+	if sm == nil || len(*sm) == 0 {
+		return []string{}
+	}
+
+	out := make([]string, len(*sm))
+
+	for i, sort := range *sm {
+		field := sort["colId"]
+		if prefix != "" && !strings.Contains(field, ".") {
+			field = prefix + "." + field
+		}
+
+		out[i] = fmt.Sprintf("%s %s", field, sort["sort"])
+	}
+
+	return out
+}

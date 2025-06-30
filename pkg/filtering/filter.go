@@ -3,8 +3,6 @@ package filtering
 
 import (
 	"encoding/json"
-	"fmt"
-	"strings"
 )
 
 type Condition struct {
@@ -49,24 +47,6 @@ type SortModel []map[string]string
 
 func (sm *SortModel) Unmarshal(data []byte) error {
 	return json.Unmarshal(data, &sm)
-}
-
-// CreateOrder builds SQL ORDER BY clauses from the sort model.
-// "prefix" is applied to fields without a dot ("owner.field" remains unchanged).
-// Pass empty string for no prefix.
-func (sm *SortModel) CreateOrder(prefix string) []string {
-	out := make([]string, len(*sm))
-
-	for i, sort := range *sm {
-		field := sort["colId"]
-		if prefix != "" && !strings.Contains(field, ".") {
-			field = prefix + "." + field
-		}
-
-		out[i] = fmt.Sprintf("%s %s", field, sort["sort"])
-	}
-
-	return out
 }
 
 // ParseJSONToFilterModel constructor.
