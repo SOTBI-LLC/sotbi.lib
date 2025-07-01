@@ -36,7 +36,7 @@ func (suite *ParserTestSuite) TestScan() {
 
 	// 1. Header (ExchangeFile)
 	header := result.ExchangeFile
-	suite.Equal(float32(1.03), header.FormatVer)
+	suite.Equal("1.03", header.FormatVer)
 	suite.Equal("Windows", header.Encoding)
 	suite.Equal("Альфа-Бизнес Онлайн", header.Sender)
 	suite.Equal("", header.Receiver)
