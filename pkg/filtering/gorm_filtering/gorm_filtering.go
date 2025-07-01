@@ -51,7 +51,7 @@ func CreateFilter(ctx context.Context, tbl *gorm.DB, args ...string) *gorm.DB {
 	}
 
 	for field, filter := range filterModel {
-		if filter != (filtering.Filter{}) {
+		if filter.IsEmpty() {
 			if !strings.Contains(field, ".") {
 				field = fmt.Sprintf("%s%s", prefix, field)
 			}
@@ -64,11 +64,11 @@ func CreateFilter(ctx context.Context, tbl *gorm.DB, args ...string) *gorm.DB {
 
 			switch *filter.FilterType {
 			case "set":
-				if len(*filter.Values) > 0 {
+				if len(filter.Values) > 0 {
 					// проверка на наличие в set null значения
 					nullExistInSet := false
 
-					for _, val := range *filter.Values {
+					for _, val := range filter.Values {
 						if val == nil || *val == "" {
 							nullExistInSet = true
 
@@ -132,7 +132,11 @@ func constructNumberWhere(tbl *gorm.DB, field string, filter filtering.Filter) *
 	return tbl
 }
 
-func constructDateWhere(tbl *gorm.DB, field, operator string, filters ...filtering.Filter) *gorm.DB {
+func constructDateWhere(
+	tbl *gorm.DB,
+	field, operator string,
+	filters ...filtering.Filter,
+) *gorm.DB {
 	var start1, start2 string
 	start1 = (*filters[0].DateFrom)[0:10]
 
@@ -181,7 +185,11 @@ func constructDateWhere(tbl *gorm.DB, field, operator string, filters ...filteri
 	return tbl
 }
 
-func constructTextWhere(tbl *gorm.DB, field, operator string, filters ...filtering.Filter) *gorm.DB {
+func constructTextWhere(
+	tbl *gorm.DB,
+	field, operator string,
+	filters ...filtering.Filter,
+) *gorm.DB {
 	operators := map[string]string{
 		"equals":      "lower(%s) = ?",
 		"notEqual":    "lower(%s) <> ?",

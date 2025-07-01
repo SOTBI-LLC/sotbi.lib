@@ -189,7 +189,7 @@ func TestSortModel_CreateOrder(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		got := sm.CreateOrder(tc.prefix)
+		got := CreateOrder(&sm, tc.prefix)
 		if !reflect.DeepEqual(got, tc.want) {
 			t.Errorf("CreateOrder(%q) = %v; want %v", tc.prefix, got, tc.want)
 		}

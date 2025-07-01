@@ -52,7 +52,7 @@ func CreateFilter(ctx context.Context, query sq.SelectBuilder, args ...string) s
 	}
 
 	for field, filter := range filterModel {
-		if filter != (filtering.Filter{}) {
+		if filter.IsEmpty() {
 			if !strings.Contains(field, ".") {
 				field = fmt.Sprintf("%s%s", prefix, field)
 			}
@@ -65,12 +65,12 @@ func CreateFilter(ctx context.Context, query sq.SelectBuilder, args ...string) s
 
 			switch *filter.FilterType {
 			case "set":
-				if len(*filter.Values) > 0 {
+				if len(filter.Values) > 0 {
 					// проверка на наличие в set null значения
 					nullExistInSet := false
 
-					for _, val := range *filter.Values {
-						if val == "" {
+					for _, val := range filter.Values {
+						if *val == "" {
 							nullExistInSet = true
 
 							break
@@ -111,7 +111,11 @@ func CreateFilter(ctx context.Context, query sq.SelectBuilder, args ...string) s
 	return query
 }
 
-func constructNumberWhere(query sq.SelectBuilder, field string, filter filtering.Filter) sq.SelectBuilder {
+func constructNumberWhere(
+	query sq.SelectBuilder,
+	field string,
+	filter filtering.Filter,
+) sq.SelectBuilder {
 	operators := map[string]string{
 		"equals":             "%s = ?",
 		"notEqual":           "%s <> ?",
@@ -133,7 +137,11 @@ func constructNumberWhere(query sq.SelectBuilder, field string, filter filtering
 	return query
 }
 
-func constructDateWhere(query sq.SelectBuilder, field, operator string, filters ...filtering.Filter) sq.SelectBuilder {
+func constructDateWhere(
+	query sq.SelectBuilder,
+	field, operator string,
+	filters ...filtering.Filter,
+) sq.SelectBuilder {
 	var start1, start2 string
 	start1 = (*filters[0].DateFrom)[0:10]
 
@@ -182,7 +190,11 @@ func constructDateWhere(query sq.SelectBuilder, field, operator string, filters 
 	return query
 }
 
-func constructTextWhere(query sq.SelectBuilder, field, operator string, filters ...filtering.Filter) sq.SelectBuilder {
+func constructTextWhere(
+	query sq.SelectBuilder,
+	field, operator string,
+	filters ...filtering.Filter,
+) sq.SelectBuilder {
 	operators := map[string]string{
 		"equals":      "lower(%s) = ?",
 		"notEqual":    "lower(%s) <> ?",
