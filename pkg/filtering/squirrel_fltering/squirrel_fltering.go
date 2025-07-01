@@ -1,7 +1,6 @@
 package squirrel_fltering
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -39,7 +38,7 @@ func CreateOrder(query sq.SelectBuilder, args ...string) sq.SelectBuilder {
 }
 
 // CreateFilter func.
-func CreateFilter(ctx context.Context, query sq.SelectBuilder, args ...string) sq.SelectBuilder {
+func CreateFilter(query sq.SelectBuilder, args ...string) sq.SelectBuilder {
 	filterModel, err := filtering.ParseJSONToFilterModel(args[0])
 	if err != nil {
 		return query
