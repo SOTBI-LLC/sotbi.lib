@@ -44,6 +44,7 @@ func (m *Message[T]) GetKey() []byte {
 
 type Producer[T proto.Message] interface {
 	Produce(context.Context, ...*Message[T]) error
+	Close() error
 }
 
 func GetTLSConfig(useTLS bool, cert string) *tls.Config {
