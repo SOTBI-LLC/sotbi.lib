@@ -15,6 +15,10 @@ import (
 func CreateOrder(query sq.SelectBuilder, args ...string) sq.SelectBuilder {
 	var sortModel filtering.SortModel
 
+	if len(args) == 0 {
+		return query
+	}
+
 	err := json.Unmarshal([]byte(args[0]), &sortModel)
 	if err != nil {
 		return query
@@ -22,7 +26,7 @@ func CreateOrder(query sq.SelectBuilder, args ...string) sq.SelectBuilder {
 
 	prefix := ""
 
-	if args[1] != "" {
+	if len(args) > 1 && args[1] != "" {
 		prefix = fmt.Sprintf("%s.", args[1])
 	}
 
