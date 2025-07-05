@@ -43,6 +43,10 @@ func CreateOrder(query sq.SelectBuilder, args ...string) sq.SelectBuilder {
 
 // CreateFilter func.
 func CreateFilter(query sq.SelectBuilder, args ...string) sq.SelectBuilder {
+	if len(args) == 0 {
+		return query
+	}
+
 	filterModel, err := filtering.ParseJSONToFilterModel(args[0])
 	if err != nil {
 		return query
@@ -50,7 +54,7 @@ func CreateFilter(query sq.SelectBuilder, args ...string) sq.SelectBuilder {
 
 	prefix := ""
 
-	if args[1] != "" {
+	if len(args) > 1 && args[1] != "" {
 		prefix = fmt.Sprintf("%s.", args[1])
 	}
 
