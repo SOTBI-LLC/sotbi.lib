@@ -147,27 +147,22 @@ func (p *ExchangeFile) convertFile() (onec.ExchangeFile, error) {
 }
 
 func (p *ExchangeFile) convertAccountBalance() ([]onec.AccountBalance, error) {
-	var remaining onec.AccountBalance
-	config := &mapstructure.DecoderConfig{
-		WeaklyTypedInput: true,
-		Result:           &remaining,
-	}
-
-	decoder, err := mapstructure.NewDecoder(config)
-	if err != nil {
-		return nil, fmt.Errorf("error creating new mapstructure decode: %w", err)
-	}
-
 	remainings := make([]onec.AccountBalance, 0, len(p.accountBalance))
-
 	for i := range p.accountBalance {
+		var remaining onec.AccountBalance
+		config := &mapstructure.DecoderConfig{
+			WeaklyTypedInput: true,
+			Result:           &remaining,
+		}
+		decoder, err := mapstructure.NewDecoder(config)
+		if err != nil {
+			return nil, fmt.Errorf("error creating new mapstructure decode: %w", err)
+		}
 		if err := decoder.Decode(p.accountBalance[i]); err != nil {
 			return nil, fmt.Errorf("error while decode remaining: %w", err)
 		}
-
 		remainings = append(remainings, remaining)
 	}
-
 	return remainings, nil
 }
 
