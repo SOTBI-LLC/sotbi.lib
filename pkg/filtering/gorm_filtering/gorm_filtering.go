@@ -15,6 +15,10 @@ import (
 func CreateOrder(tbl *gorm.DB, args ...string) *gorm.DB {
 	var sortModel filtering.SortModel
 
+	if len(args) == 0 {
+		return tbl
+	}
+
 	err := json.Unmarshal([]byte(args[0]), &sortModel)
 	if err != nil {
 		return tbl
@@ -22,7 +26,7 @@ func CreateOrder(tbl *gorm.DB, args ...string) *gorm.DB {
 
 	prefix := ""
 
-	if args[1] != "" {
+	if len(args) > 1 && args[1] != "" {
 		prefix = fmt.Sprintf("%s.", args[1])
 	}
 
@@ -39,6 +43,10 @@ func CreateOrder(tbl *gorm.DB, args ...string) *gorm.DB {
 
 // CreateFilter func.
 func CreateFilter(ctx context.Context, tbl *gorm.DB, args ...string) *gorm.DB {
+	if len(args) == 0 {
+		return tbl
+	}
+
 	filterModel, err := filtering.ParseJSONToFilterModel(args[0])
 	if err != nil {
 		return tbl
@@ -46,7 +54,7 @@ func CreateFilter(ctx context.Context, tbl *gorm.DB, args ...string) *gorm.DB {
 
 	prefix := ""
 
-	if args[1] != "" {
+	if len(args) > 1 && args[1] != "" {
 		prefix = fmt.Sprintf("%s.", args[1])
 	}
 
