@@ -323,7 +323,7 @@ func (x *ExcelGenStatusRequest) GetTaskId() uint64 {
 
 type ExcelGeneralRequest struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
-	TaskId     *int64                 `protobuf:"varint,1,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
+	TaskId     *uint64                `protobuf:"varint,1,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
 	Data       *structpb.Struct       `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	Template   string                 `protobuf:"bytes,3,opt,name=template,proto3" json:"template,omitempty"`
 	Recipients []string               `protobuf:"bytes,4,rep,name=recipients,proto3" json:"recipients,omitempty"`
@@ -368,7 +368,7 @@ func (*ExcelGeneralRequest) Descriptor() ([]byte, []int) {
 	return file_api_excel_gen_excel_gen_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ExcelGeneralRequest) GetTaskId() int64 {
+func (x *ExcelGeneralRequest) GetTaskId() uint64 {
 	if x != nil && x.TaskId != nil {
 		return *x.TaskId
 	}
@@ -976,7 +976,7 @@ const file_api_excel_gen_excel_gen_proto_rawDesc = "" +
 	"\x15ExcelGenStatusRequest\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\x04R\x06taskId\"\xdf\x03\n" +
 	"\x13ExcelGeneralRequest\x12\x1c\n" +
-	"\atask_id\x18\x01 \x01(\x03H\x01R\x06taskId\x88\x01\x01\x12+\n" +
+	"\atask_id\x18\x01 \x01(\x04H\x01R\x06taskId\x88\x01\x01\x12+\n" +
 	"\x04data\x18\x02 \x01(\v2\x17.google.protobuf.StructR\x04data\x12\x1a\n" +
 	"\btemplate\x18\x03 \x01(\tR\btemplate\x12\x1e\n" +
 	"\n" +

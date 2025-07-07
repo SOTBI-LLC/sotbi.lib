@@ -41,7 +41,7 @@ message ExcelGenStatusRequest {
 }
 
 message ExcelGeneralRequest {
-  optional int64 task_id = 1;
+  optional uint64 task_id = 1;
   google.protobuf.Struct data = 2;
   string template = 3;
   repeated string recipients = 4;
