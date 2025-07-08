@@ -6,7 +6,10 @@ import (
 )
 
 func TestSonyflake_UniquenessAndConcurrency(t *testing.T) {
-	sf := NewSonyflake(SonyflakeConfig{MachineID: 1})
+	sf, err := NewSonyflake(SonyflakeConfig{MachineID: 1})
+	if err != nil {
+		t.Fatalf("NewSonyflake error: %v", err)
+	}
 
 	const n = 10000
 	ids := make([]uint64, n)

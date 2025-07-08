@@ -27,7 +27,8 @@ func (suite *ParserTestSuite) TestScan() {
 
 	r := io.TeeReader(file, outputFile)
 
-	sonyflake := utils.NewSonyflake(utils.SonyflakeConfig{MachineID: 1})
+	sonyflake, err := utils.NewSonyflake(utils.SonyflakeConfig{MachineID: 1})
+	suite.NoError(err)
 
 	// Call the Scan function
 	result, err := p.Scan(r, sonyflake.NextID)
