@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/suite"
+
+	"github.com/COTBU/sotbi.lib/pkg/utils"
 )
 
 type ParserTestSuite struct {
@@ -25,8 +27,10 @@ func (suite *ParserTestSuite) TestScan() {
 
 	r := io.TeeReader(file, outputFile)
 
+	sonyflake := utils.NewSonyflake(utils.SonyflakeConfig{MachineID: 1})
+
 	// Call the Scan function
-	result, err := p.Scan(r)
+	result, err := p.Scan(r, sonyflake.NextID)
 
 	// Assert that there is no error
 	suite.NoError(err)
@@ -40,17 +44,17 @@ func (suite *ParserTestSuite) TestScan() {
 	suite.Equal("Windows", header.Encoding)
 	suite.Equal("Альфа-Бизнес Онлайн", header.Sender)
 	suite.Equal("", header.Receiver)
-	suite.Equal("31.12.2021", header.CreatedDate)
-	suite.Equal("00:00:00", header.CreatedTime)
-	suite.Equal("01.01.2019", header.StartDate)
-	suite.Equal("31.12.2021", header.EndDate)
+	suite.Equal("31.12.2021", header.CreatedDateStr)
+	suite.Equal("00:00:00", header.CreatedTimeStr)
+	suite.Equal("01.01.2019", header.StartDateStr)
+	suite.Equal("31.12.2021", header.EndDateStr)
 	suite.Equal([]string{"12345678901234567890"}, header.Account)
 
 	// 2. Account balances
 	suite.Len(result.Remainings, 1)
 	rab := result.Remainings[0]
-	suite.Equal("01.01.2019", rab.StartDate)
-	suite.Equal("31.12.2021", rab.EndDate)
+	suite.Equal("01.01.2019", rab.StartDateStr)
+	suite.Equal("31.12.2021", rab.EndDateStr)
 	suite.Equal("12345678901234567890", rab.Account)
 	suite.Equal(10.0, rab.InitialBalance)
 	suite.Equal(2.0, rab.Income)
@@ -64,7 +68,7 @@ func (suite *ParserTestSuite) TestScan() {
 	d1 := result.PaymentDocuments[0]
 	suite.Equal("Банковский ордер", d1.DocumentType)
 	suite.Equal("1", d1.Number)
-	suite.Equal("01.02.2021", d1.Data)
+	suite.Equal("01.02.2021", d1.DataStr)
 	suite.Equal(2.0, d1.Summ)
 	suite.Equal("12345678901234567890", d1.PayerAccount)
 	suite.Equal(
@@ -82,7 +86,7 @@ func (suite *ParserTestSuite) TestScan() {
 	d2 := result.PaymentDocuments[1]
 	suite.Equal("Платежное поручение", d2.DocumentType)
 	suite.Equal("2", d2.Number)
-	suite.Equal("01.03.2021", d2.Data)
+	suite.Equal("01.03.2021", d2.DataStr)
 	suite.Equal(1.0, d2.Summ)
 	suite.Equal("12345678901234567890", d2.PayerAccount)
 	suite.Equal(
