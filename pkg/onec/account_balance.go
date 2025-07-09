@@ -24,6 +24,7 @@ func (b *AccountBalance) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 	return &pb.ParseResponse{
 		RequestId:    request.RequestId,
 		CustomerType: request.CustomerType,
+		FileUrl:      request.FileUrl,
 		Item: &pb.ParseResponse_Balance{
 			Balance: &pb.AccountBalance{
 				StartDate:      timeToTimestamppb(b.StartDate),

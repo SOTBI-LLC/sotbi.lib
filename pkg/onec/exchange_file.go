@@ -26,6 +26,7 @@ func (f *ExchangeFile) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 	return &pb.ParseResponse{
 		RequestId:    request.RequestId,
 		CustomerType: request.CustomerType,
+		FileUrl:      request.FileUrl,
 		Item: &pb.ParseResponse_File{
 			File: &pb.ExchangeFile{
 				FormatVer:       f.FormatVer,
