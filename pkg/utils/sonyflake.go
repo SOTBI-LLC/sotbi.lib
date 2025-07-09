@@ -22,12 +22,12 @@ type Sonyflake struct {
 
 const (
 	// JavaScript-compatible bit allocation (53 bits total)
-	sonyflakeMachineIDBits = 6  // 6 bits: 0-63 machines
-	sonyflakeSequenceBits  = 6  // 6 bits: 0-63 per millisecond
-	sonyflakeTimeBits      = 41 // 41 bits: ~69 years from epoch
-	sonyflakeMaxSequence   = 1<<sonyflakeSequenceBits - 1 // 63
+	sonyflakeMachineIDBits = 6                             // 6 bits: 0-63 machines
+	sonyflakeSequenceBits  = 6                             // 6 bits: 0-63 per millisecond
+	sonyflakeTimeBits      = 41                            // 41 bits: ~69 years from epoch
+	sonyflakeMaxSequence   = 1<<sonyflakeSequenceBits - 1  // 63
 	sonyflakeMaxMachineID  = 1<<sonyflakeMachineIDBits - 1 // 63
-	sonyflakeMaxTime       = 1<<sonyflakeTimeBits - 1       // ~69 years
+	sonyflakeMaxTime       = 1<<sonyflakeTimeBits - 1      // ~69 years
 	sonyflakeTimeMask      = (uint64(1)<<sonyflakeTimeBits - 1) << sonyflakeSequenceBits
 	sonyflakeSeqMask       = uint64(sonyflakeMaxSequence)
 )

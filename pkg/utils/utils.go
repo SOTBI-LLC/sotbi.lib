@@ -15,6 +15,18 @@ import (
 	"github.com/COTBU/sotbi.lib/pkg/times"
 )
 
+func FromPtr[T any](t *T) T {
+	if t == nil {
+		return *new(T)
+	}
+
+	return *t
+}
+
+func ToPtr[T any](t T) *T {
+	return &t
+}
+
 func MakeWhere(
 	ctx context.Context,
 	tbl *gorm.DB,

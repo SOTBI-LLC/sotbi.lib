@@ -12,6 +12,7 @@ import (
 	"golang.org/x/text/transform"
 
 	"github.com/COTBU/sotbi.lib/pkg/onec"
+	"github.com/COTBU/sotbi.lib/pkg/utils"
 )
 
 type ExchangeFile struct {
@@ -217,6 +218,7 @@ func (p *ExchangeFile) convertPaymentDocuments() ([]onec.PaymentDocument, error)
 		pd.IncomeDate = onec.ParseDate(pd.IncomeDateStr)
 		pd.RectDateTime = onec.ParseDateTime(pd.RectDateStr + " " + pd.RectTimeStr)
 		pd.IndicatorDate = onec.ParseDate(pd.IndicatorDateStr)
+		pd.DocumentSendingDate = onec.ParseDateTime(utils.FromPtr(pd.DocumentSendingDateStr))
 
 		paymentDocuments = append(paymentDocuments, pd)
 	}

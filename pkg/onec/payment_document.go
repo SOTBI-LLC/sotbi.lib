@@ -4,7 +4,6 @@ import "time"
 
 //nolint:lll
 type PaymentDocument struct {
-	ID                     uint64     `json:"id"`
 	AccountBalanceID       uint64     `json:"account_balance_id"`
 	DocumentType           string     `json:"document_type,omitempty"            mapstructure:"СекцияДокумент"`
 	Number                 string     `json:"number,omitempty"                   mapstructure:"Номер"`
@@ -75,5 +74,6 @@ type PaymentDocument struct {
 	PaymentBy              *string    `json:"payment_by,omitempty"               mapstructure:"ПлатежПоПредст,omitempty"`
 	AdditionalTerms        *string    `json:"additional_terms,omitempty"         mapstructure:"ДополнУсловия,omitempty"`
 	SupplierAccountNumber  *string    `json:"supplier_account_number,omitempty"  mapstructure:"НомерСчетаПоставщика,omitempty"`
-	DocumentSendingDate    *string    `json:"document_sending_date,omitempty"    mapstructure:"ДатаОтсылкиДок,omitempty"`
+	DocumentSendingDateStr *string    `json:"-"                                  mapstructure:"ДатаОтсылкиДок,omitempty"`
+	DocumentSendingDate    *time.Time `json:"document_sending_date,omitempty"    mapstructure:"-"`
 }
