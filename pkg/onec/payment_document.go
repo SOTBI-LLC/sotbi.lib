@@ -158,6 +158,8 @@ func (d *PaymentDocument) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 		RequestId:    request.RequestId,
 		CustomerType: request.CustomerType,
 		FileUrl:      request.FileUrl,
+		CreatorId:    request.CreatorId,
+		DebtorId:     request.DebtorId,
 		Item: &pb.ParseResponse_Document{
 			Document: doc,
 		},
