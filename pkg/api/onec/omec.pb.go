@@ -79,7 +79,11 @@ type ParseRequest struct {
 	// Ссылка на файл, который нужно распарсить
 	FileUrl string `protobuf:"bytes,2,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
 	// Тип клиента, для которого выполняется парсинг
-	CustomerType  CustomerType `protobuf:"varint,3,opt,name=customer_type,json=customerType,proto3,enum=onec.CustomerType" json:"customer_type,omitempty"`
+	CustomerType CustomerType `protobuf:"varint,3,opt,name=customer_type,json=customerType,proto3,enum=onec.CustomerType" json:"customer_type,omitempty"`
+	// Заказчик
+	CreatorId uint64 `protobuf:"varint,4,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	// Должник
+	DebtorId      *uint64 `protobuf:"varint,5,opt,name=debtor_id,json=debtorId,proto3,oneof" json:"debtor_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -135,6 +139,20 @@ func (x *ParseRequest) GetCustomerType() CustomerType {
 	return CustomerType_DEBTOR
 }
 
+func (x *ParseRequest) GetCreatorId() uint64 {
+	if x != nil {
+		return x.CreatorId
+	}
+	return 0
+}
+
+func (x *ParseRequest) GetDebtorId() uint64 {
+	if x != nil && x.DebtorId != nil {
+		return *x.DebtorId
+	}
+	return 0
+}
+
 type ParseResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Уникальный идентификатор запроса
@@ -147,7 +165,11 @@ type ParseResponse struct {
 	//	*ParseResponse_Document
 	Item isParseResponse_Item `protobuf_oneof:"item"`
 	// Ссылка на распарсенный файл
-	FileUrl       string `protobuf:"bytes,7,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
+	FileUrl string `protobuf:"bytes,7,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
+	// Заказчик
+	CreatorId uint64 `protobuf:"varint,8,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	// Должник
+	DebtorId      *uint64 `protobuf:"varint,9,opt,name=debtor_id,json=debtorId,proto3,oneof" json:"debtor_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -235,6 +257,20 @@ func (x *ParseResponse) GetFileUrl() string {
 		return x.FileUrl
 	}
 	return ""
+}
+
+func (x *ParseResponse) GetCreatorId() uint64 {
+	if x != nil {
+		return x.CreatorId
+	}
+	return 0
+}
+
+func (x *ParseResponse) GetDebtorId() uint64 {
+	if x != nil && x.DebtorId != nil {
+		return *x.DebtorId
+	}
+	return 0
 }
 
 type isParseResponse_Item interface {
@@ -1102,12 +1138,17 @@ var File_api_onec_omec_proto protoreflect.FileDescriptor
 
 const file_api_onec_omec_proto_rawDesc = "" +
 	"\n" +
-	"\x13api/onec/omec.proto\x12\x04onec\x1a google/protobuf/descriptor.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x81\x01\n" +
+	"\x13api/onec/omec.proto\x12\x04onec\x1a google/protobuf/descriptor.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd0\x01\n" +
 	"\fParseRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\fR\trequestId\x12\x19\n" +
 	"\bfile_url\x18\x02 \x01(\tR\afileUrl\x127\n" +
-	"\rcustomer_type\x18\x03 \x01(\x0e2\x12.onec.CustomerTypeR\fcustomerType\"\x9b\x02\n" +
+	"\rcustomer_type\x18\x03 \x01(\x0e2\x12.onec.CustomerTypeR\fcustomerType\x12\x1d\n" +
+	"\n" +
+	"creator_id\x18\x04 \x01(\x04R\tcreatorId\x12 \n" +
+	"\tdebtor_id\x18\x05 \x01(\x04H\x00R\bdebtorId\x88\x01\x01B\f\n" +
+	"\n" +
+	"_debtor_id\"\xea\x02\n" +
 	"\rParseResponse\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\fR\trequestId\x127\n" +
@@ -1115,8 +1156,13 @@ const file_api_onec_omec_proto_rawDesc = "" +
 	"\x04file\x18\x03 \x01(\v2\x12.onec.ExchangeFileH\x00R\x04file\x120\n" +
 	"\abalance\x18\x05 \x01(\v2\x14.onec.AccountBalanceH\x00R\abalance\x123\n" +
 	"\bdocument\x18\x06 \x01(\v2\x15.onec.PaymentDocumentH\x00R\bdocument\x12\x19\n" +
-	"\bfile_url\x18\a \x01(\tR\afileUrlB\x06\n" +
-	"\x04item\"\xe0\x02\n" +
+	"\bfile_url\x18\a \x01(\tR\afileUrl\x12\x1d\n" +
+	"\n" +
+	"creator_id\x18\b \x01(\x04R\tcreatorId\x12 \n" +
+	"\tdebtor_id\x18\t \x01(\x04H\x01R\bdebtorId\x88\x01\x01B\x06\n" +
+	"\x04itemB\f\n" +
+	"\n" +
+	"_debtor_id\"\xe0\x02\n" +
 	"\fExchangeFile\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1d\n" +
 	"\n" +
@@ -1319,6 +1365,7 @@ func file_api_onec_omec_proto_init() {
 	if File_api_onec_omec_proto != nil {
 		return
 	}
+	file_api_onec_omec_proto_msgTypes[0].OneofWrappers = []any{}
 	file_api_onec_omec_proto_msgTypes[1].OneofWrappers = []any{
 		(*ParseResponse_File)(nil),
 		(*ParseResponse_Balance)(nil),

@@ -19,6 +19,10 @@ message ParseRequest {
   string file_url = 2;
   // Тип клиента, для которого выполняется парсинг
   CustomerType customer_type = 3;
+  // Заказчик
+  uint64 creator_id = 4;
+  //  Должник
+  optional uint64 debtor_id = 5;
 }
 
 message ParseResponse {
@@ -32,6 +36,10 @@ message ParseResponse {
   }
   // Ссылка на распарсенный файл
   string file_url = 7;
+  // Заказчик
+  uint64 creator_id = 8;
+  //  Должник
+  optional uint64 debtor_id = 9;
 }
 
 // ExchangeFile holds the metadata of a 1C-ClientBank exchange file.
