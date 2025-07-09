@@ -30,6 +30,8 @@ message ParseResponse {
     AccountBalance balance = 5;
     PaymentDocument document = 6;
   }
+  // Ссылка на распарсенный файл
+  string file_url = 7;
 }
 
 // ExchangeFile holds the metadata of a 1C-ClientBank exchange file.

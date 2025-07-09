@@ -145,7 +145,9 @@ type ParseResponse struct {
 	//	*ParseResponse_File
 	//	*ParseResponse_Balance
 	//	*ParseResponse_Document
-	Item          isParseResponse_Item `protobuf_oneof:"item"`
+	Item isParseResponse_Item `protobuf_oneof:"item"`
+	// Ссылка на распарсенный файл
+	FileUrl       string `protobuf:"bytes,7,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -226,6 +228,13 @@ func (x *ParseResponse) GetDocument() *PaymentDocument {
 		}
 	}
 	return nil
+}
+
+func (x *ParseResponse) GetFileUrl() string {
+	if x != nil {
+		return x.FileUrl
+	}
+	return ""
 }
 
 type isParseResponse_Item interface {
@@ -1098,14 +1107,15 @@ const file_api_onec_omec_proto_rawDesc = "" +
 	"\n" +
 	"request_id\x18\x01 \x01(\fR\trequestId\x12\x19\n" +
 	"\bfile_url\x18\x02 \x01(\tR\afileUrl\x127\n" +
-	"\rcustomer_type\x18\x03 \x01(\x0e2\x12.onec.CustomerTypeR\fcustomerType\"\x80\x02\n" +
+	"\rcustomer_type\x18\x03 \x01(\x0e2\x12.onec.CustomerTypeR\fcustomerType\"\x9b\x02\n" +
 	"\rParseResponse\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\fR\trequestId\x127\n" +
 	"\rcustomer_type\x18\x02 \x01(\x0e2\x12.onec.CustomerTypeR\fcustomerType\x12(\n" +
 	"\x04file\x18\x03 \x01(\v2\x12.onec.ExchangeFileH\x00R\x04file\x120\n" +
 	"\abalance\x18\x05 \x01(\v2\x14.onec.AccountBalanceH\x00R\abalance\x123\n" +
-	"\bdocument\x18\x06 \x01(\v2\x15.onec.PaymentDocumentH\x00R\bdocumentB\x06\n" +
+	"\bdocument\x18\x06 \x01(\v2\x15.onec.PaymentDocumentH\x00R\bdocument\x12\x19\n" +
+	"\bfile_url\x18\a \x01(\tR\afileUrlB\x06\n" +
 	"\x04item\"\xe0\x02\n" +
 	"\fExchangeFile\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1d\n" +
