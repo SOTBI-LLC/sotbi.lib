@@ -1,6 +1,10 @@
 package onec
 
-import "time"
+import (
+	"time"
+
+	pb "github.com/COTBU/sotbi.lib/pkg/api/onec"
+)
 
 //nolint:lll
 type PaymentDocument struct {
@@ -76,4 +80,85 @@ type PaymentDocument struct {
 	SupplierAccountNumber  *string    `json:"supplier_account_number,omitempty"  mapstructure:"НомерСчетаПоставщика,omitempty"`
 	DocumentSendingDateStr *string    `json:"-"                                  mapstructure:"ДатаОтсылкиДок,omitempty"`
 	DocumentSendingDate    *time.Time `json:"document_sending_date,omitempty"    mapstructure:"-"`
+}
+
+func (d *PaymentDocument) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
+	doc := &pb.PaymentDocument{
+		DocumentType:           d.DocumentType,
+		Number:                 d.Number,
+		Date:                   timeToTimestamppb(d.Data),
+		WrittenOffDate:         timeToTimestamppb(d.WrittenOffDate),
+		IncomeDate:             timeToTimestamppb(d.IncomeDate),
+		RectDatetime:           timeToTimestamppb(d.RectDateTime),
+		DocumentSendingDate:    timeToTimestamppb(d.DocumentSendingDate),
+		IndicatorDate:          timeToTimestamppb(d.IndicatorDate),
+		Summ:                   d.Summ,
+		PayerAccount:           d.PayerAccount,
+		Payer:                  d.Payer,
+		PayerInn:               d.PayerINN,
+		PayerKpp:               d.PayerKPP,
+		PayerCurrentAccount:    d.PayerCurrentAccount,
+		PayerBank1:             d.PayerBank1,
+		PayerBank2:             d.PayerBank2,
+		PayerBik:               d.PayerBIK,
+		PayerCorrAccount:       d.PayerCorrAccount,
+		ReceiverAccount:        d.ReceiverAccount,
+		Receiver:               d.Receiver,
+		ReceiverInn:            d.ReceiverINN,
+		ReceiverCurrentAccount: d.ReceiverCurrentAccount,
+		ReceiverBank1:          d.ReceiverBank1,
+		ReceiverBik:            d.ReceiverBIK,
+		ReceiverCorrAccount:    d.ReceiverCorrAccount,
+		PaymentPurpose:         d.PaymentPurpose,
+		RectContent:            d.RectContent,
+		ReceiverKpp:            d.ReceiverKPP,
+		Payer1:                 d.Payer1,
+		Payer2:                 d.Payer2,
+		Payer3:                 d.Payer3,
+		Payer4:                 d.Payer4,
+		Receiver1:              d.Receiver1,
+		Receiver2:              d.Receiver2,
+		Receiver3:              d.Receiver3,
+		Receiver4:              d.Receiver4,
+		ReceiverBank2:          d.ReceiverBank2,
+		PaymentType:            d.PaymentType,
+		PaymentPurposeCode:     d.PaymentPurposeCode,
+		Uin:                    d.UIN,
+		PaymentPurpose1:        d.PaymentPurpose1,
+		PaymentPurpose2:        d.PaymentPurpose2,
+		PaymentPurpose3:        d.PaymentPurpose3,
+		PaymentPurpose4:        d.PaymentPurpose4,
+		PaymentPurpose5:        d.PaymentPurpose5,
+		PaymentPurpose6:        d.PaymentPurpose6,
+		CompilerStatus:         d.CompilerStatus,
+		Okato:                  d.OKATO,
+		IndicatorKbk:           d.IndicatorKBK,
+		IndicatorBasics:        d.IndicatorBasics,
+		IndicatorPeriod:        d.IndicatorPeriod,
+		IndicatorNumber:        d.IndicatorNumber,
+		IndicatorType:          d.IndicatorType,
+		DefrayalType:           d.DefrayalType,
+		AcceptanceTerm:         d.AcceptanceTerm,
+		TypeLetterCredit:       d.TypeLetterCredit,
+		PaymentTerm:            d.PaymentTerm,
+		PaymentCondition1:      d.PaymentCondition1,
+		PaymentCondition2:      d.PaymentCondition2,
+		PaymentCondition3:      d.PaymentCondition3,
+		PaymentBy:              d.PaymentBy,
+		AdditionalTerms:        d.AdditionalTerms,
+		SupplierAccountNumber:  d.SupplierAccountNumber,
+	}
+
+	if d.Priority != nil {
+		val := uint32(*d.Priority)
+		doc.Priority = &val
+	}
+
+	return &pb.ParseResponse{
+		RequestId:    request.RequestId,
+		CustomerType: request.CustomerType,
+		Item: &pb.ParseResponse_Document{
+			Document: doc,
+		},
+	}
 }

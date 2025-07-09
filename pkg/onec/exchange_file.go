@@ -1,6 +1,10 @@
 package onec
 
-import "time"
+import (
+	"time"
+
+	pb "github.com/COTBU/sotbi.lib/pkg/api/onec"
+)
 
 type ExchangeFile struct {
 	ID             uint64     `json:"id"`
@@ -16,4 +20,23 @@ type ExchangeFile struct {
 	EndDateStr     string     `json:"-"                      mapstructure:"ДатаКонца"`
 	EndDate        *time.Time `json:"end_date,omitempty"     mapstructure:"-"`
 	Account        []string   `json:"account,omitempty"      mapstructure:"РасчСчет,omitempty"`
+}
+
+func (f *ExchangeFile) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
+	return &pb.ParseResponse{
+		RequestId:    request.RequestId,
+		CustomerType: request.CustomerType,
+		Item: &pb.ParseResponse_File{
+			File: &pb.ExchangeFile{
+				FormatVer:       f.FormatVer,
+				Encoding:        f.Encoding,
+				Sender:          f.Sender,
+				Receiver:        f.Receiver,
+				CreatedDatetime: timeToTimestamppb(f.CreatedDate),
+				StartDate:       timeToTimestamppb(f.StartDate),
+				EndDate:         timeToTimestamppb(f.EndDate),
+				Account:         f.Account,
+			},
+		},
+	}
 }

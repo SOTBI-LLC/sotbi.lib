@@ -14,14 +14,14 @@ type SonyflakeConfig struct {
 }
 
 // Sonyflake is a goroutine-safe Sonyflake ID generator using atomic state.
-// JavaScript-compatible: generates 53-bit IDs that fit in Number.MAX_SAFE_INTEGER
+// JavaScript-compatible: generates 53-bit IDs that fit in Number.MAX_SAFE_INTEGER.
 type Sonyflake struct {
 	state  uint64 // high 41 bits: time, low 6 bits: sequence
 	config SonyflakeConfig
 }
 
 const (
-	// JavaScript-compatible bit allocation (53 bits total)
+	// JavaScript-compatible bit allocation (53 bits total).
 	sonyflakeMachineIDBits = 6                             // 6 bits: 0-63 machines
 	sonyflakeSequenceBits  = 6                             // 6 bits: 0-63 per millisecond
 	sonyflakeTimeBits      = 41                            // 41 bits: ~69 years from epoch
@@ -101,12 +101,12 @@ func (s *Sonyflake) NextID() (uint64, error) {
 	}
 }
 
-// MaxSafeInteger returns the maximum safe integer for JavaScript (2^53 - 1)
+// MaxSafeInteger returns the maximum safe integer for JavaScript (2^53 - 1).
 func (s *Sonyflake) MaxSafeInteger() uint64 {
 	return 9007199254740991 // 2^53 - 1
 }
 
-// IsJavaScriptSafe checks if the given ID is safe to use in JavaScript
+// IsJavaScriptSafe checks if the given ID is safe to use in JavaScript.
 func (s *Sonyflake) IsJavaScriptSafe(id uint64) bool {
 	return id <= s.MaxSafeInteger()
 }

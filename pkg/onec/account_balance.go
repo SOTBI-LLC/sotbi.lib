@@ -1,6 +1,10 @@
 package onec
 
-import "time"
+import (
+	"time"
+
+	pb "github.com/COTBU/sotbi.lib/pkg/api/onec"
+)
 
 type AccountBalance struct {
 	ID             uint64     `json:"id"`
@@ -14,4 +18,22 @@ type AccountBalance struct {
 	Income         float64    `json:"income"               mapstructure:"ВсегоПоступило"`
 	WriteOff       float64    `json:"write_off"            mapstructure:"ВсегоСписано"`
 	FinalBalance   float64    `json:"final_balance"        mapstructure:"КонечныйОстаток"`
+}
+
+func (b *AccountBalance) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
+	return &pb.ParseResponse{
+		RequestId:    request.RequestId,
+		CustomerType: request.CustomerType,
+		Item: &pb.ParseResponse_Balance{
+			Balance: &pb.AccountBalance{
+				StartDate:      timeToTimestamppb(b.StartDate),
+				EndDate:        timeToTimestamppb(b.EndDate),
+				Account:        b.Account,
+				InitialBalance: b.InitialBalance,
+				Income:         b.Income,
+				WriteOff:       b.WriteOff,
+				FinalBalance:   b.FinalBalance,
+			},
+		},
+	}
 }

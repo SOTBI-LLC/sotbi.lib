@@ -3,8 +3,11 @@ package onec
 import (
 	"io"
 	"time"
+
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+// Helper functions.
 func ParseDate(date string) *time.Time {
 	loc, err := time.LoadLocation("Europe/Moscow")
 	if err != nil {
@@ -43,6 +46,14 @@ func parseDateTimeInLoc(date string, loc *time.Location) *time.Time {
 	}
 
 	return &t
+}
+
+func timeToTimestamppb(t *time.Time) *timestamppb.Timestamp {
+	if t == nil {
+		return nil
+	}
+
+	return timestamppb.New(*t)
 }
 
 type Result struct {
