@@ -90,7 +90,7 @@ func (r *Result) ProcessBalanceAndDocs() *Result {
 			if remainings, exists := remainingsByAccount[doc.PayerAccount]; exists {
 				for _, remaining := range remainings {
 					if isDateInRange(doc.WrittenOffDate, remaining.StartDate, remaining.EndDate) {
-						doc.AccountBalanceID = remaining.ID
+						r.PaymentDocuments[j].AccountBalanceID = remaining.ID
 
 						goto nextDoc // Found match, skip receiver check
 					}
@@ -103,7 +103,7 @@ func (r *Result) ProcessBalanceAndDocs() *Result {
 			if remainings, exists := remainingsByAccount[doc.ReceiverAccount]; exists {
 				for _, remaining := range remainings {
 					if isDateInRange(doc.IncomeDate, remaining.StartDate, remaining.EndDate) {
-						doc.AccountBalanceID = remaining.ID
+						r.PaymentDocuments[j].AccountBalanceID = remaining.ID
 
 						break
 					}
