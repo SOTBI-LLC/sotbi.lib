@@ -84,6 +84,7 @@ type PaymentDocument struct {
 
 func (d *PaymentDocument) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 	doc := &pb.PaymentDocument{
+		AccountBalanceId:       d.AccountBalanceID,
 		DocumentType:           d.DocumentType,
 		Number:                 d.Number,
 		Date:                   timeToTimestamppb(d.Data),

@@ -36,6 +36,7 @@ func (b *AccountBalance) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 				Income:         b.Income,
 				WriteOff:       b.WriteOff,
 				FinalBalance:   b.FinalBalance,
+				ExchangeFileId: b.ExchangeFileID,
 			},
 		},
 	}
