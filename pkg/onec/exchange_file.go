@@ -31,6 +31,7 @@ func (f *ExchangeFile) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 		DebtorId:     request.DebtorId,
 		Item: &pb.ParseResponse_File{
 			File: &pb.ExchangeFile{
+				Id:              f.ID,
 				FormatVer:       f.FormatVer,
 				Encoding:        f.Encoding,
 				Sender:          f.Sender,

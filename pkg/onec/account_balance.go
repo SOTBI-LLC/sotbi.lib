@@ -29,6 +29,7 @@ func (b *AccountBalance) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 		DebtorId:     request.DebtorId,
 		Item: &pb.ParseResponse_Balance{
 			Balance: &pb.AccountBalance{
+				Id:             b.ID,
 				StartDate:      timeToTimestamppb(b.StartDate),
 				EndDate:        timeToTimestamppb(b.EndDate),
 				Account:        b.Account,
