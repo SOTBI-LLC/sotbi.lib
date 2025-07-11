@@ -19,6 +19,10 @@ message ParseRequest {
   string file_url = 2;
   // Тип клиента, для которого выполняется парсинг
   CustomerType customer_type = 3;
+  // Заказчик
+  uint64 creator_id = 4;
+  //  Должник
+  optional uint64 debtor_id = 5;
 }
 
 message ParseResponse {
@@ -30,20 +34,27 @@ message ParseResponse {
     AccountBalance balance = 5;
     PaymentDocument document = 6;
   }
+  // Ссылка на распарсенный файл
+  string file_url = 7;
+  // Заказчик
+  uint64 creator_id = 8;
+  //  Должник
+  optional uint64 debtor_id = 9;
 }
 
 // ExchangeFile holds the metadata of a 1C-ClientBank exchange file.
 message ExchangeFile {
+  uint64 id = 1;
   // ВерсияФормата
-  string format_ver = 1;
+  string format_ver = 2;
   // Кодировка
-  string encoding = 2;
+  string encoding = 3;
   // Отправитель
-  string sender = 3;
+  string sender = 4;
   // Получатель
-  string receiver = 4;
+  string receiver = 5;
   // ДатаСоздания (DD.MM.YYYY HH:MM:SS)
-  google.protobuf.Timestamp created_datetime = 5;
+  google.protobuf.Timestamp created_datetime = 6;
   // ДатаНачала (DD.MM.YYYY)
   google.protobuf.Timestamp start_date = 7;
   // ДатаКонца (DD.MM.YYYY)
@@ -54,135 +65,138 @@ message ExchangeFile {
 
 // AccountBalance represents opening and closing balances for an account.
 message AccountBalance {
+  uint64 id = 1;
+  uint64 exchange_file_id = 2;
   // ДатаНачала (DD.MM.YYYY)
-  google.protobuf.Timestamp start_date = 1;
+  google.protobuf.Timestamp start_date = 3;
   // ДатаКонца (DD.MM.YYYY)
-  google.protobuf.Timestamp end_date = 2;
+  google.protobuf.Timestamp end_date = 4;
   // РасчСчет
-  string account = 3;
+  string account = 5;
   // НачальныйОстаток
-  double initial_balance = 4;
+  double initial_balance = 6;
   // ВсегоПоступило
-  double income = 5;
+  double income = 7;
   // ВсегоСписано
-  double write_off = 6;
+  double write_off = 8;
   // КонечныйОстаток
-  double final_balance = 7;
+  double final_balance = 9;
 }
 
 // PaymentDocument представляет одну запись документа обмена.
 message PaymentDocument {
+  uint64 account_balance_id = 1;
   // СекцияДокумент
-  string document_type = 1;
+  string document_type = 2;
   // Номер
-  string number = 2;
+  string number = 3;
   // Дата
-  google.protobuf.Timestamp date = 3;
+  google.protobuf.Timestamp date = 4;
   // ДатаСписано
-  optional google.protobuf.Timestamp written_off_date = 4;
+  optional google.protobuf.Timestamp written_off_date = 5;
   // ДатаПоступило
-  optional google.protobuf.Timestamp income_date = 5;
+  optional google.protobuf.Timestamp income_date = 6;
   // Сумма
-  double summ = 6;
+  double summ = 7;
   // КвитанцияДата + КвитанцияВремя (DD.MM.YYYY HH:MM:SS)
-  optional google.protobuf.Timestamp rect_datetime = 7;
+  optional google.protobuf.Timestamp rect_datetime = 8;
   // КвитанцияСодержание
-  optional string rect_content = 9;
+  optional string rect_content = 10;
   // ПлательщикСчет
-  string payer_account = 10;
+  string payer_account = 11;
   // Плательщик
-  string payer = 11;
+  string payer = 12;
   // ПлательщикИНН
-  string payer_inn = 12;
+  string payer_inn = 13;
   // ПлательщикКПП
-  optional string payer_kpp = 13;
+  optional string payer_kpp = 14;
   // Плательщик1…4
-  optional string payer1 = 14;
-  optional string payer2 = 15;
-  optional string payer3 = 16;
-  optional string payer4 = 17;
+  optional string payer1 = 16;
+  optional string payer2 = 17;
+  optional string payer3 = 18;
+  optional string payer4 = 19;
   // ПлательщикРасчСчет
-  string payer_current_account = 18;
+  string payer_current_account = 20;
   // ПлательщикБанк1…2
-  string payer_bank1 = 19;
-  optional string payer_bank2 = 20;
+  string payer_bank1 = 21;
+  optional string payer_bank2 = 22;
   // ПлательщикБИК
-  string payer_bik = 21;
+  string payer_bik = 23;
   // ПлательщикКорсчет
-  string payer_corr_account = 22;
+  string payer_corr_account = 24;
   // ПолучательСчет
-  string receiver_account = 23;
+  string receiver_account = 25;
   // Получатель
-  string receiver = 24;
+  string receiver = 26;
   // ПолучательИНН
-  string receiver_inn = 25;
+  string receiver_inn = 27;
   // ПолучательКПП
-  optional string receiver_kpp = 26;
+  optional string receiver_kpp = 28;
   // Получатель1…4
-  optional string receiver1 = 27;
-  optional string receiver2 = 28;
-  optional string receiver3 = 29;
-  optional string receiver4 = 30;
+  optional string receiver1 = 29;
+  optional string receiver2 = 30;
+  optional string receiver3 = 31;
+  optional string receiver4 = 32;
   // ПолучательРасчСчет
-  string receiver_current_account = 31;
+  string receiver_current_account = 33;
   // ПолучательБанк1…2
-  string receiver_bank1 = 32;
-  optional string receiver_bank2 = 33;
+  string receiver_bank1 = 34;
+  optional string receiver_bank2 = 35;
   // ПолучательБИК
-  string receiver_bik = 34;
+  string receiver_bik = 36;
   // ПолучательКорсчет
-  string receiver_corr_account = 35;
+  string receiver_corr_account = 37;
   // ВидПлатежа
-  optional string payment_type = 36;
+  optional string payment_type = 38;
   // КодНазПлатежа
-  optional string payment_purpose_code = 37;
+  optional string payment_purpose_code = 39;
   // Код (UIN)
-  optional string uin = 38;
+  optional string uin = 40;
   // НазначениеПлатежа
-  string payment_purpose = 39;
+  string payment_purpose = 41;
   // НазначениеПлатежа1…6
-  optional string payment_purpose1 = 40;
-  optional string payment_purpose2 = 41;
-  optional string payment_purpose3 = 42;
-  optional string payment_purpose4 = 43;
-  optional string payment_purpose5 = 44;
-  optional string payment_purpose6 = 45;
+  optional string payment_purpose1 = 42;
+  optional string payment_purpose2 = 43;
+  optional string payment_purpose3 = 44;
+  optional string payment_purpose4 = 45;
+  optional string payment_purpose5 = 46;
+  optional string payment_purpose6 = 47;
   // СтатусСоставителя
-  optional string compiler_status = 46;
+  optional string compiler_status = 48;
   // ОКАТО
-  optional string okato = 47;
+  optional string okato = 49;
   // ПоказательКБК
-  optional string indicator_kbk = 48;
+  optional string indicator_kbk = 50;
   // ПоказательОснования
-  optional string indicator_basics = 49;
+  optional string indicator_basics = 51;
   // ПоказательПериода
-  optional string indicator_period = 50;
+  optional string indicator_period = 52;
   // ПоказательНомера
-  optional string indicator_number = 51;
+  optional string indicator_number = 53;
   // ПоказательДаты
-  optional string indicator_date = 52;
+  optional google.protobuf.Timestamp indicator_date = 54;
   // ПоказательТипа
-  optional string indicator_type = 53;
+  optional string indicator_type = 55;
   // Очередность
-  optional uint32 priority = 54;
+  optional uint32 priority = 56;
   // ВидОплаты
-  optional string defrayal_type = 55;
+  optional string defrayal_type = 57;
   // СрокАкцепта
-  optional string acceptance_term = 56;
+  optional string acceptance_term = 58;
   // ВидАккредитива
-  optional string type_letter_credit = 57;
+  optional string type_letter_credit = 59;
   // СрокПлатежа
-  optional string payment_term = 58;
+  optional string payment_term = 60;
   // УсловиеОплаты1…3
-  optional string payment_condition1 = 59;
-  optional string payment_condition2 = 60;
-  optional string payment_condition3 = 61;
+  optional string payment_condition1 = 61;
+  optional string payment_condition2 = 62;
+  optional string payment_condition3 = 63;
   // ПлатежПоПредст
-  optional string payment_by = 62;
+  optional string payment_by = 64;
   // ДополнУсловия
-  optional string additional_terms = 63;
+  optional string additional_terms = 65;
   // НомерСчетаПоставщика
-  optional string supplier_account_number = 64;
+  optional string supplier_account_number = 66;
   // ДатаОтсылкиДок
-  optional string document_sending_date = 65;
+  optional google.protobuf.Timestamp document_sending_date = 67;
 }

@@ -12,6 +12,7 @@ import (
 	"golang.org/x/text/transform"
 
 	"github.com/COTBU/sotbi.lib/pkg/onec"
+	"github.com/COTBU/sotbi.lib/pkg/utils"
 )
 
 type ExchangeFile struct {
@@ -22,31 +23,47 @@ type ExchangeFile struct {
 
 var _ onec.Parser = (*ExchangeFile)(nil)
 
-func (p *ExchangeFile) Scan(file io.Reader) (onec.Result, error) {
+func (p *ExchangeFile) Scan(file io.Reader, next func() (uint64, error)) (*onec.Result, error) {
 	if err := p.read(p.convertFileEncoding(file)); err != nil {
-		return onec.Result{}, err
+		return nil, err
 	}
 
 	exFile, err := p.convertFile()
 	if err != nil {
-		return onec.Result{}, err
+		return nil, err
+	}
+
+	exFile.ID, err = next()
+	if err != nil {
+		return nil, err
 	}
 
 	rem, err := p.convertAccountBalance()
 	if err != nil {
-		return onec.Result{}, err
+		return nil, err
+	}
+
+	for i := range rem {
+		rem[i].ExchangeFileID = exFile.ID
+
+		rem[i].ID, err = next()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	pd, err := p.convertPaymentDocuments()
 	if err != nil {
-		return onec.Result{}, err
+		return nil, err
 	}
 
-	return onec.Result{
+	result := &onec.Result{
 		ExchangeFile:     exFile,
 		Remainings:       rem,
 		PaymentDocuments: pd,
-	}, nil
+	}
+
+	return result.ProcessBalanceAndDocs(), nil
 }
 
 func (*ExchangeFile) convertFileEncoding(file io.Reader) io.Reader {
@@ -143,6 +160,10 @@ func (p *ExchangeFile) convertFile() (onec.ExchangeFile, error) {
 		return exFile, fmt.Errorf("error while decoding ExchangeFile: %w", err)
 	}
 
+	exFile.StartDate = onec.ParseDate(exFile.StartDateStr)
+	exFile.EndDate = onec.ParseDateTime(exFile.EndDateStr + " 23:59:59")
+	exFile.CreatedDate = onec.ParseDateTime(exFile.CreatedDateStr + " " + exFile.CreatedTimeStr)
+
 	return exFile, nil
 }
 
@@ -164,6 +185,9 @@ func (p *ExchangeFile) convertAccountBalance() ([]onec.AccountBalance, error) {
 		if err := decoder.Decode(p.accountBalance[i]); err != nil {
 			return nil, fmt.Errorf("error while decode remaining: %w", err)
 		}
+
+		remaining.StartDate = onec.ParseDate(remaining.StartDateStr)
+		remaining.EndDate = onec.ParseDateTime(remaining.EndDateStr + " 23:59:59")
 
 		remainings = append(remainings, remaining)
 	}
@@ -188,6 +212,17 @@ func (p *ExchangeFile) convertPaymentDocuments() ([]onec.PaymentDocument, error)
 		if err := decoder.Decode(p.paymentDocuments[i]); err != nil {
 			return nil, fmt.Errorf("error while decode payment document: %w", err)
 		}
+
+		if len(pd.RectDateStr) == 5 {
+			pd.RectDateStr += ":00"
+		}
+
+		pd.Data = onec.ParseDate(pd.DataStr)
+		pd.WrittenOffDate = onec.ParseDate(pd.WrittenOffDateStr)
+		pd.IncomeDate = onec.ParseDate(pd.IncomeDateStr)
+		pd.RectDateTime = onec.ParseDateTime(pd.RectDateStr + " " + pd.RectTimeStr)
+		pd.IndicatorDate = onec.ParseDate(pd.IndicatorDateStr)
+		pd.DocumentSendingDate = onec.ParseDateTime(utils.FromPtr(pd.DocumentSendingDateStr))
 
 		paymentDocuments = append(paymentDocuments, pd)
 	}

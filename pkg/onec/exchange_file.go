@@ -1,13 +1,46 @@
 package onec
 
+import (
+	"time"
+
+	pb "github.com/COTBU/sotbi.lib/pkg/api/onec"
+)
+
 type ExchangeFile struct {
-	FormatVer   string   `mapstructure:"ВерсияФормата"      json:"format_ver"`
-	Encoding    string   `mapstructure:"Кодировка"          json:"encoding"`
-	Sender      string   `mapstructure:"Отправитель"        json:"sender"`
-	Receiver    string   `mapstructure:"Получатель"         json:"receiver"`
-	CreatedDate string   `mapstructure:"ДатаСоздания"       json:"created_date,omitempty"`
-	CreatedTime string   `mapstructure:"ВремяСоздания"      json:"created_time,omitempty"`
-	StartDate   string   `mapstructure:"ДатаНачала"         json:"start_date,omitempty"`
-	EndDate     string   `mapstructure:"ДатаКонца"          json:"end_date,omitempty"`
-	Account     []string `mapstructure:"РасчСчет,omitempty" json:"account,omitempty"`
+	ID             uint64     `json:"id"`
+	FormatVer      string     `json:"format_ver"             mapstructure:"ВерсияФормата"`
+	Encoding       string     `json:"encoding"               mapstructure:"Кодировка"`
+	Sender         string     `json:"sender"                 mapstructure:"Отправитель"`
+	Receiver       string     `json:"receiver"               mapstructure:"Получатель"`
+	CreatedDateStr string     `json:"-"                      mapstructure:"ДатаСоздания"`
+	CreatedTimeStr string     `json:"-"                      mapstructure:"ВремяСоздания"`
+	CreatedDate    *time.Time `json:"created_date,omitempty" mapstructure:"-"`
+	StartDateStr   string     `json:"-"                      mapstructure:"ДатаНачала"`
+	StartDate      *time.Time `json:"start_date,omitempty"   mapstructure:"-"`
+	EndDateStr     string     `json:"-"                      mapstructure:"ДатаКонца"`
+	EndDate        *time.Time `json:"end_date,omitempty"     mapstructure:"-"`
+	Account        []string   `json:"account,omitempty"      mapstructure:"РасчСчет,omitempty"`
+}
+
+func (f *ExchangeFile) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
+	return &pb.ParseResponse{
+		RequestId:    request.RequestId,
+		CustomerType: request.CustomerType,
+		FileUrl:      request.FileUrl,
+		CreatorId:    request.CreatorId,
+		DebtorId:     request.DebtorId,
+		Item: &pb.ParseResponse_File{
+			File: &pb.ExchangeFile{
+				Id:              f.ID,
+				FormatVer:       f.FormatVer,
+				Encoding:        f.Encoding,
+				Sender:          f.Sender,
+				Receiver:        f.Receiver,
+				CreatedDatetime: timeToTimestamppb(f.CreatedDate),
+				StartDate:       timeToTimestamppb(f.StartDate),
+				EndDate:         timeToTimestamppb(f.EndDate),
+				Account:         f.Account,
+			},
+		},
+	}
 }
