@@ -60,58 +60,60 @@ func CreateFilter(ctx context.Context, tbl *gorm.DB, args ...string) *gorm.DB {
 
 	for field, filter := range filterModel {
 		if filter.IsEmpty() {
-			if !strings.Contains(field, ".") {
-				field = fmt.Sprintf("%s%s", prefix, field)
-			}
+			continue
+		}
 
-			var filterOperator string
+		if !strings.Contains(field, ".") {
+			field = fmt.Sprintf("%s%s", prefix, field)
+		}
 
-			if filter.Operator != nil {
-				filterOperator = *filter.Operator
-			}
+		var filterOperator string
 
-			switch *filter.FilterType {
-			case "set":
-				if len(filter.Values) > 0 {
-					// проверка на наличие в set null значения
-					nullExistInSet := false
+		if filter.Operator != nil {
+			filterOperator = *filter.Operator
+		}
 
-					for _, val := range filter.Values {
-						if val == nil || *val == "" {
-							nullExistInSet = true
+		switch *filter.FilterType {
+		case "set":
+			if len(filter.Values) > 0 {
+				// проверка на наличие в set null значения
+				nullExistInSet := false
 
-							break
-						}
-					}
+				for _, val := range filter.Values {
+					if val == nil || *val == "" {
+						nullExistInSet = true
 
-					if nullExistInSet { // если null есть - то добавляем условие OR _ IS NULL
-						tbl = tbl.Where(
-							fmt.Sprintf("%s in (?) OR %s IS NULL", field, field),
-							&filter.Values,
-						)
-					} else {
-						tbl = tbl.Where(fmt.Sprintf("%s in (?)", field), filter.Values)
+						break
 					}
 				}
-			case "date":
-				if filterOperator == "" {
-					tbl = constructDateWhere(tbl, field, filterOperator, filter)
-				} else {
-					tbl = constructDateWhere(tbl, field, filterOperator, filter.Condition1.Filter, filter.Condition2.Filter)
-				}
-			case "number":
-				tbl = constructNumberWhere(tbl, field, filter)
-			case "text":
-				if filterOperator == "" {
-					tbl = constructTextWhere(tbl, field, filterOperator, filter)
-				} else {
-					tbl = constructTextWhere(tbl, field, filterOperator, filter.Condition1.Filter, filter.Condition2.Filter)
-				}
-			default:
-				tbl.Logger.Info(ctx, "unknown number filterType: "+*filter.FilterType)
 
-				return tbl
+				if nullExistInSet { // если null есть - то добавляем условие OR _ IS NULL
+					tbl = tbl.Where(
+						fmt.Sprintf("%s in (?) OR %s IS NULL", field, field),
+						&filter.Values,
+					)
+				} else {
+					tbl = tbl.Where(fmt.Sprintf("%s in (?)", field), filter.Values)
+				}
 			}
+		case "date":
+			if filterOperator == "" {
+				tbl = constructDateWhere(tbl, field, filterOperator, filter)
+			} else {
+				tbl = constructDateWhere(tbl, field, filterOperator, filter.Condition1.Filter, filter.Condition2.Filter)
+			}
+		case "number":
+			tbl = constructNumberWhere(tbl, field, filter)
+		case "text":
+			if filterOperator == "" {
+				tbl = constructTextWhere(tbl, field, filterOperator, filter)
+			} else {
+				tbl = constructTextWhere(tbl, field, filterOperator, filter.Condition1.Filter, filter.Condition2.Filter)
+			}
+		default:
+			tbl.Logger.Info(ctx, "unknown number filterType: "+*filter.FilterType)
+
+			return tbl
 		}
 	}
 
