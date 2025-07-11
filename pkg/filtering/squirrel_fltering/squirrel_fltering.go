@@ -60,58 +60,59 @@ func CreateFilter(query sq.SelectBuilder, args ...string) sq.SelectBuilder {
 
 	for field, filter := range filterModel {
 		if filter.IsEmpty() {
-			if !strings.Contains(field, ".") {
-				field = fmt.Sprintf("%s%s", prefix, field)
-			}
+			continue
+		}
+		if !strings.Contains(field, ".") {
+			field = fmt.Sprintf("%s%s", prefix, field)
+		}
 
-			var filterOperator string
+		var filterOperator string
 
-			if filter.Operator != nil {
-				filterOperator = *filter.Operator
-			}
+		if filter.Operator != nil {
+			filterOperator = *filter.Operator
+		}
 
-			switch *filter.FilterType {
-			case "set":
-				if len(filter.Values) > 0 {
-					// проверка на наличие в set null значения
-					nullExistInSet := false
+		switch *filter.FilterType {
+		case "set":
+			if len(filter.Values) > 0 {
+				// проверка на наличие в set null значения
+				nullExistInSet := false
 
-					for _, val := range filter.Values {
-						if *val == "" {
-							nullExistInSet = true
+				for _, val := range filter.Values {
+					if *val == "" {
+						nullExistInSet = true
 
-							break
-						}
-					}
-
-					if nullExistInSet { // если null есть - то добавляем условие OR _ IS NULL
-						query = query.Where(
-							fmt.Sprintf("%s in (?) OR %s IS NULL", field, field),
-							filter.Values,
-						)
-					} else {
-						query = query.Where(fmt.Sprintf("%s in (?)", field), filter.Values)
+						break
 					}
 				}
-			case "date":
-				if filterOperator == "" {
-					query = constructDateWhere(query, field, filterOperator, filter)
-				} else {
-					query = constructDateWhere(query, field, filterOperator, filter.Condition1.Filter, filter.Condition2.Filter)
-				}
-			case "number":
-				query = constructNumberWhere(query, field, filter)
-			case "text":
-				if filterOperator == "" {
-					query = constructTextWhere(query, field, filterOperator, filter)
-				} else {
-					query = constructTextWhere(query, field, filterOperator, filter.Condition1.Filter, filter.Condition2.Filter)
-				}
-			default:
-				slog.Default().Info("unknown number filterType: " + *filter.FilterType)
 
-				return query
+				if nullExistInSet { // если null есть - то добавляем условие OR _ IS NULL
+					query = query.Where(
+						fmt.Sprintf("%s in (?) OR %s IS NULL", field, field),
+						filter.Values,
+					)
+				} else {
+					query = query.Where(fmt.Sprintf("%s in (?)", field), filter.Values)
+				}
 			}
+		case "date":
+			if filterOperator == "" {
+				query = constructDateWhere(query, field, filterOperator, filter)
+			} else {
+				query = constructDateWhere(query, field, filterOperator, filter.Condition1.Filter, filter.Condition2.Filter)
+			}
+		case "number":
+			query = constructNumberWhere(query, field, filter)
+		case "text":
+			if filterOperator == "" {
+				query = constructTextWhere(query, field, filterOperator, filter)
+			} else {
+				query = constructTextWhere(query, field, filterOperator, filter.Condition1.Filter, filter.Condition2.Filter)
+			}
+		default:
+			slog.Default().Info("unknown number filterType: " + *filter.FilterType)
+
+			return query
 		}
 	}
 
