@@ -23,8 +23,8 @@ type Sonyflake struct {
 const (
 	// JavaScript-compatible bit allocation (53 bits total).
 	sonyflakeMachineIDBits = 6                             // 6 bits: 0-63 machines
-	sonyflakeSequenceBits  = 6                             // 6 bits: 0-63 per millisecond
-	sonyflakeTimeBits      = 41                            // 41 bits: ~69 years from epoch
+	sonyflakeSequenceBits  = 8                             // 8 bits: 0-255 per millisecond
+	sonyflakeTimeBits      = 39                            // 39 bits: ~17 years from epoch
 	sonyflakeMaxSequence   = 1<<sonyflakeSequenceBits - 1  // 63
 	sonyflakeMaxMachineID  = 1<<sonyflakeMachineIDBits - 1 // 63
 	sonyflakeMaxTime       = 1<<sonyflakeTimeBits - 1      // ~69 years
