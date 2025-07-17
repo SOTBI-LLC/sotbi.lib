@@ -7,23 +7,22 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-// Helper functions.
-func ParseDate(date string) *time.Time {
+func getLocation() *time.Location {
 	loc, err := time.LoadLocation("Europe/Moscow")
 	if err != nil {
-		return nil
+		loc = time.FixedZone("UTC+3", 3*60*60)
 	}
 
-	return parseDateTimeInLoc(date+" 00:00:00", loc)
+	return loc
+}
+
+// Helper functions.
+func ParseDate(date string) *time.Time {
+	return parseDateTimeInLoc(date+" 00:00:00", getLocation())
 }
 
 func ParseDateTime(date string) *time.Time {
-	loc, err := time.LoadLocation("Europe/Moscow")
-	if err != nil {
-		return nil
-	}
-
-	return parseDateTimeInLoc(date, loc)
+	return parseDateTimeInLoc(date, getLocation())
 }
 
 func parseDateTimeInLoc(date string, loc *time.Location) *time.Time {

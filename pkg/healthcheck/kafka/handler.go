@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/COTBU/sotbi.lib/pkg/log"
 	"github.com/segmentio/kafka-go"
+
+	"github.com/COTBU/sotbi.lib/pkg/log"
 )
 
 type HealthCheck struct {

@@ -34,6 +34,7 @@ func (hc HealthCheck) Handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		hc.Error("failed to ping database", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+
 		return
 	}
 }
