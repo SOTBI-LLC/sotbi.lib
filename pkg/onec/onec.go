@@ -7,27 +7,15 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func getLocation() *time.Location {
+// Helper functions.
+func ParseDateTime(date string) *time.Time {
+	if date == "" {
+		return nil
+	}
+
 	loc, err := time.LoadLocation("Europe/Moscow")
 	if err != nil {
 		loc = time.FixedZone("UTC+3", 3*60*60)
-	}
-
-	return loc
-}
-
-// Helper functions.
-func ParseDate(date string) *time.Time {
-	return parseDateTimeInLoc(date+" 00:00:00", getLocation())
-}
-
-func ParseDateTime(date string) *time.Time {
-	return parseDateTimeInLoc(date, getLocation())
-}
-
-func parseDateTimeInLoc(date string, loc *time.Location) *time.Time {
-	if date == "" {
-		return nil
 	}
 
 	t, err := time.ParseInLocation("02.01.2006 15:04:05", date, loc)
@@ -37,6 +25,28 @@ func parseDateTimeInLoc(date string, loc *time.Location) *time.Time {
 			t, err = time.ParseInLocation("02012006 15:04:05", date, loc)
 			if err != nil {
 				t, err = time.ParseInLocation("2006/01/02 15:04:05", date, loc)
+				if err != nil {
+					return nil
+				}
+			}
+		}
+	}
+
+	return &t
+}
+
+func ParseDate(date string) *time.Time {
+	if date == "" {
+		return nil
+	}
+
+	t, err := time.Parse("02.01.2006", date)
+	if err != nil {
+		t, err = time.Parse("2006-01-02", date)
+		if err != nil {
+			t, err = time.Parse("02012006", date)
+			if err != nil {
+				t, err = time.Parse("2006/01/02", date)
 				if err != nil {
 					return nil
 				}
