@@ -213,18 +213,20 @@ func (p *ExchangeFile) convertPaymentDocuments() ([]onec.PaymentDocument, error)
 			return nil, fmt.Errorf("error while decode payment document: %w", err)
 		}
 
-		if len(pd.RectDateStr) == 5 {
-			pd.RectDateStr += ":00"
+		if pd.Summ > 0 {
+			if len(pd.RectDateStr) == 5 {
+				pd.RectDateStr += ":00"
+			}
+
+			pd.Data = onec.ParseDate(pd.DataStr)
+			pd.WrittenOffDate = onec.ParseDate(pd.WrittenOffDateStr)
+			pd.IncomeDate = onec.ParseDate(pd.IncomeDateStr)
+			pd.RectDateTime = onec.ParseDateTime(pd.RectDateStr + " " + pd.RectTimeStr)
+			pd.IndicatorDate = onec.ParseDate(pd.IndicatorDateStr)
+			pd.DocumentSendingDate = onec.ParseDateTime(utils.FromPtr(pd.DocumentSendingDateStr))
+
+			paymentDocuments = append(paymentDocuments, pd)
 		}
-
-		pd.Data = onec.ParseDate(pd.DataStr)
-		pd.WrittenOffDate = onec.ParseDate(pd.WrittenOffDateStr)
-		pd.IncomeDate = onec.ParseDate(pd.IncomeDateStr)
-		pd.RectDateTime = onec.ParseDateTime(pd.RectDateStr + " " + pd.RectTimeStr)
-		pd.IndicatorDate = onec.ParseDate(pd.IndicatorDateStr)
-		pd.DocumentSendingDate = onec.ParseDateTime(utils.FromPtr(pd.DocumentSendingDateStr))
-
-		paymentDocuments = append(paymentDocuments, pd)
 	}
 
 	return paymentDocuments, nil
