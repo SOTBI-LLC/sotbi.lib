@@ -83,7 +83,9 @@ type ParseRequest struct {
 	// Заказчик
 	CreatorId uint64 `protobuf:"varint,4,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
 	// Должник
-	DebtorId      *uint64 `protobuf:"varint,5,opt,name=debtor_id,json=debtorId,proto3,oneof" json:"debtor_id,omitempty"`
+	DebtorId *uint64 `protobuf:"varint,5,opt,name=debtor_id,json=debtorId,proto3,oneof" json:"debtor_id,omitempty"`
+	// РасчСчет
+	Account       *string `protobuf:"bytes,6,opt,name=account,proto3,oneof" json:"account,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -151,6 +153,13 @@ func (x *ParseRequest) GetDebtorId() uint64 {
 		return *x.DebtorId
 	}
 	return 0
+}
+
+func (x *ParseRequest) GetAccount() string {
+	if x != nil && x.Account != nil {
+		return *x.Account
+	}
+	return ""
 }
 
 type ParseResponse struct {
@@ -1138,7 +1147,7 @@ var File_api_onec_omec_proto protoreflect.FileDescriptor
 
 const file_api_onec_omec_proto_rawDesc = "" +
 	"\n" +
-	"\x13api/onec/omec.proto\x12\x04onec\x1a google/protobuf/descriptor.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd0\x01\n" +
+	"\x13api/onec/omec.proto\x12\x04onec\x1a google/protobuf/descriptor.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfb\x01\n" +
 	"\fParseRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\fR\trequestId\x12\x19\n" +
@@ -1146,9 +1155,12 @@ const file_api_onec_omec_proto_rawDesc = "" +
 	"\rcustomer_type\x18\x03 \x01(\x0e2\x12.onec.CustomerTypeR\fcustomerType\x12\x1d\n" +
 	"\n" +
 	"creator_id\x18\x04 \x01(\x04R\tcreatorId\x12 \n" +
-	"\tdebtor_id\x18\x05 \x01(\x04H\x00R\bdebtorId\x88\x01\x01B\f\n" +
+	"\tdebtor_id\x18\x05 \x01(\x04H\x00R\bdebtorId\x88\x01\x01\x12\x1d\n" +
+	"\aaccount\x18\x06 \x01(\tH\x01R\aaccount\x88\x01\x01B\f\n" +
 	"\n" +
-	"_debtor_id\"\xea\x02\n" +
+	"_debtor_idB\n" +
+	"\n" +
+	"\b_account\"\xea\x02\n" +
 	"\rParseResponse\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\fR\trequestId\x127\n" +
