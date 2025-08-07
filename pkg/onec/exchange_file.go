@@ -24,7 +24,7 @@ type ExchangeFile struct {
 
 func (f *ExchangeFile) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 	var accounts []string
-	if len(f.Account) == 0 && request.Account != nil {
+	if (len(f.Account) == 0 || f.Account[0] == "") && request.Account != nil {
 		accounts = []string{*request.Account}
 	} else {
 		accounts = f.Account
