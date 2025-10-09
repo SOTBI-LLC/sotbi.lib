@@ -140,12 +140,12 @@ func GetInterval(qp url.Values) (start, end time.Time, err error) {
 			return
 		}
 
-		start, err = time.Parse("2006-01-02 15:04:05 MST", *filterModel["date"].DateFrom+times.MSK)
+		start, err = time.Parse("2006-01-02 MST", *filterModel["date"].DateFrom+times.MSK)
 		if err != nil {
 			return
 		}
 
-		end, err = time.Parse("2006-01-02 15:04:05  MST", *filterModel["date"].DateTo+times.MSK)
+		end, err = time.Parse("2006-01-02 MST", *filterModel["date"].DateTo+times.MSK)
 		if err != nil {
 			return
 		}
