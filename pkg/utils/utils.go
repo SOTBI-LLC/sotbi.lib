@@ -15,7 +15,7 @@ import (
 	"github.com/COTBU/sotbi.lib/pkg/times"
 )
 
-type Params struct {
+type CostsRequestParams struct {
 	Users        []uint64
 	Start        time.Time
 	End          time.Time
