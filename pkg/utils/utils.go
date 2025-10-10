@@ -15,6 +15,14 @@ import (
 	"github.com/COTBU/sotbi.lib/pkg/times"
 )
 
+type Params struct {
+	Users        []uint64
+	Start        time.Time
+	End          time.Time
+	Debtors      []uint64
+	AnalyticType string
+}
+
 func FromPtr[T any](t *T) T {
 	if t == nil {
 		return *new(T)
