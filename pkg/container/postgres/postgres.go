@@ -24,6 +24,7 @@ import (
 const (
 	dbName                 = "energy"
 	dbUser                 = "energy"
+	dbPassword             = "energy"
 	numLogOccurrence       = 2
 	postgresStartupTimeout = 5 * time.Second
 )
@@ -51,7 +52,7 @@ func New(options ...testcontainers.CustomizeRequestOption) *Postgres {
 			Env: map[string]string{
 				"POSTGRES_DB": dbName,
 			},
-			ExposedPorts: []string{"5432/tcp"},
+			// ExposedPorts: []string{"5432/tcp"},
 		},
 	}
 
@@ -78,19 +79,20 @@ func (p *Postgres) Start(ctx context.Context, datTypeNames []string) error {
 		testcontainers.CustomizeRequest(p.request),
 		postgres.WithDatabase(dbName),
 		postgres.WithUsername(dbUser),
+		postgres.WithPassword(dbPassword),
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(numLogOccurrence).
 				WithStartupTimeout(postgresStartupTimeout)))
 	if err != nil {
-		return fmt.Errorf("failed to start postgres container")
+		return fmt.Errorf("failed to start postgres container, %w", err)
 	}
 
 	p.postgres = pgContainer
 
 	connString, err := pgContainer.ConnectionString(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to get connection string: %w", err)
+		return fmt.Errorf("failed to get connection string, %w", err)
 	}
 
 	conf, err := pgxpool.ParseConfig(connString)
