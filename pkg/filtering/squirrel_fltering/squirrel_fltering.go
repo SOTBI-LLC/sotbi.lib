@@ -63,7 +63,7 @@ func CreateFilter(query sq.SelectBuilder, args ...string) sq.SelectBuilder {
 			continue
 		}
 
-		if !strings.Contains(field, ".") {
+		if prefix != "" && !strings.Contains(field, ".") {
 			field = fmt.Sprintf("%s%s", prefix, field)
 		}
 
