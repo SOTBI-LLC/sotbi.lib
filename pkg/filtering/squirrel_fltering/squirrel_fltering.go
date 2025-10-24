@@ -8,7 +8,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 
-	"github.com/COTBU/sotbi.lib/pkg/filtering"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/filtering"
 )
 
 // CreateOrder func.

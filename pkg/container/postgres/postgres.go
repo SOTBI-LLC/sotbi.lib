@@ -15,10 +15,10 @@ import (
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 
-	"github.com/COTBU/sotbi.lib/pkg/container"
-	"github.com/COTBU/sotbi.lib/pkg/database"
-	"github.com/COTBU/sotbi.lib/pkg/log"
-	"github.com/COTBU/sotbi.lib/pkg/log/slog"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/container"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/database"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/log"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/log/slog"
 )
 
 const (

@@ -2,7 +2,7 @@ syntax = "proto3";
 package excel_gen;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
-option go_package = "github.com/COTBU/sotbi.lib/pkg/api/excel_gen";
+option go_package = "github.com/SOTBI-LLC/sotbi.lib/pkg/api/excel_gen";
 
 enum Status {
   REGISTERED = 0;

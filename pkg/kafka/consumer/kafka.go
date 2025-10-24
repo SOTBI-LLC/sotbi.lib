@@ -3,7 +3,7 @@ package consumer
 import (
 	"time"
 
-	"github.com/COTBU/sotbi.lib/pkg/log"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/log"
 )
 
 type kafkaFuncOpts struct {

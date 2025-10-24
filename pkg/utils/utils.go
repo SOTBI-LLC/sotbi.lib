@@ -10,9 +10,9 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/COTBU/sotbi.lib/pkg/filtering"
-	"github.com/COTBU/sotbi.lib/pkg/filtering/gorm_filtering"
-	"github.com/COTBU/sotbi.lib/pkg/times"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/filtering"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/filtering/gorm_filtering"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/times"
 )
 
 func FromPtr[T any](t *T) T {

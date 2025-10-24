@@ -10,7 +10,7 @@ import (
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 
-	"github.com/COTBU/sotbi.lib/pkg/times"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/times"
 )
 
 //go:embed _header.html

@@ -6,7 +6,7 @@ import (
 
 	"github.com/segmentio/kafka-go"
 
-	"github.com/COTBU/sotbi.lib/pkg/log"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/log"
 )
 
 type RequiredAcks int

@@ -41,7 +41,6 @@ func request_Counterparties_GetCounterparties_0(ctx context.Context, marshaler r
 		protoReq emptypb.Empty
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
 	msg, err := client.GetCounterparties(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
@@ -85,7 +84,6 @@ func request_Counterparties_GetCounterpartyByID_0(ctx context.Context, marshaler
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	io.Copy(io.Discard, req.Body)
 	val, ok := pathParams["id"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
@@ -122,7 +120,6 @@ func request_Counterparties_ArchiveCounterparty_0(ctx context.Context, marshaler
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	io.Copy(io.Discard, req.Body)
 	val, ok := pathParams["id"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
@@ -201,7 +198,6 @@ func request_Counterparties_GetBankDetailsByCounterpartyID_0(ctx context.Context
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	io.Copy(io.Discard, req.Body)
 	val, ok := pathParams["id"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
@@ -280,7 +276,6 @@ func request_Counterparties_GetEmployeesByCounterpartyID_0(ctx context.Context, 
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	io.Copy(io.Discard, req.Body)
 	val, ok := pathParams["id"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
@@ -317,7 +312,6 @@ func request_Counterparties_GetEmployeesByUserID_0(ctx context.Context, marshale
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	io.Copy(io.Discard, req.Body)
 	val, ok := pathParams["user_id"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
@@ -437,7 +431,6 @@ func request_Counterparties_GetRules_0(ctx context.Context, marshaler runtime.Ma
 		protoReq emptypb.Empty
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
 	msg, err := client.GetRules(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }

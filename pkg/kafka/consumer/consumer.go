@@ -12,8 +12,8 @@ import (
 	"github.com/segmentio/kafka-go/sasl/scram"
 	"google.golang.org/protobuf/proto"
 
-	k "github.com/COTBU/sotbi.lib/pkg/kafka"
-	"github.com/COTBU/sotbi.lib/pkg/log"
+	k "github.com/SOTBI-LLC/sotbi.lib/pkg/kafka"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/log"
 )
 
 const (

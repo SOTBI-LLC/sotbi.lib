@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/COTBU/sotbi.lib/pkg/filtering"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/filtering"
 )
 
 func strptr(s string) *string { return &s }

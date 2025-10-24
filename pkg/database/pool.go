@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/tracelog"
 
-	"github.com/COTBU/sotbi.lib/pkg/log/slog"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/log/slog"
 )
 
 type traceLogger struct {

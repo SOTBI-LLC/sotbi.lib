@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/COTBU/sotbi.lib/pkg/filtering"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/filtering"
 )
 
 func CreateFilter(fm filtering.FilterModel, prefix *string) []string {

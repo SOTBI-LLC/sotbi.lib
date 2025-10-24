@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/COTBU/sotbi.lib/pkg/utils"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/utils"
 )
 
 type ParserTestSuite struct {

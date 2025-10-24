@@ -9,9 +9,9 @@ import (
 	"github.com/segmentio/kafka-go/sasl/scram"
 	"google.golang.org/protobuf/proto"
 
-	k "github.com/COTBU/sotbi.lib/pkg/kafka"
-	"github.com/COTBU/sotbi.lib/pkg/log"
-	"github.com/COTBU/sotbi.lib/pkg/log/slog"
+	k "github.com/SOTBI-LLC/sotbi.lib/pkg/kafka"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/log"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/log/slog"
 )
 
 type Transport struct {

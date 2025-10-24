@@ -9,7 +9,7 @@ import (
 	"github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5"
 
-	"github.com/COTBU/sotbi.lib/pkg/log"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/log"
 )
 
 type Migrator struct {

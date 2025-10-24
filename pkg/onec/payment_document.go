@@ -3,7 +3,7 @@ package onec
 import (
 	"time"
 
-	pb "github.com/COTBU/sotbi.lib/pkg/api/onec"
+	pb "github.com/SOTBI-LLC/sotbi.lib/pkg/api/onec"
 )
 
 //nolint:lll

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/COTBU/sotbi.lib/pkg/log"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/log"
 )
 
 type Pinger interface {

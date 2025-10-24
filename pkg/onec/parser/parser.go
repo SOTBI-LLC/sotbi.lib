@@ -11,8 +11,8 @@ import (
 	"golang.org/x/text/encoding/charmap"
 	"golang.org/x/text/transform"
 
-	"github.com/COTBU/sotbi.lib/pkg/onec"
-	"github.com/COTBU/sotbi.lib/pkg/utils"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/onec"
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/utils"
 )
 
 type ExchangeFile struct {
