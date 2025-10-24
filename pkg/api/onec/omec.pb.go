@@ -9,13 +9,14 @@
 package onec
 
 import (
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
+
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/descriptorpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
 )
 
 const (
@@ -83,7 +84,9 @@ type ParseRequest struct {
 	// Заказчик
 	CreatorId uint64 `protobuf:"varint,4,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
 	// Должник
-	DebtorId      *uint64 `protobuf:"varint,5,opt,name=debtor_id,json=debtorId,proto3,oneof" json:"debtor_id,omitempty"`
+	DebtorId *uint64 `protobuf:"varint,5,opt,name=debtor_id,json=debtorId,proto3,oneof" json:"debtor_id,omitempty"`
+	// РасчСчет
+	Account       *string `protobuf:"bytes,6,opt,name=account,proto3,oneof" json:"account,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -151,6 +154,13 @@ func (x *ParseRequest) GetDebtorId() uint64 {
 		return *x.DebtorId
 	}
 	return 0
+}
+
+func (x *ParseRequest) GetAccount() string {
+	if x != nil && x.Account != nil {
+		return *x.Account
+	}
+	return ""
 }
 
 type ParseResponse struct {
@@ -1470,17 +1480,19 @@ func file_api_onec_omec_proto_rawDescGZIP() []byte {
 	return file_api_onec_omec_proto_rawDescData
 }
 
-var file_api_onec_omec_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_api_onec_omec_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_api_onec_omec_proto_goTypes = []any{
-	(CustomerType)(0),             // 0: onec.CustomerType
-	(*ParseRequest)(nil),          // 1: onec.ParseRequest
-	(*ParseResponse)(nil),         // 2: onec.ParseResponse
-	(*ExchangeFile)(nil),          // 3: onec.ExchangeFile
-	(*AccountBalance)(nil),        // 4: onec.AccountBalance
-	(*PaymentDocument)(nil),       // 5: onec.PaymentDocument
-	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
-}
+var (
+	file_api_onec_omec_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+	file_api_onec_omec_proto_msgTypes  = make([]protoimpl.MessageInfo, 5)
+	file_api_onec_omec_proto_goTypes   = []any{
+		(CustomerType)(0),             // 0: onec.CustomerType
+		(*ParseRequest)(nil),          // 1: onec.ParseRequest
+		(*ParseResponse)(nil),         // 2: onec.ParseResponse
+		(*ExchangeFile)(nil),          // 3: onec.ExchangeFile
+		(*AccountBalance)(nil),        // 4: onec.AccountBalance
+		(*PaymentDocument)(nil),       // 5: onec.PaymentDocument
+		(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
+	}
+)
 var file_api_onec_omec_proto_depIdxs = []int32{
 	0,  // 0: onec.ParseRequest.customer_type:type_name -> onec.CustomerType
 	0,  // 1: onec.ParseResponse.customer_type:type_name -> onec.CustomerType

@@ -23,6 +23,8 @@ message ParseRequest {
   uint64 creator_id = 4;
   //  Должник
   optional uint64 debtor_id = 5;
+  // РасчСчет
+  optional string account = 6;
 }
 
 message ParseResponse {

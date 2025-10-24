@@ -3,6 +3,7 @@ module github.com/SOTBI-LLC/sotbi.lib
 go 1.25.1
 
 require (
+	github.com/COTBU/sotbi.lib v0.0.0-20251024142407-0122955bcf07
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/docker/go-connections v0.6.0
