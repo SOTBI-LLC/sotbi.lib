@@ -63,7 +63,7 @@ func CreateFilter(query sq.SelectBuilder, args ...string) sq.SelectBuilder {
 			continue
 		}
 
-		if !strings.Contains(field, ".") {
+		if prefix != "" && !strings.Contains(field, ".") {
 			field = fmt.Sprintf("%s%s", prefix, field)
 		}
 
@@ -89,11 +89,13 @@ func CreateFilter(query sq.SelectBuilder, args ...string) sq.SelectBuilder {
 
 				if nullExistInSet { // если null есть - то добавляем условие OR _ IS NULL
 					query = query.Where(
-						fmt.Sprintf("%s in (?) OR %s IS NULL", field, field),
-						filter.Values,
+						sq.Or{
+							sq.Eq{field: filter.Values},
+							sq.Expr(fmt.Sprintf("%s IS NULL", field)),
+						},
 					)
 				} else {
-					query = query.Where(fmt.Sprintf("%s in (?)", field), filter.Values)
+					query = query.Where(sq.Eq{field: filter.Values})
 				}
 			}
 		case "date":

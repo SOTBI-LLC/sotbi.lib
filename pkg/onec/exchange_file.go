@@ -23,6 +23,13 @@ type ExchangeFile struct {
 }
 
 func (f *ExchangeFile) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
+	var accounts []string
+	if (len(f.Account) == 0 || f.Account[0] == "") && request.Account != nil {
+		accounts = []string{*request.Account}
+	} else {
+		accounts = f.Account
+	}
+
 	return &pb.ParseResponse{
 		RequestId:    request.RequestId,
 		CustomerType: request.CustomerType,
@@ -39,7 +46,7 @@ func (f *ExchangeFile) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 				CreatedDatetime: timeToTimestamppb(f.CreatedDate),
 				StartDate:       timeToTimestamppb(f.StartDate),
 				EndDate:         timeToTimestamppb(f.EndDate),
-				Account:         f.Account,
+				Account:         accounts,
 			},
 		},
 	}

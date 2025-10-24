@@ -63,7 +63,7 @@ func CreateFilter(ctx context.Context, tbl *gorm.DB, args ...string) *gorm.DB {
 			continue
 		}
 
-		if !strings.Contains(field, ".") {
+		if prefix != "" && !strings.Contains(field, ".") {
 			field = fmt.Sprintf("%s%s", prefix, field)
 		}
 

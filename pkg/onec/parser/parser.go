@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"strings"
 
 	"github.com/mitchellh/mapstructure"
@@ -163,6 +164,8 @@ func (p *ExchangeFile) convertFile() (onec.ExchangeFile, error) {
 	exFile.StartDate = onec.ParseDate(exFile.StartDateStr)
 	exFile.EndDate = onec.ParseDateTime(exFile.EndDateStr + " 23:59:59")
 	exFile.CreatedDate = onec.ParseDateTime(exFile.CreatedDateStr + " " + exFile.CreatedTimeStr)
+
+  log.Println("exFile", exFile)
 
 	return exFile, nil
 }
