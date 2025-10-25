@@ -3,12 +3,11 @@ module github.com/SOTBI-LLC/sotbi.lib
 go 1.25.1
 
 require (
-	github.com/COTBU/sotbi.lib v0.0.0-20251024142407-0122955bcf07
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/docker/go-connections v0.6.0
 	github.com/go-resty/resty/v2 v2.16.5
-	github.com/go-testfixtures/testfixtures/v3 v3.18.0
+	github.com/go-testfixtures/testfixtures/v3 v3.19.0
 	github.com/golang-migrate/migrate/v4 v4.19.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.3
 	github.com/jackc/pgx/v5 v5.7.6

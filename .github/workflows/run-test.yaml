@@ -1,0 +1,39 @@
+name: Run test
+on:
+  workflow_dispatch:
+  workflow_call:
+env:
+  POSTGRES_URL: "postgresql://energy:postgres@localhost:5432/energy_test?sslmode=disable"
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: stable
+      - name: Install dependencies
+        run: go mod tidy
+      - name: Test Sotbi service
+        run: go test --tags=tests -coverpkg=./internal/...  ./... -json > test-results.json
+      - name: Upload Go test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Go-test-results
+          path: test-results.json
+      - name: Send telegram message after testing on PR
+        if: failure()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHANNEL }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            🔍PR #${{github.event.number}}:
+            ❗️Testing failed❗️
+            Run by ${{ github.triggering_actor }}
+
+            See changes: https://github.com/${{ github.repository }}/pull/${{github.event.number}}

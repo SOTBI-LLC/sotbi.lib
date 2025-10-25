@@ -38,11 +38,11 @@ func ExecTemplate(data any, templ, ip string) (res string, err error) {
 
 	t, err := template.New("title").Funcs(funcs).Parse(templ)
 	if err != nil {
-		return
+		return res, err
 	}
 
 	if err = t.Execute(&buf, emailData); err != nil {
-		return
+		return res, err
 	}
 
 	buffer := new(bytes.Buffer)

@@ -3,8 +3,9 @@ package files
 import (
 	"context"
 
-	"github.com/COTBU/sotbi.lib/pkg/commonqueries"
 	"gorm.io/gorm"
+
+	"github.com/SOTBI-LLC/sotbi.lib/pkg/commonqueries"
 )
 
 func GetOriginalFileName(ctx context.Context, db *gorm.DB, file string) (string, error) {

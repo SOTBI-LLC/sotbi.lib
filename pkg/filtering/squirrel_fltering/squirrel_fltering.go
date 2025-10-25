@@ -154,6 +154,7 @@ func constructDateWhere(
 	filters ...filtering.Filter,
 ) sq.SelectBuilder {
 	var start1, start2 string
+
 	start1 = (*filters[0].DateFrom)[0:10]
 
 	if operator != "" {

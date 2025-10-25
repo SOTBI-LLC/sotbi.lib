@@ -1,0 +1,36 @@
+name: Run Lint
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "stable"
+          check-latest: true
+      - name: Install dependencies
+        run: go mod tidy
+      - name: Linting
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: latest
+          args: --timeout 5m
+
+      - name: Send telegram message after linting error on PR
+        if: failure()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHANNEL }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            🔍PR #${{github.event.number}}:
+            ❗️Linting failed❗️
+            Run by ${{ github.triggering_actor }}
+
+            See changes: https://github.com/${{ github.repository }}/pull/${{github.event.number}}

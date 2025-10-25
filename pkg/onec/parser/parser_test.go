@@ -17,10 +17,12 @@ type ParserTestSuite struct {
 func (suite *ParserTestSuite) TestScan() {
 	file, err := os.Open("fixtures/0.txt")
 	suite.NoError(err)
+
 	defer file.Close()
 
 	outputFile, err := os.Create("fixtures/out.txt")
 	suite.NoError(err)
+
 	defer outputFile.Close()
 
 	p := &ExchangeFile{}

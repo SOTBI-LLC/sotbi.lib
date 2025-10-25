@@ -74,6 +74,7 @@ func (p *ExchangeFile) read(file io.Reader) error {
 	scanner := bufio.NewScanner(file)
 
 	const maxCapacity = 1024 * 1024 * 40 // 40MB эмпирический размер на файл
+
 	buf := make([]byte, 0, maxCapacity)
 	scanner.Buffer(buf, maxCapacity)
 
@@ -146,6 +147,7 @@ func (p *ExchangeFile) read(file io.Reader) error {
 
 func (p *ExchangeFile) convertFile() (onec.ExchangeFile, error) {
 	var exFile onec.ExchangeFile
+
 	config := &mapstructure.DecoderConfig{
 		WeaklyTypedInput: true,
 		Result:           &exFile,
@@ -172,6 +174,7 @@ func (p *ExchangeFile) convertAccountBalance() ([]onec.AccountBalance, error) {
 
 	for i := range p.accountBalance {
 		var remaining onec.AccountBalance
+
 		config := &mapstructure.DecoderConfig{
 			WeaklyTypedInput: true,
 			Result:           &remaining,
@@ -199,6 +202,7 @@ func (p *ExchangeFile) convertPaymentDocuments() ([]onec.PaymentDocument, error)
 	paymentDocuments := make([]onec.PaymentDocument, 0, len(p.paymentDocuments))
 	for i := range p.paymentDocuments {
 		var pd onec.PaymentDocument
+
 		config := &mapstructure.DecoderConfig{
 			WeaklyTypedInput: true,
 			Result:           &pd,

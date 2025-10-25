@@ -12,6 +12,7 @@ func TestSonyflake_UniquenessAndConcurrency(t *testing.T) {
 	}
 
 	const n = 10000
+
 	ids := make([]uint64, n)
 
 	var wg sync.WaitGroup

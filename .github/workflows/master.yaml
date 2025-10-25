@@ -1,0 +1,16 @@
+name: Check on commit
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  lint:
+    name: Lint
+    uses: ./.github/workflows/run-lint.yaml
+    secrets: inherit
+
+  test:
+    name: Test
+    uses: ./.github/workflows/run-test.yaml
+    secrets: inherit

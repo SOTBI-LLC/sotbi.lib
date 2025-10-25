@@ -2,7 +2,7 @@ version: "2"
 run:
   tests: false
   concurrency: 4
-  go: '1.25.1'
+  go: '1.25'
 
 # all available settings of specific linters
 linters:
@@ -10,6 +10,7 @@ linters:
     - bodyclose
     - containedctx
     - errname
+    # - revive
     - gosec
     - unconvert
     - goconst
@@ -27,7 +28,7 @@ linters:
     - godot
     - whitespace
     - nlreturn
-    - wsl
+    - wsl_v5
   settings:
     gosec:
       excludes:
@@ -51,8 +52,12 @@ linters:
     #   locale: US
     # unparam:
     #   check-exported: true
-    wsl:
-      allow-assign-and-anything: true
+    wsl_v5:
+      allow-first-in-block: true
+      allow-whole-block: false
+      branch-max-lines: 2
+      disable:
+        - assign
     whitespace:
       multi-if: false
     gocritic:

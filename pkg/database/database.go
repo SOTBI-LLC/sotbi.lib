@@ -92,12 +92,12 @@ func SetNullFieldDB(db *gorm.DB, table, field string, id int) (err error) {
 }
 
 func (c *Conn) Ping(ctx context.Context) error {
-	err := c.db.Ping()
+	err := c.db.PingContext(ctx)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	c.Logger.Info(ctx, "%#v\n", c.db.Stats())
+	c.Logger.Info(ctx, "database pinged successfully", "stats", c.db.Stats())
 
 	return nil
 }

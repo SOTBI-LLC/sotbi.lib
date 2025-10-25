@@ -125,14 +125,14 @@ func GetInterval(qp url.Values) (start, end time.Time, err error) {
 	if val, ok := qp["start"]; ok && len(val) > 0 && val[0] != "" {
 		start, err = time.Parse("2006-01-02 MST", val[0]+times.MSK)
 		if err != nil {
-			return
+			return start, end, err
 		}
 	}
 
 	if val, ok := qp["end"]; ok && len(val) > 0 && val[0] != "" {
 		end, err = time.Parse("2006-01-02 MST", val[0]+times.MSK)
 		if err != nil {
-			return
+			return start, end, err
 		}
 	}
 
@@ -141,21 +141,21 @@ func GetInterval(qp url.Values) (start, end time.Time, err error) {
 
 		filterModel, err = filtering.ParseJSONToFilterModel(val[0])
 		if err != nil {
-			return
+			return start, end, err
 		}
 
 		if len(filterModel) == 0 {
-			return
+			return start, end, err
 		}
 
 		start, err = time.Parse("2006-01-02 MST", *filterModel["date"].DateFrom+times.MSK)
 		if err != nil {
-			return
+			return start, end, err
 		}
 
 		end, err = time.Parse("2006-01-02 MST", *filterModel["date"].DateTo+times.MSK)
 		if err != nil {
-			return
+			return start, end, err
 		}
 	}
 
