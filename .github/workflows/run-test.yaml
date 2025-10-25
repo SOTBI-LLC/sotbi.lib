@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: go mod tidy
       - name: Test Sotbi service
-        run: go test --tags=tests -coverpkg=./internal/...  ./... -json > test-results.json
+        run: go test --tags=tests -coverpkg=./pkg/...  ./... -json > test-results.json
       - name: Upload Go test results
         uses: actions/upload-artifact@v4
         with:
