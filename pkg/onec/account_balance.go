@@ -1,6 +1,7 @@
 package onec
 
 import (
+	"strings"
 	"time"
 
 	pb "github.com/SOTBI-LLC/sotbi.lib/pkg/api/onec"
@@ -32,7 +33,7 @@ func (b *AccountBalance) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 				Id:             b.ID,
 				StartDate:      timeToTimestamppb(b.StartDate),
 				EndDate:        timeToTimestamppb(b.EndDate),
-				Account:        b.Account,
+				Account:        strings.TrimSpace(b.Account),
 				InitialBalance: b.InitialBalance,
 				Income:         b.Income,
 				WriteOff:       b.WriteOff,

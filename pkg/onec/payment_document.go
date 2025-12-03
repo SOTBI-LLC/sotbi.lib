@@ -1,6 +1,7 @@
 package onec
 
 import (
+	"strings"
 	"time"
 
 	pb "github.com/SOTBI-LLC/sotbi.lib/pkg/api/onec"
@@ -85,8 +86,8 @@ type PaymentDocument struct {
 func (d *PaymentDocument) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 	doc := &pb.PaymentDocument{
 		AccountBalanceId:       d.AccountBalanceID,
-		DocumentType:           d.DocumentType,
-		Number:                 d.Number,
+		DocumentType:           strings.TrimSpace(d.DocumentType),
+		Number:                 strings.TrimSpace(d.Number),
 		Date:                   timeToTimestamppb(d.Data),
 		WrittenOffDate:         timeToTimestamppb(d.WrittenOffDate),
 		IncomeDate:             timeToTimestamppb(d.IncomeDate),
@@ -94,23 +95,23 @@ func (d *PaymentDocument) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 		DocumentSendingDate:    timeToTimestamppb(d.DocumentSendingDate),
 		IndicatorDate:          timeToTimestamppb(d.IndicatorDate),
 		Summ:                   d.Summ,
-		PayerAccount:           d.PayerAccount,
-		Payer:                  d.Payer,
-		PayerInn:               d.PayerINN,
+		PayerAccount:           strings.TrimSpace(d.PayerAccount),
+		Payer:                  strings.TrimSpace(d.Payer),
+		PayerInn:               strings.TrimSpace(d.PayerINN),
 		PayerKpp:               d.PayerKPP,
-		PayerCurrentAccount:    d.PayerCurrentAccount,
-		PayerBank1:             d.PayerBank1,
+		PayerCurrentAccount:    strings.TrimSpace(d.PayerCurrentAccount),
+		PayerBank1:             strings.TrimSpace(d.PayerBank1),
 		PayerBank2:             d.PayerBank2,
-		PayerBik:               d.PayerBIK,
-		PayerCorrAccount:       d.PayerCorrAccount,
-		ReceiverAccount:        d.ReceiverAccount,
-		Receiver:               d.Receiver,
-		ReceiverInn:            d.ReceiverINN,
-		ReceiverCurrentAccount: d.ReceiverCurrentAccount,
-		ReceiverBank1:          d.ReceiverBank1,
-		ReceiverBik:            d.ReceiverBIK,
-		ReceiverCorrAccount:    d.ReceiverCorrAccount,
-		PaymentPurpose:         d.PaymentPurpose,
+		PayerBik:               strings.TrimSpace(d.PayerBIK),
+		PayerCorrAccount:       strings.TrimSpace(d.PayerCorrAccount),
+		ReceiverAccount:        strings.TrimSpace(d.ReceiverAccount),
+		Receiver:               strings.TrimSpace(d.Receiver),
+		ReceiverInn:            strings.TrimSpace(d.ReceiverINN),
+		ReceiverCurrentAccount: strings.TrimSpace(d.ReceiverCurrentAccount),
+		ReceiverBank1:          strings.TrimSpace(d.ReceiverBank1),
+		ReceiverBik:            strings.TrimSpace(d.ReceiverBIK),
+		ReceiverCorrAccount:    strings.TrimSpace(d.ReceiverCorrAccount),
+		PaymentPurpose:         strings.TrimSpace(d.PaymentPurpose),
 		RectContent:            d.RectContent,
 		ReceiverKpp:            d.ReceiverKPP,
 		Payer1:                 d.Payer1,

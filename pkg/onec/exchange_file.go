@@ -1,6 +1,7 @@
 package onec
 
 import (
+	"strings"
 	"time"
 
 	pb "github.com/SOTBI-LLC/sotbi.lib/pkg/api/onec"
@@ -39,10 +40,10 @@ func (f *ExchangeFile) ToPB(request *pb.ParseRequest) *pb.ParseResponse {
 		Item: &pb.ParseResponse_File{
 			File: &pb.ExchangeFile{
 				Id:              f.ID,
-				FormatVer:       f.FormatVer,
-				Encoding:        f.Encoding,
-				Sender:          f.Sender,
-				Receiver:        f.Receiver,
+				FormatVer:       strings.TrimSpace(f.FormatVer),
+				Encoding:        strings.TrimSpace(f.Encoding),
+				Sender:          strings.TrimSpace(f.Sender),
+				Receiver:        strings.TrimSpace(f.Receiver),
 				CreatedDatetime: timeToTimestamppb(f.CreatedDate),
 				StartDate:       timeToTimestamppb(f.StartDate),
 				EndDate:         timeToTimestamppb(f.EndDate),
