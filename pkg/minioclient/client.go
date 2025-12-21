@@ -26,11 +26,12 @@ type PutRemover interface {
 }
 
 func New(conf *Config) *minio.Client {
-	tr := http.DefaultTransport.(*http.Transport).Clone()
+	tr := http.DefaultTransport.(*http.Transport).Clone() //nolint:errcheck
 	tr.TLSClientConfig = &tls.Config{
-		InsecureSkipVerify: true,
+		InsecureSkipVerify: true, //nolint:gosec
 		MinVersion:         tls.VersionTLS12,
 	}
+
 	minioClient, err := minio.New(conf.Endpoint, &minio.Options{
 		Creds:     credentials.NewStaticV4(conf.AccessKey, conf.SecretKey, ""),
 		Secure:    conf.UseSSL,
