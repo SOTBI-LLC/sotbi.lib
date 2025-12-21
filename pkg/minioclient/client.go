@@ -2,6 +2,8 @@ package minioclient
 
 import (
 	"context"
+	"crypto/tls"
+	"net/http"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -24,9 +26,15 @@ type PutRemover interface {
 }
 
 func New(conf *Config) *minio.Client {
+	tr := http.DefaultTransport.(*http.Transport).Clone()
+	tr.TLSClientConfig = &tls.Config{
+		InsecureSkipVerify: true,
+		MinVersion:         tls.VersionTLS12,
+	}
 	minioClient, err := minio.New(conf.Endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(conf.AccessKey, conf.SecretKey, ""),
-		Secure: conf.UseSSL,
+		Creds:     credentials.NewStaticV4(conf.AccessKey, conf.SecretKey, ""),
+		Secure:    conf.UseSSL,
+		Transport: tr,
 	})
 	if err != nil {
 		panic(err)
