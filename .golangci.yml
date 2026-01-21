@@ -2,7 +2,7 @@ version: "2"
 run:
   tests: false
   concurrency: 4
-  go: '1.25'
+  go: '1.25.5'
 
 # all available settings of specific linters
 linters:
