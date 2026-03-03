@@ -1,0 +1,213 @@
+syntax = "proto3";
+
+package motivation;
+
+option go_package = "github.com/SOTBI-LLC/sotbi.lib/pkg/api/motivation";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message BaseCriteria {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  int32 max_score = 4;
+  google.protobuf.Timestamp valid_from = 5;
+  google.protobuf.Timestamp valid_to = 6;
+  int64 updated_by = 7;
+}
+
+message BaseCriteriaList {
+  repeated BaseCriteria items = 1;
+}
+
+message CreateBaseCriteriaRequest {
+  string name = 1;
+  string description = 2;
+  int32 max_score = 3;
+  google.protobuf.Timestamp valid_from = 4;
+  google.protobuf.Timestamp valid_to = 5;
+}
+
+message UpdateBaseCriteriaRequest {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  int32 max_score = 4;
+  google.protobuf.Timestamp valid_from = 5;
+  google.protobuf.Timestamp valid_to = 6;
+}
+
+message PerformancePeriod {
+  int64 id = 1;
+  int32 year = 2;
+  int32 month = 3;
+  bool is_active = 4;
+  google.protobuf.Timestamp starts_at = 5;
+  google.protobuf.Timestamp ends_at = 6;
+  int64 updated_by = 7;
+}
+
+message PerformancePeriodID {
+  int64 id = 1;
+}
+
+message PerformancePeriodsList {
+  repeated PerformancePeriod items = 1;
+}
+
+message UpsertPerformancePeriodRequest {
+  int32 year = 1;
+  int32 month = 2;
+  bool is_active = 3;
+  google.protobuf.Timestamp starts_at = 4;
+  google.protobuf.Timestamp ends_at = 5;
+}
+
+message PerformanceCriteria {
+  int64 id = 1;
+  int32 year = 2;
+  int32 month = 3;
+  int64 department_id = 4;
+  int64 user_id = 5;
+  string name = 6;
+  string description = 7;
+  int32 max_score = 8;
+  bool is_absolute = 9;
+  int64 updated_by = 10;
+}
+
+message PerformanceCriteriaID {
+  int64 id = 1;
+}
+
+message PerformanceCriteriaList {
+  repeated PerformanceCriteria items = 1;
+}
+
+message ListPerformanceCriteriaRequest {
+  int32 year = 1;
+  int32 month = 2;
+  google.protobuf.Int64Value department_id = 3;
+  google.protobuf.Int64Value user_id = 4;
+}
+
+message CreatePerformanceCriteriaRequest {
+  int32 year = 1;
+  int32 month = 2;
+  google.protobuf.Int64Value department_id = 3;
+  google.protobuf.Int64Value user_id = 4;
+  string name = 5;
+  string description = 6;
+  int32 max_score = 7;
+  bool is_absolute = 8;
+}
+
+message UpdatePerformanceCriteriaRequest {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  int32 max_score = 4;
+  bool is_absolute = 5;
+}
+
+message UserPerformance {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 staff_id = 3;
+  int64 criteria_id = 4;
+  int32 earned_score = 5;
+  string comment = 6;
+  google.protobuf.Timestamp evaluated_at = 7;
+  int64 evaluated_by = 8;
+}
+
+message UserPerformanceList {
+  repeated UserPerformance items = 1;
+}
+
+message UpsertUserPerformanceRequest {
+  int64 user_id = 1;
+  google.protobuf.Int64Value staff_id = 2;
+  int64 criteria_id = 3;
+  int32 earned_score = 4;
+  string comment = 5;
+}
+
+message ListUserPerformanceRequest {
+  int64 user_id = 1;
+  int32 year = 2;
+  int32 month = 3;
+}
+
+message CalculateUserPercentageRequest {
+  int64 user_id = 1;
+  int32 year = 2;
+  int32 month = 3;
+}
+
+message UserPercentage {
+  double base_percent = 1;
+  double absolute_percent = 2;
+  double total_percent = 3;
+}
+
+service Motivation {
+  rpc ListBaseCriteria(google.protobuf.Empty) returns (BaseCriteriaList) {
+    option (google.api.http) = {get: "/api/motivation/base_criteria"};
+  }
+  rpc CreateBaseCriteria(CreateBaseCriteriaRequest) returns (BaseCriteria) {
+    option (google.api.http) = {
+      post: "/api/motivation/base_criteria"
+      body: "*"
+    };
+  }
+  rpc UpdateBaseCriteria(UpdateBaseCriteriaRequest) returns (BaseCriteria) {
+    option (google.api.http) = {
+      put: "/api/motivation/base_criteria/{id}"
+      body: "*"
+    };
+  }
+
+  rpc ListPerformancePeriods(google.protobuf.Empty) returns (PerformancePeriodsList) {
+    option (google.api.http) = {get: "/api/motivation/periods"};
+  }
+  rpc UpsertPerformancePeriod(UpsertPerformancePeriodRequest) returns (PerformancePeriod) {
+    option (google.api.http) = {
+      put: "/api/motivation/periods"
+      body: "*"
+    };
+  }
+
+  rpc ListPerformanceCriteria(ListPerformanceCriteriaRequest) returns (PerformanceCriteriaList) {
+    option (google.api.http) = {get: "/api/motivation/criteria"};
+  }
+  rpc CreatePerformanceCriteria(CreatePerformanceCriteriaRequest) returns (PerformanceCriteria) {
+    option (google.api.http) = {
+      post: "/api/motivation/criteria"
+      body: "*"
+    };
+  }
+  rpc UpdatePerformanceCriteria(UpdatePerformanceCriteriaRequest) returns (PerformanceCriteria) {
+    option (google.api.http) = {
+      put: "/api/motivation/criteria/{id}"
+      body: "*"
+    };
+  }
+
+  rpc UpsertUserPerformance(UpsertUserPerformanceRequest) returns (UserPerformance) {
+    option (google.api.http) = {
+      put: "/api/motivation/performance"
+      body: "*"
+    };
+  }
+  rpc ListUserPerformance(ListUserPerformanceRequest) returns (UserPerformanceList) {
+    option (google.api.http) = {get: "/api/motivation/performance"};
+  }
+
+  rpc CalculateUserPercentage(CalculateUserPercentageRequest) returns (UserPercentage) {
+    option (google.api.http) = {get: "/api/motivation/percentage"};
+  }
+}
