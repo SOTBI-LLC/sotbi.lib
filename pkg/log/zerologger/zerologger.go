@@ -50,28 +50,28 @@ func (l Logger) GetLevel() zerolog.Level {
 }
 
 // Debug -.
-func (l Logger) Debug(message string, args ...interface{}) {
+func (l Logger) Debug(message string, args ...any) {
 	if l.Logger.GetLevel() <= zerolog.DebugLevel {
 		l.msg("debug", message, args...)
 	}
 }
 
 // Info -.
-func (l Logger) Info(message string, args ...interface{}) {
+func (l Logger) Info(message string, args ...any) {
 	if l.Logger.GetLevel() <= zerolog.InfoLevel {
 		l.log(message, args...)
 	}
 }
 
 // Warn -.
-func (l Logger) Warn(message string, args ...interface{}) {
+func (l Logger) Warn(message string, args ...any) {
 	if l.Logger.GetLevel() <= zerolog.WarnLevel {
 		l.log(message, args...)
 	}
 }
 
 // Error -.
-func (l Logger) Error(message string, args ...interface{}) {
+func (l Logger) Error(message string, args ...any) {
 	if l.Logger.GetLevel() == zerolog.DebugLevel {
 		l.Debug(message, args...)
 	}
@@ -80,13 +80,13 @@ func (l Logger) Error(message string, args ...interface{}) {
 }
 
 // Fatal -.
-func (l Logger) Fatal(message string, args ...interface{}) {
+func (l Logger) Fatal(message string, args ...any) {
 	l.msg("fatal", message, args...)
 
 	os.Exit(1)
 }
 
-func (l Logger) log(message string, args ...interface{}) {
+func (l Logger) log(message string, args ...any) {
 	if len(args) == 0 {
 		l.Logger.Info().Msg(message)
 	} else {
@@ -94,7 +94,7 @@ func (l Logger) log(message string, args ...interface{}) {
 	}
 }
 
-func (l Logger) msg(level string, message interface{}, args ...interface{}) {
+func (l Logger) msg(level string, message any, args ...any) {
 	switch msg := message.(type) {
 	case error:
 		l.log(msg.Error(), args...)

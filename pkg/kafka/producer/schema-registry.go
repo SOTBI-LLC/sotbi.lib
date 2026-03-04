@@ -20,7 +20,7 @@ const magicByte byte = 0x0
 type SchemaRegistry struct {
 	URL         string
 	Username    string
-	Password    string
+	Password    string //nolint:gosec
 	SchemaNames map[string]proto.Message
 	schemas     map[string]int
 }

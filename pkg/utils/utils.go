@@ -31,8 +31,9 @@ func FromPtr[T any](t *T) T {
 	return *t
 }
 
+//go:fix inline
 func ToPtr[T any](t T) *T {
-	return &t
+	return new(t)
 }
 
 func MakeWhere(

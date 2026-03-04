@@ -21,7 +21,7 @@ type Transport struct {
 type TransportOptions struct {
 	DialerTimeout time.Duration
 	Username      string
-	Password      string
+	Password      string //nolint:gosec
 	// Cert опциональный параметр, в котором можно передать
 	// тело сертификата, который будет использован при создании защищенного соединения
 	// Если задан, значение параметра TLS игнорируется

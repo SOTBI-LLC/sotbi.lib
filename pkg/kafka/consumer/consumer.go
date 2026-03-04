@@ -26,7 +26,7 @@ type ConsumerOptions struct {
 	GroupID string
 
 	Username string
-	Password string
+	Password string //nolint:gosec
 
 	// Cert опциональный параметр, в котором можно передать
 	// тело сертификата, который будет использован при создании защищенного соединения

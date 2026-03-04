@@ -21,7 +21,7 @@ const (
 
 // Writer log writer interface.
 type Writer interface {
-	Printf(string, ...interface{})
+	Printf(string, ...any)
 }
 
 type Conn struct {
@@ -82,7 +82,7 @@ func SetNullFieldDB(db *gorm.DB, table, field string, id int) (err error) {
 		// Debug().
 		Table(table).
 		Where("id=?", id).
-		Updates(map[string]interface{}{field: nil}).
+		Updates(map[string]any{field: nil}).
 		Error
 	if err != nil {
 		return err

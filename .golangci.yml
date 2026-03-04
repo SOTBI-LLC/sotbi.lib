@@ -2,7 +2,7 @@ version: "2"
 run:
   tests: false
   concurrency: 4
-  go: '1.25'
+  go: '1.26'
 
 # all available settings of specific linters
 linters:
@@ -29,6 +29,7 @@ linters:
     - whitespace
     - nlreturn
     - wsl_v5
+    - modernize
   settings:
     gosec:
       excludes:

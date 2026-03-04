@@ -79,8 +79,8 @@ func (im *img) Resize(length, width int) Resizer {
 	resImg := image.NewRGBA(rect)
 	draw.Draw(resImg, resImg.Bounds(), &image.Uniform{C: color.White}, image.Point{}, draw.Src)
 
-	for y := 0; y < width; y++ {
-		for x := 0; x < length; x++ {
+	for y := range width {
+		for x := range length {
 			averageColor := im.getAverageColor(
 				minX+x*scaleX,
 				minX+(x+1)*scaleX,
