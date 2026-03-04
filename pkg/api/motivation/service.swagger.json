@@ -1,0 +1,786 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "motivation/service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Motivation"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/motivation/base_criteria": {
+      "get": {
+        "operationId": "Motivation_ListBaseCriteria",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/motivationBaseCriteriaList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Motivation"
+        ]
+      },
+      "post": {
+        "operationId": "Motivation_CreateBaseCriteria",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/motivationBaseCriteria"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/motivationCreateBaseCriteriaRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Motivation"
+        ]
+      }
+    },
+    "/api/motivation/base_criteria/{id}": {
+      "put": {
+        "operationId": "Motivation_UpdateBaseCriteria",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/motivationBaseCriteria"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MotivationUpdateBaseCriteriaBody"
+            }
+          }
+        ],
+        "tags": [
+          "Motivation"
+        ]
+      }
+    },
+    "/api/motivation/criteria": {
+      "get": {
+        "operationId": "Motivation_ListPerformanceCriteria",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/motivationPerformanceCriteriaList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "departmentId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Motivation"
+        ]
+      },
+      "post": {
+        "operationId": "Motivation_CreatePerformanceCriteria",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/motivationPerformanceCriteria"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/motivationCreatePerformanceCriteriaRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Motivation"
+        ]
+      }
+    },
+    "/api/motivation/criteria/{id}": {
+      "put": {
+        "operationId": "Motivation_UpdatePerformanceCriteria",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/motivationPerformanceCriteria"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MotivationUpdatePerformanceCriteriaBody"
+            }
+          }
+        ],
+        "tags": [
+          "Motivation"
+        ]
+      }
+    },
+    "/api/motivation/percentage": {
+      "get": {
+        "operationId": "Motivation_CalculateUserPercentage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/motivationUserPercentage"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Motivation"
+        ]
+      }
+    },
+    "/api/motivation/performance": {
+      "get": {
+        "operationId": "Motivation_ListUserPerformance",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/motivationUserPerformanceList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Motivation"
+        ]
+      },
+      "put": {
+        "operationId": "Motivation_UpsertUserPerformance",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/motivationUserPerformance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/motivationUpsertUserPerformanceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Motivation"
+        ]
+      }
+    },
+    "/api/motivation/periods": {
+      "get": {
+        "operationId": "Motivation_ListPerformancePeriods",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/motivationPerformancePeriodsList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Motivation"
+        ]
+      },
+      "put": {
+        "operationId": "Motivation_UpsertPerformancePeriod",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/motivationPerformancePeriod"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/motivationUpsertPerformancePeriodRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Motivation"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "MotivationUpdateBaseCriteriaBody": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "maxScore": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validTo": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "MotivationUpdatePerformanceCriteriaBody": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "maxScore": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "isAbsolute": {
+          "type": "boolean"
+        }
+      }
+    },
+    "motivationBaseCriteria": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "maxScore": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validTo": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedBy": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "motivationBaseCriteriaList": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/motivationBaseCriteria"
+          }
+        }
+      }
+    },
+    "motivationCreateBaseCriteriaRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "maxScore": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validTo": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "motivationCreatePerformanceCriteriaRequest": {
+      "type": "object",
+      "properties": {
+        "year": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "month": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "departmentId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "userId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "maxScore": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "isAbsolute": {
+          "type": "boolean"
+        }
+      }
+    },
+    "motivationPerformanceCriteria": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "year": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "month": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "departmentId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "userId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "maxScore": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "isAbsolute": {
+          "type": "boolean"
+        },
+        "updatedBy": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "motivationPerformanceCriteriaList": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/motivationPerformanceCriteria"
+          }
+        }
+      }
+    },
+    "motivationPerformancePeriod": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "year": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "month": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "isActive": {
+          "type": "boolean"
+        },
+        "startsAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "endsAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedBy": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "motivationPerformancePeriodsList": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/motivationPerformancePeriod"
+          }
+        }
+      }
+    },
+    "motivationUpsertPerformancePeriodRequest": {
+      "type": "object",
+      "properties": {
+        "year": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "month": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "isActive": {
+          "type": "boolean"
+        },
+        "startsAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "endsAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "motivationUpsertUserPerformanceRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "staffId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "criteriaId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "earnedScore": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "comment": {
+          "type": "string"
+        }
+      }
+    },
+    "motivationUserPercentage": {
+      "type": "object",
+      "properties": {
+        "basePercent": {
+          "type": "number",
+          "format": "double"
+        },
+        "absolutePercent": {
+          "type": "number",
+          "format": "double"
+        },
+        "totalPercent": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "motivationUserPerformance": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "userId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "staffId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "criteriaId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "earnedScore": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "evaluatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evaluatedBy": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "motivationUserPerformanceList": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/motivationUserPerformance"
+          }
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}
