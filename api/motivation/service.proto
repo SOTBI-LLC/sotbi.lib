@@ -4,10 +4,27 @@ package motivation;
 
 option go_package = "github.com/SOTBI-LLC/sotbi.lib/pkg/api/motivation";
 
-import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
+
+service Motivation {
+  rpc ListBaseCriteria(google.protobuf.Empty) returns (BaseCriteriaList);
+  rpc CreateBaseCriteria(CreateBaseCriteriaRequest) returns (BaseCriteria);
+  rpc UpdateBaseCriteria(UpdateBaseCriteriaRequest) returns (BaseCriteria);
+
+  rpc ListPerformancePeriods(google.protobuf.Empty) returns (PerformancePeriodsList);
+  rpc UpsertPerformancePeriod(UpsertPerformancePeriodRequest) returns (PerformancePeriod);
+
+  rpc ListPerformanceCriteria(ListPerformanceCriteriaRequest) returns (PerformanceCriteriaList);
+  rpc CreatePerformanceCriteria(CreatePerformanceCriteriaRequest) returns (PerformanceCriteria);
+  rpc UpdatePerformanceCriteria(UpdatePerformanceCriteriaRequest) returns (PerformanceCriteria);
+
+  rpc UpsertUserPerformance(UpsertUserPerformanceRequest) returns (UserPerformance);
+  rpc ListUserPerformance(ListUserPerformanceRequest) returns (UserPerformanceList);
+
+  rpc CalculateUserPercentage(CalculateUserPercentageRequest) returns (UserPercentage);
+}
 
 message BaseCriteria {
   int64 id = 1;
@@ -152,62 +169,4 @@ message UserPercentage {
   double base_percent = 1;
   double absolute_percent = 2;
   double total_percent = 3;
-}
-
-service Motivation {
-  rpc ListBaseCriteria(google.protobuf.Empty) returns (BaseCriteriaList) {
-    option (google.api.http) = {get: "/api/motivation/base_criteria"};
-  }
-  rpc CreateBaseCriteria(CreateBaseCriteriaRequest) returns (BaseCriteria) {
-    option (google.api.http) = {
-      post: "/api/motivation/base_criteria"
-      body: "*"
-    };
-  }
-  rpc UpdateBaseCriteria(UpdateBaseCriteriaRequest) returns (BaseCriteria) {
-    option (google.api.http) = {
-      put: "/api/motivation/base_criteria/{id}"
-      body: "*"
-    };
-  }
-
-  rpc ListPerformancePeriods(google.protobuf.Empty) returns (PerformancePeriodsList) {
-    option (google.api.http) = {get: "/api/motivation/periods"};
-  }
-  rpc UpsertPerformancePeriod(UpsertPerformancePeriodRequest) returns (PerformancePeriod) {
-    option (google.api.http) = {
-      put: "/api/motivation/periods"
-      body: "*"
-    };
-  }
-
-  rpc ListPerformanceCriteria(ListPerformanceCriteriaRequest) returns (PerformanceCriteriaList) {
-    option (google.api.http) = {get: "/api/motivation/criteria"};
-  }
-  rpc CreatePerformanceCriteria(CreatePerformanceCriteriaRequest) returns (PerformanceCriteria) {
-    option (google.api.http) = {
-      post: "/api/motivation/criteria"
-      body: "*"
-    };
-  }
-  rpc UpdatePerformanceCriteria(UpdatePerformanceCriteriaRequest) returns (PerformanceCriteria) {
-    option (google.api.http) = {
-      put: "/api/motivation/criteria/{id}"
-      body: "*"
-    };
-  }
-
-  rpc UpsertUserPerformance(UpsertUserPerformanceRequest) returns (UserPerformance) {
-    option (google.api.http) = {
-      put: "/api/motivation/performance"
-      body: "*"
-    };
-  }
-  rpc ListUserPerformance(ListUserPerformanceRequest) returns (UserPerformanceList) {
-    option (google.api.http) = {get: "/api/motivation/performance"};
-  }
-
-  rpc CalculateUserPercentage(CalculateUserPercentageRequest) returns (UserPercentage) {
-    option (google.api.http) = {get: "/api/motivation/percentage"};
-  }
 }
