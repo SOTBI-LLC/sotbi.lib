@@ -7,7 +7,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/avast/retry-go"
+	"github.com/avast/retry-go/v5"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/sasl/scram"
 	"google.golang.org/protobuf/proto"
@@ -232,7 +232,12 @@ func (c *consumer[T]) Consume(ctx context.Context) error {
 
 			var err error
 
-			err = retry.Do(
+			err = retry.New(
+				retry.Attempts(MaxAttempts),
+				retry.RetryIf(func(err error) bool {
+					return errors.Is(err, k.ErrFetchMessage)
+				}),
+			).Do(
 				func() error {
 					msg, err = c.fetchMessage(ctx)
 					if err != nil {
@@ -240,26 +245,14 @@ func (c *consumer[T]) Consume(ctx context.Context) error {
 					}
 
 					return nil
-				},
-				retry.Attempts(MaxAttempts),
-				retry.RetryIf(func(err error) bool {
-					return errors.Is(err, k.ErrFetchMessage)
-				}),
-			)
+				})
 			if err != nil {
 				c.logger.Error("failed to fetch message", err)
 
 				continue
 			}
 
-			err = retry.Do(
-				func() error {
-					if err := c.handleMessage(ctx, msg.Value); err != nil {
-						return fmt.Errorf("c.consumer.HandleMessage: %w", err)
-					}
-
-					return nil
-				},
+			err = retry.New(
 				retry.Attempts(MaxAttempts),
 				retry.Delay(DelayTimeout),
 				retry.OnRetry(func(n uint, err error) {
@@ -268,7 +261,15 @@ func (c *consumer[T]) Consume(ctx context.Context) error {
 						msg,
 						fmt.Errorf("attempt %d: %w", n, err),
 					)
-				}))
+				}),
+			).Do(
+				func() error {
+					if err := c.handleMessage(ctx, msg.Value); err != nil {
+						return fmt.Errorf("c.consumer.HandleMessage: %w", err)
+					}
+
+					return nil
+				})
 			if err != nil {
 				c.logger.Error("failed to handle message", err)
 

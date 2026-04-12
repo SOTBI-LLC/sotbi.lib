@@ -4,7 +4,7 @@ go 1.26
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
-	github.com/avast/retry-go v3.0.0+incompatible
+	github.com/avast/retry-go/v5 v5.0.0
 	github.com/docker/go-connections v0.6.0
 	github.com/go-resty/resty/v2 v2.17.2
 	github.com/go-testfixtures/testfixtures/v3 v3.19.0
