@@ -71,8 +71,6 @@ func Connect(opts ...Option) (*Conn, error) {
 		return nil, err
 	}
 
-	conn.Exec("set timezone to 'Europe/Moscow'")
-
 	return conn, nil
 }
 
