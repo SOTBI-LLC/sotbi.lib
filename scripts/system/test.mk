@@ -6,3 +6,6 @@ test-cov:  ## Запустить тесты с покрытием
 	go test --tags=tests -coverpkg=./internal/... -coverprofile=coverage.txt ./...
 	go tool cover -func coverage.txt
 	rm coverage.txt
+
+test-ci:
+	go test --tags=tests -coverpkg=./pkg/...  ./... -json > test-results.json
