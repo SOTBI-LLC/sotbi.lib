@@ -3,14 +3,32 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to deploy'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
     name: Lint
-    uses: ./.github/workflows/run-lint.yaml
+    uses:  SOTBI-LLC/gh-actions/.github/workflows/go-lint.yaml@main
     secrets: inherit
 
   test:
     name: Test
-    uses: ./.github/workflows/run-test.yaml
+    uses: SOTBI-LLC/gh-actions/.github/workflows/go-test.yaml@main
     secrets: inherit
