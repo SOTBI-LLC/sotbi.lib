@@ -10,7 +10,7 @@ require (
 	github.com/go-testfixtures/testfixtures/v3 v3.19.0
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0
-	github.com/jackc/pgx/v5 v5.9.0
+	github.com/jackc/pgx/v5 v5.9.2
 	github.com/jhump/protoreflect v1.18.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/minio/minio-go/v7 v7.0.98
