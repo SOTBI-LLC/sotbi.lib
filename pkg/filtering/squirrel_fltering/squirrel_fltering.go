@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"strings"
 
-	sq "github.com/Masterminds/squirrel"
+	sq "github.com/n-r-w/squirrel"
 
 	"github.com/SOTBI-LLC/sotbi.lib/pkg/filtering"
 )

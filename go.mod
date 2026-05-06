@@ -3,7 +3,6 @@ module github.com/SOTBI-LLC/sotbi.lib
 go 1.26
 
 require (
-	github.com/Masterminds/squirrel v1.5.4
 	github.com/avast/retry-go/v5 v5.0.0
 	github.com/docker/go-connections v0.6.0
 	github.com/go-resty/resty/v2 v2.17.2
@@ -15,6 +14,7 @@ require (
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/minio/minio-go/v7 v7.0.98
 	github.com/mitchellh/mapstructure v1.5.0
+	github.com/n-r-w/squirrel v1.5.1
 	github.com/riferrei/srclient v0.7.4
 	github.com/rs/zerolog v1.34.0
 	github.com/segmentio/kafka-go v0.4.50
@@ -109,6 +109,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.41.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.48.0 // indirect
+	golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b // indirect
 	golang.org/x/net v0.51.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.41.0 // indirect
