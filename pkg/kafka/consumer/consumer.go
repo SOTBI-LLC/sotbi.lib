@@ -273,6 +273,8 @@ func (c *consumer[T]) Consume(ctx context.Context) error {
 			if err != nil {
 				c.logger.Error("failed to handle message", err)
 
+				// TODO: add DLQ logic
+
 				continue
 			}
 
