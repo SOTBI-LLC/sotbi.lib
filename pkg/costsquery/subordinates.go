@@ -65,6 +65,7 @@ func BuildSubordinatesCostsSQL(prm utils.CostsRequestParams, filterModel string)
 		PlaceholderFormat(sq.Dollar)
 
 	query = applySubordinatesCostsScope(query, prm, "cr")
+	query = applySubordinatesPeriodFilter(query, periodStart, periodEnd, "cr")
 	query = squirrel_fltering.CreateFilter(query, filterModel, "cr")
 
 	sql, args, err = query.ToSql()
@@ -108,6 +109,16 @@ func buildSubordinatesReportTotals(
 	query = squirrel_fltering.CreateFilter(query, filterModel, "c2")
 
 	return query.GroupBy("c2.user_id").PlaceholderFormat(sq.Dollar)
+}
+
+func applySubordinatesPeriodFilter(
+	query sq.SelectBuilder,
+	periodStart, periodEnd, alias string,
+) sq.SelectBuilder {
+	return query.Where(sq.And{
+		sq.Expr(alias+".date::date >= ?::date", periodStart),
+		sq.Expr(alias+".date::date <= ?::date", periodEnd),
+	})
 }
 
 func applySubordinatesCostsScope(
