@@ -16,7 +16,6 @@ func BuildSubordinatesCostsSQL(prm utils.CostsRequestParams, filterModel string)
 	periodEnd := prm.End.Format("2006-01-02")
 
 	userTotals := buildSubordinatesPeriodTotals(periodStart, periodEnd)
-	reportTotals := buildSubordinatesReportTotals(prm, periodStart, periodEnd, filterModel)
 
 	query := sq.
 		Select(
@@ -37,7 +36,7 @@ func BuildSubordinatesCostsSQL(prm utils.CostsRequestParams, filterModel string)
 			"COALESCE(us.unit1, '') as unit1",
 			"COALESCE(us.unit2, '') as unit2",
 			"COALESCE(user_totals.total_minutes, 0) AS total_minutes",
-			"COALESCE(ROUND(cr.minutes_costs::numeric / NULLIF(COALESCE(report_totals.report_minutes, 0), 0) * 100, 3), 0) AS minutes_share", //nolint:lll
+			"COALESCE(ROUND(cr.minutes_costs::numeric / NULLIF(COALESCE(user_totals.total_minutes, 0), 0) * 100, 3), 0) AS minutes_share", //nolint:lll
 			"COALESCE(pos.name, '') AS position",
 		).
 		From("costs_real cr").
@@ -52,7 +51,6 @@ func BuildSubordinatesCostsSQL(prm utils.CostsRequestParams, filterModel string)
 		LeftJoin(commonqueries.NamedTable(commonqueries.UsersStaffsLight, "us") + " ON cr.user_id = us.id").
 		LeftJoin("staffs s3 ON s3.user_id = cr.user_id").
 		JoinClause(userTotals.Prefix("LEFT JOIN (").Suffix(") user_totals ON user_totals.user_id = cr.user_id")).
-		JoinClause(reportTotals.Prefix("LEFT JOIN (").Suffix(") report_totals ON report_totals.user_id = cr.user_id")).
 		LeftJoin(`LATERAL (
     SELECT p.name
     FROM users_positions up
@@ -88,27 +86,6 @@ func buildSubordinatesPeriodTotals(periodStart, periodEnd string) sq.SelectBuild
 		}).
 		GroupBy("c2.user_id").
 		PlaceholderFormat(sq.Dollar)
-}
-
-func buildSubordinatesReportTotals(
-	prm utils.CostsRequestParams,
-	periodStart, periodEnd, filterModel string,
-) sq.SelectBuilder {
-	query := sq.Select(
-		"c2.user_id",
-		"COALESCE(SUM(c2.minutes_costs), 0) AS report_minutes",
-	).
-		From("costs_real c2").
-		LeftJoin(commonqueries.NamedTable(commonqueries.UsersStaffsLight, "us") + " ON c2.user_id = us.id").
-		Where(sq.And{
-			sq.Expr("c2.date::date >= ?::date", periodStart),
-			sq.Expr("c2.date::date <= ?::date", periodEnd),
-		})
-
-	query = applySubordinatesCostsScope(query, prm, "c2")
-	query = squirrel_fltering.CreateFilter(query, filterModel, "c2")
-
-	return query.GroupBy("c2.user_id").PlaceholderFormat(sq.Dollar)
 }
 
 func applySubordinatesPeriodFilter(
