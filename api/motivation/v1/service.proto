@@ -1,0 +1,462 @@
+syntax = "proto3";
+
+package motivation.v1;
+
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/rpc/status.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/SOTBI-LLC/sotbi.lib/pkg/api/motivation/v1;motivationv1";
+
+// FieldMask paths are declared in the descriptor because PGV does not inspect
+// paths inside the google.protobuf.FieldMask well-known type. Go consumers use
+// ValidateUpdateBaseCriteriaRequest to compose PGV and this allowlist.
+extend google.protobuf.FieldOptions {
+  repeated string allowed_field_mask_path = 50001;
+}
+
+// PerformanceEvaluationService is the clean v1 boundary owned by Motivation.
+//
+// Motivation derives the authenticated UserID and roles from trusted gRPC
+// metadata and remains the authorization authority even behind a gateway. A
+// User can read their own sheets, a current manager can read and score current
+// reports, an administrator manages catalog, cap, lifecycle and inclusion,
+// and payroll can read results for Closed Periods only.
+//
+// Boundary validation maps to InvalidArgument with google.rpc.BadRequest
+// details. Identity, authorization, absence, duplicate/idempotency conflict,
+// lifecycle, transient, context and unexpected failures map respectively to
+// Unauthenticated, PermissionDenied, NotFound, AlreadyExists,
+// FailedPrecondition, Unavailable, Canceled/DeadlineExceeded and Internal.
+//
+// Every mutation requires a UUID idempotency_key. For at least 24 hours, the
+// same method and payload returns its original terminal outcome without a
+// second mutation; reuse with another method or payload returns AlreadyExists.
+// Caller identity and audit time are never accepted in mutation bodies.
+service PerformanceEvaluationService {
+  rpc CreateBaseCriteria(CreateBaseCriteriaRequest) returns (CreateBaseCriteriaResponse);
+  rpc UpdateBaseCriteria(UpdateBaseCriteriaRequest) returns (UpdateBaseCriteriaResponse);
+  rpc GetBaseCriteria(GetBaseCriteriaRequest) returns (GetBaseCriteriaResponse);
+  rpc ListBaseCriteria(ListBaseCriteriaRequest) returns (ListBaseCriteriaResponse);
+
+  rpc GetCoefficientCap(GetCoefficientCapRequest) returns (GetCoefficientCapResponse);
+  rpc SetCoefficientCap(SetCoefficientCapRequest) returns (SetCoefficientCapResponse);
+
+  rpc OpenPeriod(OpenPeriodRequest) returns (OpenPeriodResponse);
+  rpc ReopenPeriod(ReopenPeriodRequest) returns (ReopenPeriodResponse);
+  rpc GetPeriod(GetPeriodRequest) returns (GetPeriodResponse);
+  rpc ListPeriods(ListPeriodsRequest) returns (ListPeriodsResponse);
+
+  rpc IncludeUser(IncludeUserRequest) returns (IncludeUserResponse);
+  rpc SetCriterionScore(SetCriterionScoreRequest) returns (SetCriterionScoreResponse);
+  rpc SetAdjustment(SetAdjustmentRequest) returns (SetAdjustmentResponse);
+
+  rpc GetPerformanceSheet(GetPerformanceSheetRequest) returns (GetPerformanceSheetResponse);
+  rpc ListPerformanceSheets(ListPerformanceSheetsRequest) returns (ListPerformanceSheetsResponse);
+
+  // StreamPerformanceSheets is a finite point-in-time alternative to the
+  // unary list. It preserves ascending UserID order and ends after the last
+  // resource; it is not a live subscription.
+  rpc StreamPerformanceSheets(StreamPerformanceSheetsRequest) returns (stream StreamPerformanceSheetsResponse);
+
+  rpc ListPayrollResults(ListPayrollResultsRequest) returns (ListPayrollResultsResponse);
+
+  // StreamPayrollResults is a finite Closed-Period snapshot in ascending
+  // UserID order and ends after the last resource.
+  rpc StreamPayrollResults(StreamPayrollResultsRequest) returns (stream StreamPayrollResultsResponse);
+
+  // StartClosePeriod durably accepts work and makes the Period Closing before
+  // returning. Closing blocks scoring, Adjustment, inclusion, Reopen and an
+  // independent Close. The same key returns the same operation; another key
+  // returns an active operation; Closed returns its latest successful
+  // operation; a new key after failure or Reopen creates a new operation.
+  // Success atomically leaves Closed, failure leaves Open with no partial
+  // Close materialization. v1 exposes no cancellation.
+  rpc StartClosePeriod(StartClosePeriodRequest) returns (StartClosePeriodResponse);
+
+  // GetClosePeriodOperation supports durable polling across process restarts.
+  rpc GetClosePeriodOperation(GetClosePeriodOperationRequest) returns (GetClosePeriodOperationResponse);
+
+  // WatchClosePeriodOperation first sends the current durable state, then
+  // later durable state/progress changes, and ends after a terminal message.
+  // A Failed business operation is a normal terminal message; a stream error
+  // represents a transport failure.
+  rpc WatchClosePeriodOperation(WatchClosePeriodOperationRequest) returns (stream WatchClosePeriodOperationResponse);
+}
+
+message Date {
+  // Component ranges are enforced by PGV. Consumers and the Motivation
+  // transport must call ValidateMessage to reject impossible combinations
+  // such as 2026-02-29.
+  int32 year = 1 [(validate.rules).int32 = {gte: 1, lte: 9999}];
+  int32 month = 2 [(validate.rules).int32 = {gte: 1, lte: 12}];
+  int32 day = 3 [(validate.rules).int32 = {gte: 1, lte: 31}];
+}
+
+// Coefficient stores an exact count of ten-thousandths. For example, 30000
+// means 3.0000. Zero is valid for calculated sheet and payroll coefficients.
+message Coefficient {
+  uint32 ten_thousandths = 1;
+}
+
+enum PeriodStatus {
+  PERIOD_STATUS_UNSPECIFIED = 0;
+  PERIOD_STATUS_OPEN = 1;
+  PERIOD_STATUS_CLOSING = 2;
+  PERIOD_STATUS_CLOSED = 3;
+}
+
+enum ClosePeriodOperationState {
+  CLOSE_PERIOD_OPERATION_STATE_UNSPECIFIED = 0;
+  CLOSE_PERIOD_OPERATION_STATE_QUEUED = 1;
+  CLOSE_PERIOD_OPERATION_STATE_RUNNING = 2;
+  CLOSE_PERIOD_OPERATION_STATE_SUCCEEDED = 3;
+  CLOSE_PERIOD_OPERATION_STATE_FAILED = 4;
+}
+
+message BaseCriteria {
+  string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string name = 2 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
+  string description = 3;
+  int32 max_score = 4 [(validate.rules).int32.gt = 0];
+  Date valid_from = 5 [(validate.rules).message.required = true];
+  optional Date valid_to = 6;
+}
+
+message PeriodCriterion {
+  string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string base_criteria_id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string name = 3 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
+  string description = 4;
+  int32 max_score = 5 [(validate.rules).int32.gt = 0];
+}
+
+message PeriodSummary {
+  string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  int32 year = 2 [(validate.rules).int32 = {gte: 1, lte: 9999}];
+  int32 month = 3 [(validate.rules).int32 = {gte: 1, lte: 12}];
+  Date starts_at = 4 [(validate.rules).message.required = true];
+  Date ends_at = 5 [(validate.rules).message.required = true];
+  PeriodStatus status = 6 [(validate.rules).enum.defined_only = true];
+  Coefficient effective_cap = 7 [(validate.rules).message.required = true];
+  uint32 total_sheets = 8;
+  uint32 complete_sheets = 9;
+}
+
+message Period {
+  PeriodSummary summary = 1 [(validate.rules).message.required = true];
+
+  // Frozen criteria are ordered by Name then identifier.
+  repeated PeriodCriterion criteria = 2;
+
+  // stamped_cap is absent while the Period has not committed Close.
+  optional Coefficient stamped_cap = 3;
+  optional string latest_reopen_reason = 4;
+}
+
+message PerformanceSheetSummary {
+  string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string period_id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  int64 user_id = 3;
+  int64 position_id = 4;
+  bool is_complete = 5;
+  Coefficient coefficient = 6 [(validate.rules).message.required = true];
+}
+
+message ScoreChange {
+  string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  int64 actor_user_id = 2;
+  google.protobuf.Timestamp changed_at = 3 [(validate.rules).timestamp.required = true];
+  optional int32 from = 4;
+  int32 to = 5;
+  string comment = 6;
+}
+
+message SheetCriterion {
+  string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string period_criterion_id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string name = 3 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
+  string description = 4;
+  int32 max_score = 5 [(validate.rules).int32.gt = 0];
+  optional int32 score = 6;
+
+  // History is in committed event order, including equal-timestamp events.
+  repeated ScoreChange history = 7;
+}
+
+message Adjustment {
+  int32 value = 1;
+
+  // History is in committed event order, including equal-timestamp events.
+  repeated ScoreChange history = 2;
+}
+
+message PerformanceSheet {
+  PerformanceSheetSummary summary = 1 [(validate.rules).message.required = true];
+
+  // Criteria are ordered by frozen Name then identifier.
+  repeated SheetCriterion criteria = 2;
+
+  // Absence means that no Adjustment has been recorded; a present message
+  // with value zero represents an explicit zero Adjustment.
+  optional Adjustment adjustment = 3;
+}
+
+message PayrollResult {
+  string period_id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  int64 user_id = 2;
+  int64 position_id = 3;
+  Coefficient coefficient = 4 [(validate.rules).message.required = true];
+}
+
+message CoefficientCap {
+  Coefficient value = 1 [(validate.rules).message.required = true];
+}
+
+message UserIDFilter {
+  // An explicitly present filter with no values selects no users.
+  repeated int64 user_ids = 1 [(validate.rules).repeated = {
+    max_items: 5000,
+    unique: true,
+    items: {int64: {gt: 0}}
+  }];
+}
+
+message ClosePeriodOperation {
+  string operation_id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string period_id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  int64 requester_user_id = 3;
+  ClosePeriodOperationState state = 4 [(validate.rules).enum = {
+    defined_only: true,
+    not_in: 0
+  }];
+  uint32 processed_sheets = 5;
+  uint32 total_sheets = 6;
+  google.protobuf.Timestamp created_at = 7 [(validate.rules).timestamp.required = true];
+  optional google.protobuf.Timestamp started_at = 8;
+  optional google.protobuf.Timestamp finished_at = 9;
+
+  // Exactly one terminal outcome is present after Succeeded or Failed and no
+  // outcome is present while Queued or Running.
+  oneof terminal_outcome {
+    Period result = 10;
+    google.rpc.Status error = 11;
+  }
+}
+
+message CreateBaseCriteriaRequest {
+  string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string name = 2 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
+  string description = 3;
+  int32 max_score = 4 [(validate.rules).int32.gt = 0];
+  Date valid_from = 5 [(validate.rules).message.required = true];
+  optional Date valid_to = 6;
+}
+
+message CreateBaseCriteriaResponse {
+  BaseCriteria base_criteria = 1 [(validate.rules).message.required = true];
+}
+
+message UpdateBaseCriteriaRequest {
+  string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  google.protobuf.FieldMask update_mask = 3 [
+    (validate.rules).message.required = true,
+    (allowed_field_mask_path) = "name",
+    (allowed_field_mask_path) = "description",
+    (allowed_field_mask_path) = "max_score",
+    (allowed_field_mask_path) = "valid_from",
+    (allowed_field_mask_path) = "valid_to"
+  ];
+  optional string name = 4 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
+  optional string description = 5;
+  optional int32 max_score = 6 [(validate.rules).int32.gt = 0];
+  optional Date valid_from = 7;
+  optional Date valid_to = 8;
+}
+
+message UpdateBaseCriteriaResponse {
+  BaseCriteria base_criteria = 1 [(validate.rules).message.required = true];
+}
+
+message GetBaseCriteriaRequest {
+  string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+}
+
+message GetBaseCriteriaResponse {
+  BaseCriteria base_criteria = 1 [(validate.rules).message.required = true];
+}
+
+message ListBaseCriteriaRequest {
+  // Absence lists all criteria. Presence selects criteria whose inclusive
+  // validity interval contains this date.
+  optional Date active_on = 1;
+}
+
+message ListBaseCriteriaResponse {
+  repeated BaseCriteria base_criteria = 1;
+}
+
+message GetCoefficientCapRequest {}
+
+message GetCoefficientCapResponse {
+  CoefficientCap coefficient_cap = 1 [(validate.rules).message.required = true];
+}
+
+message SetCoefficientCapRequest {
+  string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  uint32 ten_thousandths = 2 [(validate.rules).uint32.gt = 0];
+}
+
+message SetCoefficientCapResponse {
+  CoefficientCap coefficient_cap = 1 [(validate.rules).message.required = true];
+}
+
+message OpenPeriodRequest {
+  string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  int32 year = 2 [(validate.rules).int32 = {gte: 1, lte: 9999}];
+  int32 month = 3 [(validate.rules).int32 = {gte: 1, lte: 12}];
+}
+
+message OpenPeriodResponse {
+  Period period = 1 [(validate.rules).message.required = true];
+}
+
+message ReopenPeriodRequest {
+  string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string period_id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string reason = 3 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
+}
+
+message ReopenPeriodResponse {
+  Period period = 1 [(validate.rules).message.required = true];
+}
+
+message GetPeriodRequest {
+  string period_id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+}
+
+message GetPeriodResponse {
+  Period period = 1 [(validate.rules).message.required = true];
+}
+
+message ListPeriodsRequest {}
+
+message ListPeriodsResponse {
+  // Ordered by descending Year then Month.
+  repeated PeriodSummary periods = 1;
+}
+
+message IncludeUserRequest {
+  string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string period_id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  int64 user_id = 3 [(validate.rules).int64.gt = 0];
+}
+
+message IncludeUserResponse {
+  PerformanceSheet performance_sheet = 1 [(validate.rules).message.required = true];
+}
+
+message SetCriterionScoreRequest {
+  string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string sheet_id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string sheet_criterion_id = 3 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  oneof score_input {
+    option (validate.required) = true;
+    int32 score = 4;
+  }
+  string comment = 5;
+}
+
+message SetCriterionScoreResponse {
+  SheetCriterion sheet_criterion = 1 [(validate.rules).message.required = true];
+}
+
+message SetAdjustmentRequest {
+  string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string sheet_id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  oneof adjustment_input {
+    option (validate.required) = true;
+    int32 value = 3;
+  }
+  string comment = 4 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
+}
+
+message SetAdjustmentResponse {
+  Adjustment adjustment = 1 [(validate.rules).message.required = true];
+}
+
+message GetPerformanceSheetRequest {
+  string sheet_id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+}
+
+message GetPerformanceSheetResponse {
+  PerformanceSheet performance_sheet = 1 [(validate.rules).message.required = true];
+}
+
+message ListPerformanceSheetsRequest {
+  string period_id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+
+  // Absence selects all users; a present empty filter selects no users.
+  optional UserIDFilter user_id_filter = 2;
+}
+
+message ListPerformanceSheetsResponse {
+  // Ordered by ascending UserID.
+  repeated PerformanceSheetSummary performance_sheets = 1 [(validate.rules).repeated.max_items = 5000];
+}
+
+message StreamPerformanceSheetsRequest {
+  string period_id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+
+  // Absence selects all users; a present empty filter selects no users.
+  optional UserIDFilter user_id_filter = 2;
+}
+
+message StreamPerformanceSheetsResponse {
+  PerformanceSheetSummary performance_sheet = 1 [(validate.rules).message.required = true];
+}
+
+message ListPayrollResultsRequest {
+  string period_id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+}
+
+message ListPayrollResultsResponse {
+  // Available only for a Closed Period and ordered by ascending UserID.
+  repeated PayrollResult payroll_results = 1 [(validate.rules).repeated.max_items = 5000];
+}
+
+message StreamPayrollResultsRequest {
+  string period_id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+}
+
+message StreamPayrollResultsResponse {
+  PayrollResult payroll_result = 1 [(validate.rules).message.required = true];
+}
+
+message StartClosePeriodRequest {
+  string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string period_id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+}
+
+message StartClosePeriodResponse {
+  ClosePeriodOperation operation = 1 [(validate.rules).message.required = true];
+}
+
+message GetClosePeriodOperationRequest {
+  string operation_id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+}
+
+message GetClosePeriodOperationResponse {
+  ClosePeriodOperation operation = 1 [(validate.rules).message.required = true];
+}
+
+message WatchClosePeriodOperationRequest {
+  string operation_id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+}
+
+message WatchClosePeriodOperationResponse {
+  ClosePeriodOperation operation = 1 [(validate.rules).message.required = true];
+}

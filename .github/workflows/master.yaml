@@ -32,3 +32,24 @@ jobs:
     name: Test
     uses: SOTBI-LLC/gh-actions/.github/workflows/go-test.yaml@main
     secrets: inherit
+
+  directory-codegen:
+    name: Directory v1 codegen drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.x'
+      - uses: arduino/setup-protoc@v3
+        with:
+          version: '36.0'
+      - name: Install pinned Directory generators
+        run: |
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.6
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5.1
+          go install github.com/envoyproxy/protoc-gen-validate@v1.2.1
+      - name: Check Directory v1 generated files
+        run: |
+          make check_directory_codegen
+          go test ./pkg/api/directory/v1 -run '^TestDirectoryV1Compatibility'

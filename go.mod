@@ -5,6 +5,7 @@ go 1.26
 require (
 	github.com/avast/retry-go/v5 v5.0.0
 	github.com/docker/go-connections v0.6.0
+	github.com/envoyproxy/protoc-gen-validate v1.3.0
 	github.com/go-resty/resty/v2 v2.17.2
 	github.com/go-testfixtures/testfixtures/v3 v3.19.0
 	github.com/golang-migrate/migrate/v4 v4.19.1
@@ -25,6 +26,7 @@ require (
 	github.com/yuin/goldmark v1.7.16
 	golang.org/x/text v0.37.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20260226221140-a57be14db171
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260226221140-a57be14db171
 	google.golang.org/grpc v1.79.3
 	google.golang.org/protobuf v1.36.11
 	gorm.io/driver/postgres v1.6.0
@@ -113,6 +115,5 @@ require (
 	golang.org/x/net v0.55.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/sys v0.45.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260226221140-a57be14db171 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

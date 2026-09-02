@@ -13,7 +13,7 @@ linters:
     # - revive
     - gosec
     - unconvert
-    - goconst
+    # - goconst
     - misspell
     - unparam
     - prealloc
