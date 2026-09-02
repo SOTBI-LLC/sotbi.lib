@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package directory.v1;
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/SOTBI-LLC/sotbi.lib/pkg/api/directory/v1;directoryv1";
+
+// DirectoryService provides one bounded, current, read-only organization view.
+//
+// Errors use standard gRPC status codes with google.rpc.ErrorInfo reasons:
+// USER_NOT_FOUND, DIRECTORY_DATA_INCONSISTENT, ROSTER_LIMIT_EXCEEDED,
+// DIRECT_REPORT_LIMIT_EXCEEDED, RATE_LIMITED, and AUTH_ROLE_MISSING. Only
+// temporary RATE_LIMITED responses include google.rpc.RetryInfo.
+service DirectoryService {
+  rpc GetRosterSnapshot(GetRosterSnapshotRequest) returns (GetRosterSnapshotResponse);
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc ListDirectReports(ListDirectReportsRequest) returns (ListDirectReportsResponse);
+}
+
+// DirectoryUser is the complete evaluation-relevant organization fact for one
+// User. manager_user_id is absent when the User has no direct manager.
+message DirectoryUser {
+  uint64 user_id = 1 [(validate.rules).uint64.gt = 0];
+  uint64 position_id = 2 [(validate.rules).uint64.gt = 0];
+  optional uint64 manager_user_id = 3 [(validate.rules).uint64.gt = 0];
+  bool active = 4;
+}
+
+message GetRosterSnapshotRequest {}
+
+message GetRosterSnapshotResponse {
+  google.protobuf.Timestamp snapshot_at = 1 [(validate.rules).timestamp.required = true];
+  string version = 2 [(validate.rules).string = {pattern: "^[0-9a-f]{64}$"}];
+  repeated DirectoryUser users = 3 [(validate.rules).repeated = {max_items: 5000}];
+}
+
+message GetUserRequest {
+  uint64 user_id = 1 [(validate.rules).uint64.gt = 0];
+}
+
+message GetUserResponse {
+  DirectoryUser user = 1 [(validate.rules).message.required = true];
+}
+
+message ListDirectReportsRequest {
+  uint64 manager_user_id = 1 [(validate.rules).uint64.gt = 0];
+}
+
+message ListDirectReportsResponse {
+  google.protobuf.Timestamp snapshot_at = 1 [(validate.rules).timestamp.required = true];
+  string version = 2 [(validate.rules).string = {pattern: "^[0-9a-f]{64}$"}];
+  repeated uint64 user_ids = 3 [(validate.rules).repeated = {
+    max_items: 5000,
+    unique: true,
+    items: {uint64: {gt: 0}}
+  }];
+}
