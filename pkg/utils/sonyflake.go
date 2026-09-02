@@ -16,7 +16,7 @@ type SonyflakeConfig struct {
 // Sonyflake is a goroutine-safe Sonyflake ID generator using atomic state.
 // JavaScript-compatible: generates 53-bit IDs that fit in Number.MAX_SAFE_INTEGER.
 type Sonyflake struct {
-	state  uint64 // high 41 bits: time, low 6 bits: sequence
+	state  atomic.Uint64 // high 41 bits: time, low 6 bits: sequence
 	config SonyflakeConfig
 }
 
@@ -62,7 +62,7 @@ func (s *Sonyflake) NextID() (uint64, error) {
 			return 0, errors.New("time overflow: exceeds 41-bit limit")
 		}
 
-		curr := atomic.LoadUint64(&s.state)
+		curr := s.state.Load()
 		lastTime := int64((curr & sonyflakeTimeMask) >> sonyflakeSequenceBits)
 		seq := uint16(curr & sonyflakeSeqMask)
 
@@ -79,7 +79,7 @@ func (s *Sonyflake) NextID() (uint64, error) {
 			newSeq := seq + 1
 			newState := (uint64(now) << sonyflakeSequenceBits) | uint64(newSeq)
 
-			if atomic.CompareAndSwapUint64(&s.state, curr, newState) {
+			if s.state.CompareAndSwap(curr, newState) {
 				return (uint64(now) << (sonyflakeMachineIDBits + sonyflakeSequenceBits)) |
 					(machineID << sonyflakeSequenceBits) |
 					uint64(newSeq), nil
@@ -89,7 +89,7 @@ func (s *Sonyflake) NextID() (uint64, error) {
 			newSeq := uint16(rand.IntN(sonyflakeMaxSequence + 1)) //nolint:gosec
 			newState := (uint64(now) << sonyflakeSequenceBits) | uint64(newSeq)
 
-			if atomic.CompareAndSwapUint64(&s.state, curr, newState) {
+			if s.state.CompareAndSwap(curr, newState) {
 				return (uint64(now) << (sonyflakeMachineIDBits + sonyflakeSequenceBits)) |
 					(machineID << sonyflakeSequenceBits) |
 					uint64(newSeq), nil
