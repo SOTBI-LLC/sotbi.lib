@@ -39,10 +39,6 @@ func ValidateMessage(message proto.Message) error {
 }
 
 func validateRosterSnapshot(response *GetRosterSnapshotResponse) error {
-	if response.Users == nil {
-		return fmt.Errorf("users must be initialized")
-	}
-
 	var previousUserID uint64
 
 	for index, user := range response.Users {
@@ -61,10 +57,6 @@ func validateRosterSnapshot(response *GetRosterSnapshotResponse) error {
 }
 
 func validateDirectReports(response *ListDirectReportsResponse) error {
-	if response.UserIds == nil {
-		return fmt.Errorf("user_ids must be initialized")
-	}
-
 	var previousUserID uint64
 	for index, userID := range response.UserIds {
 		if index > 0 && userID <= previousUserID {

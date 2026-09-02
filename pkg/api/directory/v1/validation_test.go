@@ -109,12 +109,11 @@ func TestValidateMessageDirectoryResponses(t *testing.T) {
 			},
 		},
 		{
-			name: "empty roster must be initialized",
+			name: "empty roster is valid",
 			message: &directoryv1.GetRosterSnapshotResponse{
 				SnapshotAt: snapshotAt,
 				Version:    directoryVersion,
 			},
-			wantErr: "users must be initialized",
 		},
 		{
 			name: "roster rejects inactive user",
