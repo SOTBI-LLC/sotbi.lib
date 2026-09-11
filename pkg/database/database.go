@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -48,7 +49,7 @@ func Connect(opts ...Option) (*Conn, error) {
 		opt(conn)
 	}
 
-	sqlDB, err := sql.Open("pgx", fmt.Sprintf(conn.dsn, os.Getenv("ENERGY_DB_PASS")))
+	sqlDB, err := sql.Open("pgx", formatDSN(conn.dsn, os.Getenv("ENERGY_DB_PASS")))
 	if err != nil {
 		return nil, err
 	}
@@ -72,6 +73,14 @@ func Connect(opts ...Option) (*Conn, error) {
 	}
 
 	return conn, nil
+}
+
+func formatDSN(dsn, password string) string {
+	if !strings.Contains(dsn, "%s") {
+		return dsn
+	}
+
+	return fmt.Sprintf(dsn, password)
 }
 
 // SetNullFieldDB func.
