@@ -8,4 +8,4 @@ test-cov:  ## Запустить тесты с покрытием
 	rm coverage.txt
 
 test-ci:
-	go test --tags=tests -coverpkg=./pkg/...  ./... -json > test-results.json
+	go test --tags=tests -v --race -coverpkg=./pkg/...  ./... -json > test-results.json
