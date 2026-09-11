@@ -15,9 +15,6 @@ on:
         required: false
         type: string
 
-env:
-  DADATA_API_KEY: ${{ secrets.DADATA_API_KEY }}
-
 permissions:
   contents: read
 
