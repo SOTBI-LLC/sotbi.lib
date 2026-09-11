@@ -234,8 +234,8 @@ func constructTextWhere(
 			field,
 			operator,
 			likeMix(*filters[0].Type, (*filters[0].Filter).(string)), //nolint:errcheck
-			likeMix(*filters[1].Type, (*filters[1].Filter).(string)),
-		) //nolint:errcheck
+			likeMix(*filters[1].Type, (*filters[1].Filter).(string)), //nolint:errcheck
+		)
 	}
 
 	return query
