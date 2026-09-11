@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
+	"github.com/moby/moby/api/types/network"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -68,8 +69,8 @@ func New(options ...testcontainers.CustomizeRequestOption) *Postgres {
 	}
 }
 
-func (p *Postgres) Port(ctx context.Context, port nat.Port) (nat.Port, error) {
-	return p.postgres.MappedPort(ctx, port)
+func (p *Postgres) Port(ctx context.Context, port nat.Port) (network.Port, error) {
+	return p.postgres.MappedPort(ctx, port.Port())
 }
 
 func (p *Postgres) Start(ctx context.Context, datTypeNames []string) error {
@@ -83,7 +84,9 @@ func (p *Postgres) Start(ctx context.Context, datTypeNames []string) error {
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(numLogOccurrence).
-				WithStartupTimeout(postgresStartupTimeout)))
+				WithStartupTimeout(postgresStartupTimeout),
+		),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to start postgres container, %w", err)
 	}
@@ -130,7 +133,7 @@ func (p *Postgres) Status(ctx context.Context) string {
 		panic(err)
 	}
 
-	return state.Status
+	return string(state.Status)
 }
 
 func (p *Postgres) Name(ctx context.Context) string {

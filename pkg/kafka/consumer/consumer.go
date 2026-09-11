@@ -77,7 +77,8 @@ func NewConsumer[T proto.Message](
 		mechanism, err := scram.Mechanism(
 			scram.SHA512,
 			opts.Username,
-			opts.Password)
+			opts.Password,
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -245,7 +246,8 @@ func (c *consumer[T]) Consume(ctx context.Context) error {
 					}
 
 					return nil
-				})
+				},
+			)
 			if err != nil {
 				c.logger.Error("failed to fetch message", err)
 
@@ -269,7 +271,8 @@ func (c *consumer[T]) Consume(ctx context.Context) error {
 					}
 
 					return nil
-				})
+				},
+			)
 			if err != nil {
 				c.logger.Error("failed to handle message", err)
 

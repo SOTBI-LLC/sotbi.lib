@@ -186,7 +186,8 @@ func constructDateWhere(
 				"",
 				field,
 				operator,
-				start1)
+				start1,
+			)
 		} else {
 			query = constructQuery(
 				query,
@@ -195,7 +196,8 @@ func constructDateWhere(
 				field,
 				operator,
 				start1,
-				start2)
+				start2,
+			)
 		}
 	}
 
@@ -222,7 +224,8 @@ func constructTextWhere(
 			"",
 			field,
 			operator,
-			likeMix(*filters[0].Type, fmt.Sprintf("%v", *filters[0].Filter)))
+			likeMix(*filters[0].Type, fmt.Sprintf("%v", *filters[0].Filter)),
+		)
 	} else {
 		query = constructQuery(
 			query,
@@ -231,7 +234,8 @@ func constructTextWhere(
 			field,
 			operator,
 			likeMix(*filters[0].Type, (*filters[0].Filter).(string)), //nolint:errcheck
-			likeMix(*filters[1].Type, (*filters[1].Filter).(string))) //nolint:errcheck
+			likeMix(*filters[1].Type, (*filters[1].Filter).(string)),
+		) //nolint:errcheck
 	}
 
 	return query
