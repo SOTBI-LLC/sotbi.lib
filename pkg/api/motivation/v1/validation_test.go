@@ -475,3 +475,220 @@ func TestValidateUpdateBaseCriteriaRequest(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateSavePerformanceSheetRequest(t *testing.T) {
+	t.Parallel()
+
+	criterionA := "11111111-1111-4111-8111-111111111111"
+	criterionB := "22222222-2222-4222-8222-222222222222"
+
+	validScoreChange := func() *motivationv1.SaveSheetScoreChange {
+		return &motivationv1.SaveSheetScoreChange{
+			SheetCriterionId: criterionA,
+			ScoreInput: &motivationv1.SaveSheetScoreChange_Score{
+				Score: 5,
+			},
+		}
+	}
+	validAdjustmentChange := func() *motivationv1.SaveSheetAdjustmentChange {
+		return &motivationv1.SaveSheetAdjustmentChange{
+			AdjustmentInput: &motivationv1.SaveSheetAdjustmentChange_Value{
+				Value: -3,
+			},
+			Comment: "remove carrot",
+		}
+	}
+	validRequest := func() *motivationv1.SavePerformanceSheetRequest {
+		return &motivationv1.SavePerformanceSheetRequest{
+			IdempotencyKey: idempotencyKey,
+			SheetId:        resourceID,
+			Scores:         []*motivationv1.SaveSheetScoreChange{validScoreChange()},
+			Adjustment:     validAdjustmentChange(),
+		}
+	}
+
+	tests := []struct {
+		name        string
+		request     func() *motivationv1.SavePerformanceSheetRequest
+		wantErrText string
+	}{
+		{
+			name: "scores and adjustment are accepted",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				return &motivationv1.SavePerformanceSheetRequest{
+					IdempotencyKey: idempotencyKey,
+					SheetId:        resourceID,
+					Scores: []*motivationv1.SaveSheetScoreChange{
+						validScoreChange(),
+						{
+							SheetCriterionId: criterionB,
+							ScoreInput:       &motivationv1.SaveSheetScoreChange_Score{Score: 0},
+							Comment:          "keep zero",
+						},
+					},
+				}
+			},
+		},
+		{
+			name: "adjustment only is accepted",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				request := validRequest()
+				request.Scores = nil
+
+				return request
+			},
+		},
+		{
+			name: "explicit zero score keeps presence",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				request := validRequest()
+				request.Scores = []*motivationv1.SaveSheetScoreChange{
+					{
+						SheetCriterionId: criterionA,
+						ScoreInput:       &motivationv1.SaveSheetScoreChange_Score{Score: 0},
+					},
+				}
+
+				return request
+			},
+		},
+		{
+			name: "score entry without comment is accepted at the contract layer",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				request := validRequest()
+				request.Scores = []*motivationv1.SaveSheetScoreChange{validScoreChange()}
+				request.Scores[0].Comment = ""
+
+				return request
+			},
+		},
+		{
+			name: "empty command is rejected",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				request := validRequest()
+				request.Scores = nil
+				request.Adjustment = nil
+
+				return request
+			},
+			wantErrText: "at least one",
+		},
+		{
+			name: "duplicate criterion entries are rejected",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				request := validRequest()
+				request.Scores = []*motivationv1.SaveSheetScoreChange{
+					validScoreChange(),
+					{
+						SheetCriterionId: criterionA,
+						ScoreInput:       &motivationv1.SaveSheetScoreChange_Score{Score: 0},
+					},
+				}
+
+				return request
+			},
+			wantErrText: "duplicate",
+		},
+		{
+			name: "score entry without value is rejected",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				request := validRequest()
+				request.Scores = []*motivationv1.SaveSheetScoreChange{
+					{
+						SheetCriterionId: criterionA,
+						Comment:          "no value",
+					},
+				}
+
+				return request
+			},
+			wantErrText: "ScoreInput",
+		},
+		{
+			name: "adjustment without value is rejected",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				request := validRequest()
+				request.Adjustment = &motivationv1.SaveSheetAdjustmentChange{
+					Comment: "no value",
+				}
+
+				return request
+			},
+			wantErrText: "AdjustmentInput",
+		},
+		{
+			name: "adjustment without comment is rejected",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				request := validRequest()
+				request.Adjustment = &motivationv1.SaveSheetAdjustmentChange{
+					AdjustmentInput: &motivationv1.SaveSheetAdjustmentChange_Value{Value: 1},
+				}
+
+				return request
+			},
+			wantErrText: "Comment",
+		},
+		{
+			name: "blank adjustment comment is rejected",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				request := validRequest()
+				request.Adjustment.Comment = "   "
+
+				return request
+			},
+			wantErrText: "Comment",
+		},
+		{
+			name: "non-UUID criterion id is rejected",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				request := validRequest()
+				request.Scores = []*motivationv1.SaveSheetScoreChange{
+					{
+						SheetCriterionId: "not-a-uuid",
+						ScoreInput:       &motivationv1.SaveSheetScoreChange_Score{Score: 1},
+					},
+				}
+
+				return request
+			},
+			wantErrText: "valid UUID",
+		},
+		{
+			name: "non-UUID sheet id is rejected",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				request := validRequest()
+				request.SheetId = "not-a-uuid"
+
+				return request
+			},
+			wantErrText: "valid UUID",
+		},
+		{
+			name: "non-UUID idempotency key is rejected",
+			request: func() *motivationv1.SavePerformanceSheetRequest {
+				request := validRequest()
+				request.IdempotencyKey = "not-a-uuid"
+
+				return request
+			},
+			wantErrText: "valid UUID",
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			err := motivationv1.ValidateSavePerformanceSheetRequest(test.request())
+			if test.wantErrText == "" && err != nil {
+				t.Fatalf("validation failed: %v", err)
+			}
+
+			if test.wantErrText != "" &&
+				(err == nil || !strings.Contains(err.Error(), test.wantErrText)) {
+				t.Fatalf("error = %v, want text %q", err, test.wantErrText)
+			}
+		})
+	}
+}

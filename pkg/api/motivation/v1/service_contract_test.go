@@ -106,6 +106,12 @@ func TestPerformanceEvaluationServiceDescriptor(t *testing.T) {
 			false,
 		},
 		{
+			"SavePerformanceSheet",
+			"motivation.v1.SavePerformanceSheetRequest",
+			"motivation.v1.SavePerformanceSheetResponse",
+			false,
+		},
+		{
 			"GetPerformanceSheet",
 			"motivation.v1.GetPerformanceSheetRequest",
 			"motivation.v1.GetPerformanceSheetResponse",
@@ -553,6 +559,7 @@ func TestCommandAndFilterRequestShapes(t *testing.T) {
 		"IncludeUserRequest",
 		"SetCriterionScoreRequest",
 		"SetAdjustmentRequest",
+		"SavePerformanceSheetRequest",
 		"StartClosePeriodRequest",
 	}
 
@@ -629,12 +636,134 @@ func TestGeneratedValidationAPI(t *testing.T) {
 		&motivationv1.IncludeUserRequest{},
 		&motivationv1.SetCriterionScoreRequest{},
 		&motivationv1.SetAdjustmentRequest{},
+		&motivationv1.SavePerformanceSheetRequest{},
 		&motivationv1.StartClosePeriodRequest{},
 	}
 
 	for _, validator := range validators {
 		if validator == nil {
 			t.Fatal("generated validator is nil")
+		}
+	}
+}
+
+func TestSavePerformanceSheetRequestShape(t *testing.T) {
+	t.Parallel()
+
+	request := (&motivationv1.SavePerformanceSheetRequest{}).ProtoReflect().Descriptor()
+
+	fieldNumbers := map[protoreflect.Name]int{
+		"idempotency_key": 1,
+		"sheet_id":        2,
+		"scores":          3,
+		"adjustment":      4,
+	}
+	for name, number := range fieldNumbers {
+		field := request.Fields().ByName(name)
+		if field == nil {
+			t.Errorf("SavePerformanceSheetRequest.%s is missing", name)
+			continue
+		}
+
+		if int(field.Number()) != number {
+			t.Errorf("SavePerformanceSheetRequest.%s number = %d, want %d", name, field.Number(), number)
+		}
+	}
+
+	scores := request.Fields().ByName("scores")
+	if scores != nil && !scores.IsList() {
+		t.Error("SavePerformanceSheetRequest.scores must be repeated")
+	}
+
+	if adjustment := request.Fields().ByName("adjustment"); adjustment != nil && !adjustment.HasPresence() {
+		t.Error("SavePerformanceSheetRequest.adjustment must preserve presence")
+	}
+
+	scoreChange := (&motivationv1.SaveSheetScoreChange{}).ProtoReflect().Descriptor()
+	scoreChangeNumbers := map[protoreflect.Name]int{
+		"sheet_criterion_id": 1,
+		"score":              2,
+		"comment":            3,
+	}
+	for name, number := range scoreChangeNumbers {
+		field := scoreChange.Fields().ByName(name)
+		if field == nil {
+			t.Errorf("SaveSheetScoreChange.%s is missing", name)
+			continue
+		}
+
+		if int(field.Number()) != number {
+			t.Errorf("SaveSheetScoreChange.%s number = %d, want %d", name, field.Number(), number)
+		}
+	}
+
+	if score := scoreChange.Fields().ByName("score"); score == nil || !score.HasPresence() {
+		t.Error("SaveSheetScoreChange.score must preserve presence for explicit zero")
+	}
+
+	adjustmentChange := (&motivationv1.SaveSheetAdjustmentChange{}).ProtoReflect().Descriptor()
+	if value := adjustmentChange.Fields().ByName("value"); value == nil || !value.HasPresence() {
+		t.Error("SaveSheetAdjustmentChange.value must preserve presence for explicit zero")
+	}
+
+	if comment := adjustmentChange.Fields().ByName("comment"); comment == nil {
+		t.Error("SaveSheetAdjustmentChange.comment is missing")
+	}
+}
+
+func TestSummaryFieldNumbersUnchanged(t *testing.T) {
+	t.Parallel()
+
+	summary := (&motivationv1.PerformanceSheetSummary{}).ProtoReflect().Descriptor()
+
+	legacyNumbers := map[protoreflect.Name]int{
+		"id":          1,
+		"period_id":   2,
+		"user_id":     3,
+		"position_id": 4,
+		"is_complete": 5,
+		"coefficient": 6,
+	}
+	for name, number := range legacyNumbers {
+		field := summary.Fields().ByName(name)
+		if field == nil {
+			t.Errorf("PerformanceSheetSummary.%s is missing", name)
+			continue
+		}
+
+		if int(field.Number()) != number {
+			t.Errorf(
+				"PerformanceSheetSummary.%s number = %d, want unchanged %d",
+				name,
+				field.Number(),
+				number,
+			)
+		}
+	}
+
+	actions := summary.Fields().ByName("actions")
+	if actions == nil {
+		t.Fatal("PerformanceSheetSummary.actions is missing")
+	}
+
+	if int(actions.Number()) != 7 {
+		t.Errorf("PerformanceSheetSummary.actions number = %d, want 7", actions.Number())
+	}
+
+	if got := actions.Message().FullName(); got != "motivation.v1.SheetActions" {
+		t.Errorf("PerformanceSheetSummary.actions type = %s, want motivation.v1.SheetActions", got)
+	}
+
+	sheetActions := (&motivationv1.SheetActions{}).ProtoReflect().Descriptor()
+	for _, name := range []protoreflect.Name{"can_edit_scores", "can_edit_adjustment", "requires_score_comment"} {
+		field := sheetActions.Fields().ByName(name)
+		if field == nil {
+			t.Errorf("SheetActions.%s is missing", name)
+			continue
+		}
+
+		if field.Kind() != protoreflect.BoolKind {
+			t.Errorf("SheetActions.%s kind = %s, want bool", name, field.Kind())
 		}
 	}
 }
