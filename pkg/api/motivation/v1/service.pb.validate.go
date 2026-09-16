@@ -1320,6 +1320,46 @@ func (m *PerformanceSheetSummary) validate(all bool) error {
 		}
 	}
 
+	if m.GetActions() == nil {
+		err := PerformanceSheetSummaryValidationError{
+			field:  "Actions",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetActions()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PerformanceSheetSummaryValidationError{
+					field:  "Actions",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PerformanceSheetSummaryValidationError{
+					field:  "Actions",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetActions()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PerformanceSheetSummaryValidationError{
+				field:  "Actions",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return PerformanceSheetSummaryMultiError(errors)
 	}
@@ -1411,6 +1451,111 @@ var _ interface {
 var _PerformanceSheetSummary_Id_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
 var _PerformanceSheetSummary_PeriodId_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+// Validate checks the field values on SheetActions with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SheetActions) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SheetActions with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SheetActionsMultiError, or
+// nil if none found.
+func (m *SheetActions) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SheetActions) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CanEditScores
+
+	// no validation rules for CanEditAdjustment
+
+	// no validation rules for RequiresScoreComment
+
+	if len(errors) > 0 {
+		return SheetActionsMultiError(errors)
+	}
+
+	return nil
+}
+
+// SheetActionsMultiError is an error wrapping multiple validation errors
+// returned by SheetActions.ValidateAll() if the designated constraints aren't met.
+type SheetActionsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SheetActionsMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SheetActionsMultiError) AllErrors() []error { return m }
+
+// SheetActionsValidationError is the validation error returned by
+// SheetActions.Validate if the designated constraints aren't met.
+type SheetActionsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SheetActionsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SheetActionsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SheetActionsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SheetActionsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SheetActionsValidationError) ErrorName() string { return "SheetActionsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SheetActionsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSheetActions.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SheetActionsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SheetActionsValidationError{}
 
 // Validate checks the field values on ScoreChange with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -7039,6 +7184,698 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SetAdjustmentResponseValidationError{}
+
+// Validate checks the field values on SaveSheetScoreChange with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SaveSheetScoreChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SaveSheetScoreChange with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SaveSheetScoreChangeMultiError, or nil if none found.
+func (m *SaveSheetScoreChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SaveSheetScoreChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateUuid(m.GetSheetCriterionId()); err != nil {
+		err = SaveSheetScoreChangeValidationError{
+			field:  "SheetCriterionId",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_SaveSheetScoreChange_SheetCriterionId_Pattern.MatchString(m.GetSheetCriterionId()) {
+		err := SaveSheetScoreChangeValidationError{
+			field:  "SheetCriterionId",
+			reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Comment
+
+	oneofScoreInputPresent := false
+	switch v := m.ScoreInput.(type) {
+	case *SaveSheetScoreChange_Score:
+		if v == nil {
+			err := SaveSheetScoreChangeValidationError{
+				field:  "ScoreInput",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofScoreInputPresent = true
+		// no validation rules for Score
+	default:
+		_ = v // ensures v is used
+	}
+	if !oneofScoreInputPresent {
+		err := SaveSheetScoreChangeValidationError{
+			field:  "ScoreInput",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return SaveSheetScoreChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *SaveSheetScoreChange) _validateUuid(uuid string) error {
+	if matched := _service_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
+	}
+
+	return nil
+}
+
+// SaveSheetScoreChangeMultiError is an error wrapping multiple validation
+// errors returned by SaveSheetScoreChange.ValidateAll() if the designated
+// constraints aren't met.
+type SaveSheetScoreChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SaveSheetScoreChangeMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SaveSheetScoreChangeMultiError) AllErrors() []error { return m }
+
+// SaveSheetScoreChangeValidationError is the validation error returned by
+// SaveSheetScoreChange.Validate if the designated constraints aren't met.
+type SaveSheetScoreChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SaveSheetScoreChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SaveSheetScoreChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SaveSheetScoreChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SaveSheetScoreChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SaveSheetScoreChangeValidationError) ErrorName() string {
+	return "SaveSheetScoreChangeValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SaveSheetScoreChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSaveSheetScoreChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SaveSheetScoreChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SaveSheetScoreChangeValidationError{}
+
+var _SaveSheetScoreChange_SheetCriterionId_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+// Validate checks the field values on SaveSheetAdjustmentChange with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SaveSheetAdjustmentChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SaveSheetAdjustmentChange with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SaveSheetAdjustmentChangeMultiError, or nil if none found.
+func (m *SaveSheetAdjustmentChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SaveSheetAdjustmentChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetComment()) < 1 {
+		err := SaveSheetAdjustmentChangeValidationError{
+			field:  "Comment",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_SaveSheetAdjustmentChange_Comment_Pattern.MatchString(m.GetComment()) {
+		err := SaveSheetAdjustmentChangeValidationError{
+			field:  "Comment",
+			reason: "value does not match regex pattern \"\\\\S\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	oneofAdjustmentInputPresent := false
+	switch v := m.AdjustmentInput.(type) {
+	case *SaveSheetAdjustmentChange_Value:
+		if v == nil {
+			err := SaveSheetAdjustmentChangeValidationError{
+				field:  "AdjustmentInput",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofAdjustmentInputPresent = true
+		// no validation rules for Value
+	default:
+		_ = v // ensures v is used
+	}
+	if !oneofAdjustmentInputPresent {
+		err := SaveSheetAdjustmentChangeValidationError{
+			field:  "AdjustmentInput",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return SaveSheetAdjustmentChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// SaveSheetAdjustmentChangeMultiError is an error wrapping multiple validation
+// errors returned by SaveSheetAdjustmentChange.ValidateAll() if the
+// designated constraints aren't met.
+type SaveSheetAdjustmentChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SaveSheetAdjustmentChangeMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SaveSheetAdjustmentChangeMultiError) AllErrors() []error { return m }
+
+// SaveSheetAdjustmentChangeValidationError is the validation error returned by
+// SaveSheetAdjustmentChange.Validate if the designated constraints aren't met.
+type SaveSheetAdjustmentChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SaveSheetAdjustmentChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SaveSheetAdjustmentChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SaveSheetAdjustmentChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SaveSheetAdjustmentChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SaveSheetAdjustmentChangeValidationError) ErrorName() string {
+	return "SaveSheetAdjustmentChangeValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SaveSheetAdjustmentChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSaveSheetAdjustmentChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SaveSheetAdjustmentChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SaveSheetAdjustmentChangeValidationError{}
+
+var _SaveSheetAdjustmentChange_Comment_Pattern = regexp.MustCompile("\\S")
+
+// Validate checks the field values on SavePerformanceSheetRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SavePerformanceSheetRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SavePerformanceSheetRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SavePerformanceSheetRequestMultiError, or nil if none found.
+func (m *SavePerformanceSheetRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SavePerformanceSheetRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateUuid(m.GetIdempotencyKey()); err != nil {
+		err = SavePerformanceSheetRequestValidationError{
+			field:  "IdempotencyKey",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_SavePerformanceSheetRequest_IdempotencyKey_Pattern.MatchString(m.GetIdempotencyKey()) {
+		err := SavePerformanceSheetRequestValidationError{
+			field:  "IdempotencyKey",
+			reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if err := m._validateUuid(m.GetSheetId()); err != nil {
+		err = SavePerformanceSheetRequestValidationError{
+			field:  "SheetId",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_SavePerformanceSheetRequest_SheetId_Pattern.MatchString(m.GetSheetId()) {
+		err := SavePerformanceSheetRequestValidationError{
+			field:  "SheetId",
+			reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetScores() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SavePerformanceSheetRequestValidationError{
+						field:  fmt.Sprintf("Scores[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SavePerformanceSheetRequestValidationError{
+						field:  fmt.Sprintf("Scores[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SavePerformanceSheetRequestValidationError{
+					field:  fmt.Sprintf("Scores[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Adjustment != nil {
+
+		if all {
+			switch v := interface{}(m.GetAdjustment()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SavePerformanceSheetRequestValidationError{
+						field:  "Adjustment",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SavePerformanceSheetRequestValidationError{
+						field:  "Adjustment",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetAdjustment()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SavePerformanceSheetRequestValidationError{
+					field:  "Adjustment",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return SavePerformanceSheetRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *SavePerformanceSheetRequest) _validateUuid(uuid string) error {
+	if matched := _service_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
+	}
+
+	return nil
+}
+
+// SavePerformanceSheetRequestMultiError is an error wrapping multiple
+// validation errors returned by SavePerformanceSheetRequest.ValidateAll() if
+// the designated constraints aren't met.
+type SavePerformanceSheetRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SavePerformanceSheetRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SavePerformanceSheetRequestMultiError) AllErrors() []error { return m }
+
+// SavePerformanceSheetRequestValidationError is the validation error returned
+// by SavePerformanceSheetRequest.Validate if the designated constraints
+// aren't met.
+type SavePerformanceSheetRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SavePerformanceSheetRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SavePerformanceSheetRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SavePerformanceSheetRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SavePerformanceSheetRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SavePerformanceSheetRequestValidationError) ErrorName() string {
+	return "SavePerformanceSheetRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SavePerformanceSheetRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSavePerformanceSheetRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SavePerformanceSheetRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SavePerformanceSheetRequestValidationError{}
+
+var _SavePerformanceSheetRequest_IdempotencyKey_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+var _SavePerformanceSheetRequest_SheetId_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+// Validate checks the field values on SavePerformanceSheetResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SavePerformanceSheetResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SavePerformanceSheetResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SavePerformanceSheetResponseMultiError, or nil if none found.
+func (m *SavePerformanceSheetResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SavePerformanceSheetResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPerformanceSheet() == nil {
+		err := SavePerformanceSheetResponseValidationError{
+			field:  "PerformanceSheet",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPerformanceSheet()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SavePerformanceSheetResponseValidationError{
+					field:  "PerformanceSheet",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SavePerformanceSheetResponseValidationError{
+					field:  "PerformanceSheet",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPerformanceSheet()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SavePerformanceSheetResponseValidationError{
+				field:  "PerformanceSheet",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SavePerformanceSheetResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SavePerformanceSheetResponseMultiError is an error wrapping multiple
+// validation errors returned by SavePerformanceSheetResponse.ValidateAll() if
+// the designated constraints aren't met.
+type SavePerformanceSheetResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SavePerformanceSheetResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SavePerformanceSheetResponseMultiError) AllErrors() []error { return m }
+
+// SavePerformanceSheetResponseValidationError is the validation error returned
+// by SavePerformanceSheetResponse.Validate if the designated constraints
+// aren't met.
+type SavePerformanceSheetResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SavePerformanceSheetResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SavePerformanceSheetResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SavePerformanceSheetResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SavePerformanceSheetResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SavePerformanceSheetResponseValidationError) ErrorName() string {
+	return "SavePerformanceSheetResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SavePerformanceSheetResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSavePerformanceSheetResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SavePerformanceSheetResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SavePerformanceSheetResponseValidationError{}
 
 // Validate checks the field values on GetPerformanceSheetRequest with the
 // rules defined in the proto definition for this message. If any rules are

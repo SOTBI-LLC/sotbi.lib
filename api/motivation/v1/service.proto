@@ -53,6 +53,14 @@ service PerformanceEvaluationService {
   rpc SetCriterionScore(SetCriterionScoreRequest) returns (SetCriterionScoreResponse);
   rpc SetAdjustment(SetAdjustmentRequest) returns (SetAdjustmentResponse);
 
+  // SavePerformanceSheet applies supplied score changes and an optional
+  // Adjustment change to one PerformanceSheet as one atomic command. Only
+  // supplied cells change; at least one change is required. The final sheet
+  // state is validated as a whole, so order inside the request does not
+  // matter. On success the complete committed sheet is returned; the standard
+  // idempotency contract applies.
+  rpc SavePerformanceSheet(SavePerformanceSheetRequest) returns (SavePerformanceSheetResponse);
+
   rpc GetPerformanceSheet(GetPerformanceSheetRequest) returns (GetPerformanceSheetResponse);
   rpc ListPerformanceSheets(ListPerformanceSheetsRequest) returns (ListPerformanceSheetsResponse);
 
@@ -163,6 +171,19 @@ message PerformanceSheetSummary {
   int64 position_id = 4;
   bool is_complete = 5;
   Coefficient coefficient = 6 [(validate.rules).message.required = true];
+
+  // Derived read projection for the authenticated principal at response time.
+  // It is a UI hint, never a write credential and never durable domain state.
+  SheetActions actions = 7 [(validate.rules).message.required = true];
+}
+
+// SheetActions reports what the current authenticated principal may do with
+// the sheet right now. Flags are recomputed for every new response snapshot;
+// a replayed idempotent response may carry stale hints.
+message SheetActions {
+  bool can_edit_scores = 1;
+  bool can_edit_adjustment = 2;
+  bool requires_score_comment = 3;
 }
 
 message ScoreChange {
@@ -386,6 +407,45 @@ message SetAdjustmentRequest {
 
 message SetAdjustmentResponse {
   Adjustment adjustment = 1 [(validate.rules).message.required = true];
+}
+
+// SaveSheetScoreChange is one dirty score cell. The score value uses a
+// required oneof so an explicit zero stays distinguishable from an omitted
+// value, which is never a clearing command. Comment rules are evaluated by
+// the domain against the locked current state, so the comment is unconstrained
+// at the contract level.
+message SaveSheetScoreChange {
+  string sheet_criterion_id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  oneof score_input {
+    option (validate.required) = true;
+    int32 score = 2;
+  }
+  string comment = 3;
+}
+
+// SaveSheetAdjustmentChange is the optional Adjustment write. Every
+// Adjustment write requires a comment, including a first set and a zero.
+message SaveSheetAdjustmentChange {
+  oneof adjustment_input {
+    option (validate.required) = true;
+    int32 value = 1;
+  }
+  string comment = 2 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
+}
+
+message SavePerformanceSheetRequest {
+  string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string sheet_id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+
+  // Supplied score cells; duplicates are rejected by semantic validation.
+  repeated SaveSheetScoreChange scores = 3;
+
+  // Absence leaves the Adjustment unchanged.
+  optional SaveSheetAdjustmentChange adjustment = 4;
+}
+
+message SavePerformanceSheetResponse {
+  PerformanceSheet performance_sheet = 1 [(validate.rules).message.required = true];
 }
 
 message GetPerformanceSheetRequest {

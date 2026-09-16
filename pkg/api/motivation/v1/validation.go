@@ -77,6 +77,37 @@ func ValidateUpdateBaseCriteriaRequest(request *UpdateBaseCriteriaRequest) error
 	return nil
 }
 
+// ValidateSavePerformanceSheetRequest composes PGV validation with the batch
+// rules PGV cannot express: the command must change at least one cell and
+// score entries must reference distinct criteria. Score range, comment rules
+// and the final-state invariant remain domain authority.
+func ValidateSavePerformanceSheetRequest(request *SavePerformanceSheetRequest) error {
+	if err := ValidateMessage(request); err != nil {
+		return fmt.Errorf("validate save performance sheet request: %w", err)
+	}
+
+	if len(request.GetScores()) == 0 && request.GetAdjustment() == nil {
+		return fmt.Errorf(
+			"validate save performance sheet request: at least one score change or adjustment change is required",
+		)
+	}
+
+	seen := make(map[string]struct{}, len(request.GetScores()))
+	for _, change := range request.GetScores() {
+		id := change.GetSheetCriterionId()
+		if _, ok := seen[id]; ok {
+			return fmt.Errorf(
+				"validate save performance sheet request: duplicate sheet_criterion_id %q",
+				id,
+			)
+		}
+
+		seen[id] = struct{}{}
+	}
+
+	return nil
+}
+
 func validateUpdateBaseCriteriaPathValue(request *UpdateBaseCriteriaRequest, path string) error {
 	if path == "valid_to" {
 		// Absence deliberately clears the nullable validity end.
