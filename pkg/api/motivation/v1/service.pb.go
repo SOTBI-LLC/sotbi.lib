@@ -1878,8 +1878,13 @@ type SetCoefficientCapRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	IdempotencyKey string                 `protobuf:"bytes,1,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
 	TenThousandths uint32                 `protobuf:"varint,2,opt,name=ten_thousandths,json=tenThousandths,proto3" json:"ten_thousandths,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Optional audit comment. Omission and empty are equivalent; supplied text
+	// is retained verbatim without trimming. A non-empty comment participates
+	// in canonical command identity, so the same key with a different comment
+	// conflicts. Actor, time and previous value stay server-derived.
+	Comment       string `protobuf:"bytes,3,opt,name=comment,proto3" json:"comment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *SetCoefficientCapRequest) Reset() {
@@ -1926,6 +1931,13 @@ func (x *SetCoefficientCapRequest) GetTenThousandths() uint32 {
 	return 0
 }
 
+func (x *SetCoefficientCapRequest) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
 type SetCoefficientCapResponse struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	CoefficientCap *CoefficientCap        `protobuf:"bytes,1,opt,name=coefficient_cap,json=coefficientCap,proto3" json:"coefficient_cap,omitempty"`
@@ -1970,6 +1982,244 @@ func (x *SetCoefficientCapResponse) GetCoefficientCap() *CoefficientCap {
 	return nil
 }
 
+type ListCoefficientCapHistoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListCoefficientCapHistoryRequest) Reset() {
+	*x = ListCoefficientCapHistoryRequest{}
+	mi := &file_api_motivation_v1_service_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListCoefficientCapHistoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListCoefficientCapHistoryRequest) ProtoMessage() {}
+
+func (x *ListCoefficientCapHistoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_motivation_v1_service_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListCoefficientCapHistoryRequest.ProtoReflect.Descriptor instead.
+func (*ListCoefficientCapHistoryRequest) Descriptor() ([]byte, []int) {
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{28}
+}
+
+type CoefficientCapHistoryBaseline struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The actual cap value and the server time when durable audit coverage
+	// started. The baseline is not a user save and has no actor.
+	CoefficientCap *Coefficient           `protobuf:"bytes,1,opt,name=coefficient_cap,json=coefficientCap,proto3" json:"coefficient_cap,omitempty"`
+	RecordedAt     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=recorded_at,json=recordedAt,proto3" json:"recorded_at,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *CoefficientCapHistoryBaseline) Reset() {
+	*x = CoefficientCapHistoryBaseline{}
+	mi := &file_api_motivation_v1_service_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CoefficientCapHistoryBaseline) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CoefficientCapHistoryBaseline) ProtoMessage() {}
+
+func (x *CoefficientCapHistoryBaseline) ProtoReflect() protoreflect.Message {
+	mi := &file_api_motivation_v1_service_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CoefficientCapHistoryBaseline.ProtoReflect.Descriptor instead.
+func (*CoefficientCapHistoryBaseline) Descriptor() ([]byte, []int) {
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *CoefficientCapHistoryBaseline) GetCoefficientCap() *Coefficient {
+	if x != nil {
+		return x.CoefficientCap
+	}
+	return nil
+}
+
+func (x *CoefficientCapHistoryBaseline) GetRecordedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RecordedAt
+	}
+	return nil
+}
+
+type CoefficientCapHistoryEntry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ActorUserId   int64                  `protobuf:"varint,2,opt,name=actor_user_id,json=actorUserId,proto3" json:"actor_user_id,omitempty"`
+	RecordedAt    *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=recorded_at,json=recordedAt,proto3" json:"recorded_at,omitempty"`
+	PreviousCap   *Coefficient           `protobuf:"bytes,4,opt,name=previous_cap,json=previousCap,proto3" json:"previous_cap,omitempty"`
+	NewCap        *Coefficient           `protobuf:"bytes,5,opt,name=new_cap,json=newCap,proto3" json:"new_cap,omitempty"`
+	Comment       string                 `protobuf:"bytes,6,opt,name=comment,proto3" json:"comment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CoefficientCapHistoryEntry) Reset() {
+	*x = CoefficientCapHistoryEntry{}
+	mi := &file_api_motivation_v1_service_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CoefficientCapHistoryEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CoefficientCapHistoryEntry) ProtoMessage() {}
+
+func (x *CoefficientCapHistoryEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_api_motivation_v1_service_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CoefficientCapHistoryEntry.ProtoReflect.Descriptor instead.
+func (*CoefficientCapHistoryEntry) Descriptor() ([]byte, []int) {
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *CoefficientCapHistoryEntry) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *CoefficientCapHistoryEntry) GetActorUserId() int64 {
+	if x != nil {
+		return x.ActorUserId
+	}
+	return 0
+}
+
+func (x *CoefficientCapHistoryEntry) GetRecordedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RecordedAt
+	}
+	return nil
+}
+
+func (x *CoefficientCapHistoryEntry) GetPreviousCap() *Coefficient {
+	if x != nil {
+		return x.PreviousCap
+	}
+	return nil
+}
+
+func (x *CoefficientCapHistoryEntry) GetNewCap() *Coefficient {
+	if x != nil {
+		return x.NewCap
+	}
+	return nil
+}
+
+func (x *CoefficientCapHistoryEntry) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
+type ListCoefficientCapHistoryResponse struct {
+	state    protoimpl.MessageState         `protogen:"open.v1"`
+	Baseline *CoefficientCapHistoryBaseline `protobuf:"bytes,1,opt,name=baseline,proto3" json:"baseline,omitempty"`
+	// Always true in v1: coverage is complete only since the baseline, never
+	// for the time before it.
+	EarlierHistoryUnavailable bool `protobuf:"varint,2,opt,name=earlier_history_unavailable,json=earlierHistoryUnavailable,proto3" json:"earlier_history_unavailable,omitempty"`
+	// All accepted saves since the baseline in reverse committed order,
+	// including equal recorded_at timestamps. Unpaginated.
+	Entries       []*CoefficientCapHistoryEntry `protobuf:"bytes,3,rep,name=entries,proto3" json:"entries,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListCoefficientCapHistoryResponse) Reset() {
+	*x = ListCoefficientCapHistoryResponse{}
+	mi := &file_api_motivation_v1_service_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListCoefficientCapHistoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListCoefficientCapHistoryResponse) ProtoMessage() {}
+
+func (x *ListCoefficientCapHistoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_motivation_v1_service_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListCoefficientCapHistoryResponse.ProtoReflect.Descriptor instead.
+func (*ListCoefficientCapHistoryResponse) Descriptor() ([]byte, []int) {
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *ListCoefficientCapHistoryResponse) GetBaseline() *CoefficientCapHistoryBaseline {
+	if x != nil {
+		return x.Baseline
+	}
+	return nil
+}
+
+func (x *ListCoefficientCapHistoryResponse) GetEarlierHistoryUnavailable() bool {
+	if x != nil {
+		return x.EarlierHistoryUnavailable
+	}
+	return false
+}
+
+func (x *ListCoefficientCapHistoryResponse) GetEntries() []*CoefficientCapHistoryEntry {
+	if x != nil {
+		return x.Entries
+	}
+	return nil
+}
+
 type OpenPeriodRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	IdempotencyKey string                 `protobuf:"bytes,1,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
@@ -1981,7 +2231,7 @@ type OpenPeriodRequest struct {
 
 func (x *OpenPeriodRequest) Reset() {
 	*x = OpenPeriodRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[28]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1993,7 +2243,7 @@ func (x *OpenPeriodRequest) String() string {
 func (*OpenPeriodRequest) ProtoMessage() {}
 
 func (x *OpenPeriodRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[28]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2006,7 +2256,7 @@ func (x *OpenPeriodRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OpenPeriodRequest.ProtoReflect.Descriptor instead.
 func (*OpenPeriodRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{28}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *OpenPeriodRequest) GetIdempotencyKey() string {
@@ -2039,7 +2289,7 @@ type OpenPeriodResponse struct {
 
 func (x *OpenPeriodResponse) Reset() {
 	*x = OpenPeriodResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[29]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2051,7 +2301,7 @@ func (x *OpenPeriodResponse) String() string {
 func (*OpenPeriodResponse) ProtoMessage() {}
 
 func (x *OpenPeriodResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[29]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2064,7 +2314,7 @@ func (x *OpenPeriodResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OpenPeriodResponse.ProtoReflect.Descriptor instead.
 func (*OpenPeriodResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{29}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *OpenPeriodResponse) GetPeriod() *Period {
@@ -2085,7 +2335,7 @@ type ReopenPeriodRequest struct {
 
 func (x *ReopenPeriodRequest) Reset() {
 	*x = ReopenPeriodRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[30]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2097,7 +2347,7 @@ func (x *ReopenPeriodRequest) String() string {
 func (*ReopenPeriodRequest) ProtoMessage() {}
 
 func (x *ReopenPeriodRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[30]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2110,7 +2360,7 @@ func (x *ReopenPeriodRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReopenPeriodRequest.ProtoReflect.Descriptor instead.
 func (*ReopenPeriodRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{30}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *ReopenPeriodRequest) GetIdempotencyKey() string {
@@ -2143,7 +2393,7 @@ type ReopenPeriodResponse struct {
 
 func (x *ReopenPeriodResponse) Reset() {
 	*x = ReopenPeriodResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[31]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2155,7 +2405,7 @@ func (x *ReopenPeriodResponse) String() string {
 func (*ReopenPeriodResponse) ProtoMessage() {}
 
 func (x *ReopenPeriodResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[31]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2168,7 +2418,7 @@ func (x *ReopenPeriodResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReopenPeriodResponse.ProtoReflect.Descriptor instead.
 func (*ReopenPeriodResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{31}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *ReopenPeriodResponse) GetPeriod() *Period {
@@ -2187,7 +2437,7 @@ type GetPeriodRequest struct {
 
 func (x *GetPeriodRequest) Reset() {
 	*x = GetPeriodRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[32]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2199,7 +2449,7 @@ func (x *GetPeriodRequest) String() string {
 func (*GetPeriodRequest) ProtoMessage() {}
 
 func (x *GetPeriodRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[32]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2212,7 +2462,7 @@ func (x *GetPeriodRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPeriodRequest.ProtoReflect.Descriptor instead.
 func (*GetPeriodRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{32}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *GetPeriodRequest) GetPeriodId() string {
@@ -2231,7 +2481,7 @@ type GetPeriodResponse struct {
 
 func (x *GetPeriodResponse) Reset() {
 	*x = GetPeriodResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[33]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2243,7 +2493,7 @@ func (x *GetPeriodResponse) String() string {
 func (*GetPeriodResponse) ProtoMessage() {}
 
 func (x *GetPeriodResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[33]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2256,7 +2506,7 @@ func (x *GetPeriodResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPeriodResponse.ProtoReflect.Descriptor instead.
 func (*GetPeriodResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{33}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *GetPeriodResponse) GetPeriod() *Period {
@@ -2274,7 +2524,7 @@ type ListPeriodsRequest struct {
 
 func (x *ListPeriodsRequest) Reset() {
 	*x = ListPeriodsRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[34]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2286,7 +2536,7 @@ func (x *ListPeriodsRequest) String() string {
 func (*ListPeriodsRequest) ProtoMessage() {}
 
 func (x *ListPeriodsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[34]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2299,7 +2549,7 @@ func (x *ListPeriodsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPeriodsRequest.ProtoReflect.Descriptor instead.
 func (*ListPeriodsRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{34}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{38}
 }
 
 type ListPeriodsResponse struct {
@@ -2312,7 +2562,7 @@ type ListPeriodsResponse struct {
 
 func (x *ListPeriodsResponse) Reset() {
 	*x = ListPeriodsResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[35]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2324,7 +2574,7 @@ func (x *ListPeriodsResponse) String() string {
 func (*ListPeriodsResponse) ProtoMessage() {}
 
 func (x *ListPeriodsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[35]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2337,7 +2587,7 @@ func (x *ListPeriodsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPeriodsResponse.ProtoReflect.Descriptor instead.
 func (*ListPeriodsResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{35}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *ListPeriodsResponse) GetPeriods() []*PeriodSummary {
@@ -2358,7 +2608,7 @@ type IncludeUserRequest struct {
 
 func (x *IncludeUserRequest) Reset() {
 	*x = IncludeUserRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[36]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2370,7 +2620,7 @@ func (x *IncludeUserRequest) String() string {
 func (*IncludeUserRequest) ProtoMessage() {}
 
 func (x *IncludeUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[36]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2383,7 +2633,7 @@ func (x *IncludeUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IncludeUserRequest.ProtoReflect.Descriptor instead.
 func (*IncludeUserRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{36}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *IncludeUserRequest) GetIdempotencyKey() string {
@@ -2416,7 +2666,7 @@ type IncludeUserResponse struct {
 
 func (x *IncludeUserResponse) Reset() {
 	*x = IncludeUserResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[37]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2428,7 +2678,7 @@ func (x *IncludeUserResponse) String() string {
 func (*IncludeUserResponse) ProtoMessage() {}
 
 func (x *IncludeUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[37]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2441,7 +2691,7 @@ func (x *IncludeUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IncludeUserResponse.ProtoReflect.Descriptor instead.
 func (*IncludeUserResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{37}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *IncludeUserResponse) GetPerformanceSheet() *PerformanceSheet {
@@ -2467,7 +2717,7 @@ type SetCriterionScoreRequest struct {
 
 func (x *SetCriterionScoreRequest) Reset() {
 	*x = SetCriterionScoreRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[38]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2479,7 +2729,7 @@ func (x *SetCriterionScoreRequest) String() string {
 func (*SetCriterionScoreRequest) ProtoMessage() {}
 
 func (x *SetCriterionScoreRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[38]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2492,7 +2742,7 @@ func (x *SetCriterionScoreRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetCriterionScoreRequest.ProtoReflect.Descriptor instead.
 func (*SetCriterionScoreRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{38}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *SetCriterionScoreRequest) GetIdempotencyKey() string {
@@ -2558,7 +2808,7 @@ type SetCriterionScoreResponse struct {
 
 func (x *SetCriterionScoreResponse) Reset() {
 	*x = SetCriterionScoreResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[39]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2570,7 +2820,7 @@ func (x *SetCriterionScoreResponse) String() string {
 func (*SetCriterionScoreResponse) ProtoMessage() {}
 
 func (x *SetCriterionScoreResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[39]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2583,7 +2833,7 @@ func (x *SetCriterionScoreResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetCriterionScoreResponse.ProtoReflect.Descriptor instead.
 func (*SetCriterionScoreResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{39}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *SetCriterionScoreResponse) GetSheetCriterion() *SheetCriterion {
@@ -2608,7 +2858,7 @@ type SetAdjustmentRequest struct {
 
 func (x *SetAdjustmentRequest) Reset() {
 	*x = SetAdjustmentRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[40]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2620,7 +2870,7 @@ func (x *SetAdjustmentRequest) String() string {
 func (*SetAdjustmentRequest) ProtoMessage() {}
 
 func (x *SetAdjustmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[40]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2633,7 +2883,7 @@ func (x *SetAdjustmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetAdjustmentRequest.ProtoReflect.Descriptor instead.
 func (*SetAdjustmentRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{40}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *SetAdjustmentRequest) GetIdempotencyKey() string {
@@ -2692,7 +2942,7 @@ type SetAdjustmentResponse struct {
 
 func (x *SetAdjustmentResponse) Reset() {
 	*x = SetAdjustmentResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[41]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2704,7 +2954,7 @@ func (x *SetAdjustmentResponse) String() string {
 func (*SetAdjustmentResponse) ProtoMessage() {}
 
 func (x *SetAdjustmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[41]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2717,7 +2967,7 @@ func (x *SetAdjustmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetAdjustmentResponse.ProtoReflect.Descriptor instead.
 func (*SetAdjustmentResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{41}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *SetAdjustmentResponse) GetAdjustment() *Adjustment {
@@ -2746,7 +2996,7 @@ type SaveSheetScoreChange struct {
 
 func (x *SaveSheetScoreChange) Reset() {
 	*x = SaveSheetScoreChange{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[42]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2758,7 +3008,7 @@ func (x *SaveSheetScoreChange) String() string {
 func (*SaveSheetScoreChange) ProtoMessage() {}
 
 func (x *SaveSheetScoreChange) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[42]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2771,7 +3021,7 @@ func (x *SaveSheetScoreChange) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveSheetScoreChange.ProtoReflect.Descriptor instead.
 func (*SaveSheetScoreChange) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{42}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *SaveSheetScoreChange) GetSheetCriterionId() string {
@@ -2829,7 +3079,7 @@ type SaveSheetAdjustmentChange struct {
 
 func (x *SaveSheetAdjustmentChange) Reset() {
 	*x = SaveSheetAdjustmentChange{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[43]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2841,7 +3091,7 @@ func (x *SaveSheetAdjustmentChange) String() string {
 func (*SaveSheetAdjustmentChange) ProtoMessage() {}
 
 func (x *SaveSheetAdjustmentChange) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[43]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2854,7 +3104,7 @@ func (x *SaveSheetAdjustmentChange) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveSheetAdjustmentChange.ProtoReflect.Descriptor instead.
 func (*SaveSheetAdjustmentChange) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{43}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *SaveSheetAdjustmentChange) GetAdjustmentInput() isSaveSheetAdjustmentChange_AdjustmentInput {
@@ -2904,7 +3154,7 @@ type SavePerformanceSheetRequest struct {
 
 func (x *SavePerformanceSheetRequest) Reset() {
 	*x = SavePerformanceSheetRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[44]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2916,7 +3166,7 @@ func (x *SavePerformanceSheetRequest) String() string {
 func (*SavePerformanceSheetRequest) ProtoMessage() {}
 
 func (x *SavePerformanceSheetRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[44]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2929,7 +3179,7 @@ func (x *SavePerformanceSheetRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SavePerformanceSheetRequest.ProtoReflect.Descriptor instead.
 func (*SavePerformanceSheetRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{44}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *SavePerformanceSheetRequest) GetIdempotencyKey() string {
@@ -2969,7 +3219,7 @@ type SavePerformanceSheetResponse struct {
 
 func (x *SavePerformanceSheetResponse) Reset() {
 	*x = SavePerformanceSheetResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[45]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2981,7 +3231,7 @@ func (x *SavePerformanceSheetResponse) String() string {
 func (*SavePerformanceSheetResponse) ProtoMessage() {}
 
 func (x *SavePerformanceSheetResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[45]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2994,7 +3244,7 @@ func (x *SavePerformanceSheetResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SavePerformanceSheetResponse.ProtoReflect.Descriptor instead.
 func (*SavePerformanceSheetResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{45}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *SavePerformanceSheetResponse) GetPerformanceSheet() *PerformanceSheet {
@@ -3013,7 +3263,7 @@ type GetPerformanceSheetRequest struct {
 
 func (x *GetPerformanceSheetRequest) Reset() {
 	*x = GetPerformanceSheetRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[46]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3025,7 +3275,7 @@ func (x *GetPerformanceSheetRequest) String() string {
 func (*GetPerformanceSheetRequest) ProtoMessage() {}
 
 func (x *GetPerformanceSheetRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[46]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3038,7 +3288,7 @@ func (x *GetPerformanceSheetRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPerformanceSheetRequest.ProtoReflect.Descriptor instead.
 func (*GetPerformanceSheetRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{46}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *GetPerformanceSheetRequest) GetSheetId() string {
@@ -3057,7 +3307,7 @@ type GetPerformanceSheetResponse struct {
 
 func (x *GetPerformanceSheetResponse) Reset() {
 	*x = GetPerformanceSheetResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[47]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3069,7 +3319,7 @@ func (x *GetPerformanceSheetResponse) String() string {
 func (*GetPerformanceSheetResponse) ProtoMessage() {}
 
 func (x *GetPerformanceSheetResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[47]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3082,7 +3332,7 @@ func (x *GetPerformanceSheetResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPerformanceSheetResponse.ProtoReflect.Descriptor instead.
 func (*GetPerformanceSheetResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{47}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *GetPerformanceSheetResponse) GetPerformanceSheet() *PerformanceSheet {
@@ -3103,7 +3353,7 @@ type ListPerformanceSheetsRequest struct {
 
 func (x *ListPerformanceSheetsRequest) Reset() {
 	*x = ListPerformanceSheetsRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[48]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3115,7 +3365,7 @@ func (x *ListPerformanceSheetsRequest) String() string {
 func (*ListPerformanceSheetsRequest) ProtoMessage() {}
 
 func (x *ListPerformanceSheetsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[48]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3128,7 +3378,7 @@ func (x *ListPerformanceSheetsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPerformanceSheetsRequest.ProtoReflect.Descriptor instead.
 func (*ListPerformanceSheetsRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{48}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *ListPerformanceSheetsRequest) GetPeriodId() string {
@@ -3155,7 +3405,7 @@ type ListPerformanceSheetsResponse struct {
 
 func (x *ListPerformanceSheetsResponse) Reset() {
 	*x = ListPerformanceSheetsResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[49]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3167,7 +3417,7 @@ func (x *ListPerformanceSheetsResponse) String() string {
 func (*ListPerformanceSheetsResponse) ProtoMessage() {}
 
 func (x *ListPerformanceSheetsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[49]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3180,7 +3430,7 @@ func (x *ListPerformanceSheetsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPerformanceSheetsResponse.ProtoReflect.Descriptor instead.
 func (*ListPerformanceSheetsResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{49}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *ListPerformanceSheetsResponse) GetPerformanceSheets() []*PerformanceSheetSummary {
@@ -3201,7 +3451,7 @@ type StreamPerformanceSheetsRequest struct {
 
 func (x *StreamPerformanceSheetsRequest) Reset() {
 	*x = StreamPerformanceSheetsRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[50]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3213,7 +3463,7 @@ func (x *StreamPerformanceSheetsRequest) String() string {
 func (*StreamPerformanceSheetsRequest) ProtoMessage() {}
 
 func (x *StreamPerformanceSheetsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[50]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3226,7 +3476,7 @@ func (x *StreamPerformanceSheetsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamPerformanceSheetsRequest.ProtoReflect.Descriptor instead.
 func (*StreamPerformanceSheetsRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{50}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *StreamPerformanceSheetsRequest) GetPeriodId() string {
@@ -3252,7 +3502,7 @@ type StreamPerformanceSheetsResponse struct {
 
 func (x *StreamPerformanceSheetsResponse) Reset() {
 	*x = StreamPerformanceSheetsResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[51]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3264,7 +3514,7 @@ func (x *StreamPerformanceSheetsResponse) String() string {
 func (*StreamPerformanceSheetsResponse) ProtoMessage() {}
 
 func (x *StreamPerformanceSheetsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[51]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3277,7 +3527,7 @@ func (x *StreamPerformanceSheetsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamPerformanceSheetsResponse.ProtoReflect.Descriptor instead.
 func (*StreamPerformanceSheetsResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{51}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *StreamPerformanceSheetsResponse) GetPerformanceSheet() *PerformanceSheetSummary {
@@ -3296,7 +3546,7 @@ type ListPayrollResultsRequest struct {
 
 func (x *ListPayrollResultsRequest) Reset() {
 	*x = ListPayrollResultsRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[52]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3308,7 +3558,7 @@ func (x *ListPayrollResultsRequest) String() string {
 func (*ListPayrollResultsRequest) ProtoMessage() {}
 
 func (x *ListPayrollResultsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[52]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3321,7 +3571,7 @@ func (x *ListPayrollResultsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPayrollResultsRequest.ProtoReflect.Descriptor instead.
 func (*ListPayrollResultsRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{52}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *ListPayrollResultsRequest) GetPeriodId() string {
@@ -3341,7 +3591,7 @@ type ListPayrollResultsResponse struct {
 
 func (x *ListPayrollResultsResponse) Reset() {
 	*x = ListPayrollResultsResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[53]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3353,7 +3603,7 @@ func (x *ListPayrollResultsResponse) String() string {
 func (*ListPayrollResultsResponse) ProtoMessage() {}
 
 func (x *ListPayrollResultsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[53]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3366,7 +3616,7 @@ func (x *ListPayrollResultsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPayrollResultsResponse.ProtoReflect.Descriptor instead.
 func (*ListPayrollResultsResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{53}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *ListPayrollResultsResponse) GetPayrollResults() []*PayrollResult {
@@ -3385,7 +3635,7 @@ type StreamPayrollResultsRequest struct {
 
 func (x *StreamPayrollResultsRequest) Reset() {
 	*x = StreamPayrollResultsRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[54]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3397,7 +3647,7 @@ func (x *StreamPayrollResultsRequest) String() string {
 func (*StreamPayrollResultsRequest) ProtoMessage() {}
 
 func (x *StreamPayrollResultsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[54]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3410,7 +3660,7 @@ func (x *StreamPayrollResultsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamPayrollResultsRequest.ProtoReflect.Descriptor instead.
 func (*StreamPayrollResultsRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{54}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *StreamPayrollResultsRequest) GetPeriodId() string {
@@ -3429,7 +3679,7 @@ type StreamPayrollResultsResponse struct {
 
 func (x *StreamPayrollResultsResponse) Reset() {
 	*x = StreamPayrollResultsResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[55]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3441,7 +3691,7 @@ func (x *StreamPayrollResultsResponse) String() string {
 func (*StreamPayrollResultsResponse) ProtoMessage() {}
 
 func (x *StreamPayrollResultsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[55]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3454,7 +3704,7 @@ func (x *StreamPayrollResultsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamPayrollResultsResponse.ProtoReflect.Descriptor instead.
 func (*StreamPayrollResultsResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{55}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *StreamPayrollResultsResponse) GetPayrollResult() *PayrollResult {
@@ -3474,7 +3724,7 @@ type StartClosePeriodRequest struct {
 
 func (x *StartClosePeriodRequest) Reset() {
 	*x = StartClosePeriodRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[56]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3486,7 +3736,7 @@ func (x *StartClosePeriodRequest) String() string {
 func (*StartClosePeriodRequest) ProtoMessage() {}
 
 func (x *StartClosePeriodRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[56]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3499,7 +3749,7 @@ func (x *StartClosePeriodRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartClosePeriodRequest.ProtoReflect.Descriptor instead.
 func (*StartClosePeriodRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{56}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *StartClosePeriodRequest) GetIdempotencyKey() string {
@@ -3525,7 +3775,7 @@ type StartClosePeriodResponse struct {
 
 func (x *StartClosePeriodResponse) Reset() {
 	*x = StartClosePeriodResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[57]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3537,7 +3787,7 @@ func (x *StartClosePeriodResponse) String() string {
 func (*StartClosePeriodResponse) ProtoMessage() {}
 
 func (x *StartClosePeriodResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[57]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3550,7 +3800,7 @@ func (x *StartClosePeriodResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartClosePeriodResponse.ProtoReflect.Descriptor instead.
 func (*StartClosePeriodResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{57}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *StartClosePeriodResponse) GetOperation() *ClosePeriodOperation {
@@ -3569,7 +3819,7 @@ type GetClosePeriodOperationRequest struct {
 
 func (x *GetClosePeriodOperationRequest) Reset() {
 	*x = GetClosePeriodOperationRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[58]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3581,7 +3831,7 @@ func (x *GetClosePeriodOperationRequest) String() string {
 func (*GetClosePeriodOperationRequest) ProtoMessage() {}
 
 func (x *GetClosePeriodOperationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[58]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3594,7 +3844,7 @@ func (x *GetClosePeriodOperationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClosePeriodOperationRequest.ProtoReflect.Descriptor instead.
 func (*GetClosePeriodOperationRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{58}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *GetClosePeriodOperationRequest) GetOperationId() string {
@@ -3613,7 +3863,7 @@ type GetClosePeriodOperationResponse struct {
 
 func (x *GetClosePeriodOperationResponse) Reset() {
 	*x = GetClosePeriodOperationResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[59]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3625,7 +3875,7 @@ func (x *GetClosePeriodOperationResponse) String() string {
 func (*GetClosePeriodOperationResponse) ProtoMessage() {}
 
 func (x *GetClosePeriodOperationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[59]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3638,7 +3888,7 @@ func (x *GetClosePeriodOperationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClosePeriodOperationResponse.ProtoReflect.Descriptor instead.
 func (*GetClosePeriodOperationResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{59}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *GetClosePeriodOperationResponse) GetOperation() *ClosePeriodOperation {
@@ -3657,7 +3907,7 @@ type WatchClosePeriodOperationRequest struct {
 
 func (x *WatchClosePeriodOperationRequest) Reset() {
 	*x = WatchClosePeriodOperationRequest{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[60]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3669,7 +3919,7 @@ func (x *WatchClosePeriodOperationRequest) String() string {
 func (*WatchClosePeriodOperationRequest) ProtoMessage() {}
 
 func (x *WatchClosePeriodOperationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[60]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3682,7 +3932,7 @@ func (x *WatchClosePeriodOperationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchClosePeriodOperationRequest.ProtoReflect.Descriptor instead.
 func (*WatchClosePeriodOperationRequest) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{60}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *WatchClosePeriodOperationRequest) GetOperationId() string {
@@ -3701,7 +3951,7 @@ type WatchClosePeriodOperationResponse struct {
 
 func (x *WatchClosePeriodOperationResponse) Reset() {
 	*x = WatchClosePeriodOperationResponse{}
-	mi := &file_api_motivation_v1_service_proto_msgTypes[61]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3713,7 +3963,7 @@ func (x *WatchClosePeriodOperationResponse) String() string {
 func (*WatchClosePeriodOperationResponse) ProtoMessage() {}
 
 func (x *WatchClosePeriodOperationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_motivation_v1_service_proto_msgTypes[61]
+	mi := &file_api_motivation_v1_service_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3726,7 +3976,7 @@ func (x *WatchClosePeriodOperationResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use WatchClosePeriodOperationResponse.ProtoReflect.Descriptor instead.
 func (*WatchClosePeriodOperationResponse) Descriptor() ([]byte, []int) {
-	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{61}
+	return file_api_motivation_v1_service_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *WatchClosePeriodOperationResponse) GetOperation() *ClosePeriodOperation {
@@ -3915,12 +4165,30 @@ const file_api_motivation_v1_service_proto_rawDesc = "" +
 	"\rbase_criteria\x18\x01 \x03(\v2\x1b.motivation.v1.BaseCriteriaR\fbaseCriteria\"\x1a\n" +
 	"\x18GetCoefficientCapRequest\"m\n" +
 	"\x19GetCoefficientCapResponse\x12P\n" +
-	"\x0fcoefficient_cap\x18\x01 \x01(\v2\x1d.motivation.v1.CoefficientCapB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x0ecoefficientCap\"\xbf\x01\n" +
+	"\x0fcoefficient_cap\x18\x01 \x01(\v2\x1d.motivation.v1.CoefficientCapB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x0ecoefficientCap\"\xd9\x01\n" +
 	"\x18SetCoefficientCapRequest\x12q\n" +
 	"\x0fidempotency_key\x18\x01 \x01(\tBH\xfaBErC2>^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\xb0\x01\x01R\x0eidempotencyKey\x120\n" +
-	"\x0ften_thousandths\x18\x02 \x01(\rB\a\xfaB\x04*\x02 \x00R\x0etenThousandths\"m\n" +
+	"\x0ften_thousandths\x18\x02 \x01(\rB\a\xfaB\x04*\x02 \x00R\x0etenThousandths\x12\x18\n" +
+	"\acomment\x18\x03 \x01(\tR\acomment\"m\n" +
 	"\x19SetCoefficientCapResponse\x12P\n" +
-	"\x0fcoefficient_cap\x18\x01 \x01(\v2\x1d.motivation.v1.CoefficientCapB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x0ecoefficientCap\"\xc7\x01\n" +
+	"\x0fcoefficient_cap\x18\x01 \x01(\v2\x1d.motivation.v1.CoefficientCapB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x0ecoefficientCap\"\"\n" +
+	" ListCoefficientCapHistoryRequest\"\xb5\x01\n" +
+	"\x1dCoefficientCapHistoryBaseline\x12M\n" +
+	"\x0fcoefficient_cap\x18\x01 \x01(\v2\x1a.motivation.v1.CoefficientB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x0ecoefficientCap\x12E\n" +
+	"\vrecorded_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\b\xfaB\x05\xb2\x01\x02\b\x01R\n" +
+	"recordedAt\"\x8c\x03\n" +
+	"\x1aCoefficientCapHistoryEntry\x12X\n" +
+	"\x02id\x18\x01 \x01(\tBH\xfaBErC2>^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\xb0\x01\x01R\x02id\x12+\n" +
+	"\ractor_user_id\x18\x02 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\vactorUserId\x12E\n" +
+	"\vrecorded_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\b\xfaB\x05\xb2\x01\x02\b\x01R\n" +
+	"recordedAt\x12G\n" +
+	"\fprevious_cap\x18\x04 \x01(\v2\x1a.motivation.v1.CoefficientB\b\xfaB\x05\x8a\x01\x02\x10\x01R\vpreviousCap\x12=\n" +
+	"\anew_cap\x18\x05 \x01(\v2\x1a.motivation.v1.CoefficientB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x06newCap\x12\x18\n" +
+	"\acomment\x18\x06 \x01(\tR\acomment\"\x85\x02\n" +
+	"!ListCoefficientCapHistoryResponse\x12R\n" +
+	"\bbaseline\x18\x01 \x01(\v2,.motivation.v1.CoefficientCapHistoryBaselineB\b\xfaB\x05\x8a\x01\x02\x10\x01R\bbaseline\x12G\n" +
+	"\x1bearlier_history_unavailable\x18\x02 \x01(\bB\a\xfaB\x04j\x02\b\x01R\x19earlierHistoryUnavailable\x12C\n" +
+	"\aentries\x18\x03 \x03(\v2).motivation.v1.CoefficientCapHistoryEntryR\aentries\"\xc7\x01\n" +
 	"\x11OpenPeriodRequest\x12q\n" +
 	"\x0fidempotency_key\x18\x01 \x01(\tBH\xfaBErC2>^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\xb0\x01\x01R\x0eidempotencyKey\x12\x1e\n" +
 	"\x04year\x18\x02 \x01(\x05B\n" +
@@ -4032,14 +4300,15 @@ const file_api_motivation_v1_service_proto_rawDesc = "" +
 	"#CLOSE_PERIOD_OPERATION_STATE_QUEUED\x10\x01\x12(\n" +
 	"$CLOSE_PERIOD_OPERATION_STATE_RUNNING\x10\x02\x12*\n" +
 	"&CLOSE_PERIOD_OPERATION_STATE_SUCCEEDED\x10\x03\x12'\n" +
-	"#CLOSE_PERIOD_OPERATION_STATE_FAILED\x10\x042\x86\x12\n" +
+	"#CLOSE_PERIOD_OPERATION_STATE_FAILED\x10\x042\x86\x13\n" +
 	"\x1cPerformanceEvaluationService\x12i\n" +
 	"\x12CreateBaseCriteria\x12(.motivation.v1.CreateBaseCriteriaRequest\x1a).motivation.v1.CreateBaseCriteriaResponse\x12i\n" +
 	"\x12UpdateBaseCriteria\x12(.motivation.v1.UpdateBaseCriteriaRequest\x1a).motivation.v1.UpdateBaseCriteriaResponse\x12`\n" +
 	"\x0fGetBaseCriteria\x12%.motivation.v1.GetBaseCriteriaRequest\x1a&.motivation.v1.GetBaseCriteriaResponse\x12c\n" +
 	"\x10ListBaseCriteria\x12&.motivation.v1.ListBaseCriteriaRequest\x1a'.motivation.v1.ListBaseCriteriaResponse\x12f\n" +
 	"\x11GetCoefficientCap\x12'.motivation.v1.GetCoefficientCapRequest\x1a(.motivation.v1.GetCoefficientCapResponse\x12f\n" +
-	"\x11SetCoefficientCap\x12'.motivation.v1.SetCoefficientCapRequest\x1a(.motivation.v1.SetCoefficientCapResponse\x12Q\n" +
+	"\x11SetCoefficientCap\x12'.motivation.v1.SetCoefficientCapRequest\x1a(.motivation.v1.SetCoefficientCapResponse\x12~\n" +
+	"\x19ListCoefficientCapHistory\x12/.motivation.v1.ListCoefficientCapHistoryRequest\x1a0.motivation.v1.ListCoefficientCapHistoryResponse\x12Q\n" +
 	"\n" +
 	"OpenPeriod\x12 .motivation.v1.OpenPeriodRequest\x1a!.motivation.v1.OpenPeriodResponse\x12W\n" +
 	"\fReopenPeriod\x12\".motivation.v1.ReopenPeriodRequest\x1a#.motivation.v1.ReopenPeriodResponse\x12N\n" +
@@ -4072,7 +4341,7 @@ func file_api_motivation_v1_service_proto_rawDescGZIP() []byte {
 }
 
 var file_api_motivation_v1_service_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_api_motivation_v1_service_proto_msgTypes = make([]protoimpl.MessageInfo, 62)
+var file_api_motivation_v1_service_proto_msgTypes = make([]protoimpl.MessageInfo, 66)
 var file_api_motivation_v1_service_proto_goTypes = []any{
 	(PeriodStatus)(0),                         // 0: motivation.v1.PeriodStatus
 	(ClosePeriodOperationState)(0),            // 1: motivation.v1.ClosePeriodOperationState
@@ -4104,44 +4373,48 @@ var file_api_motivation_v1_service_proto_goTypes = []any{
 	(*GetCoefficientCapResponse)(nil),         // 27: motivation.v1.GetCoefficientCapResponse
 	(*SetCoefficientCapRequest)(nil),          // 28: motivation.v1.SetCoefficientCapRequest
 	(*SetCoefficientCapResponse)(nil),         // 29: motivation.v1.SetCoefficientCapResponse
-	(*OpenPeriodRequest)(nil),                 // 30: motivation.v1.OpenPeriodRequest
-	(*OpenPeriodResponse)(nil),                // 31: motivation.v1.OpenPeriodResponse
-	(*ReopenPeriodRequest)(nil),               // 32: motivation.v1.ReopenPeriodRequest
-	(*ReopenPeriodResponse)(nil),              // 33: motivation.v1.ReopenPeriodResponse
-	(*GetPeriodRequest)(nil),                  // 34: motivation.v1.GetPeriodRequest
-	(*GetPeriodResponse)(nil),                 // 35: motivation.v1.GetPeriodResponse
-	(*ListPeriodsRequest)(nil),                // 36: motivation.v1.ListPeriodsRequest
-	(*ListPeriodsResponse)(nil),               // 37: motivation.v1.ListPeriodsResponse
-	(*IncludeUserRequest)(nil),                // 38: motivation.v1.IncludeUserRequest
-	(*IncludeUserResponse)(nil),               // 39: motivation.v1.IncludeUserResponse
-	(*SetCriterionScoreRequest)(nil),          // 40: motivation.v1.SetCriterionScoreRequest
-	(*SetCriterionScoreResponse)(nil),         // 41: motivation.v1.SetCriterionScoreResponse
-	(*SetAdjustmentRequest)(nil),              // 42: motivation.v1.SetAdjustmentRequest
-	(*SetAdjustmentResponse)(nil),             // 43: motivation.v1.SetAdjustmentResponse
-	(*SaveSheetScoreChange)(nil),              // 44: motivation.v1.SaveSheetScoreChange
-	(*SaveSheetAdjustmentChange)(nil),         // 45: motivation.v1.SaveSheetAdjustmentChange
-	(*SavePerformanceSheetRequest)(nil),       // 46: motivation.v1.SavePerformanceSheetRequest
-	(*SavePerformanceSheetResponse)(nil),      // 47: motivation.v1.SavePerformanceSheetResponse
-	(*GetPerformanceSheetRequest)(nil),        // 48: motivation.v1.GetPerformanceSheetRequest
-	(*GetPerformanceSheetResponse)(nil),       // 49: motivation.v1.GetPerformanceSheetResponse
-	(*ListPerformanceSheetsRequest)(nil),      // 50: motivation.v1.ListPerformanceSheetsRequest
-	(*ListPerformanceSheetsResponse)(nil),     // 51: motivation.v1.ListPerformanceSheetsResponse
-	(*StreamPerformanceSheetsRequest)(nil),    // 52: motivation.v1.StreamPerformanceSheetsRequest
-	(*StreamPerformanceSheetsResponse)(nil),   // 53: motivation.v1.StreamPerformanceSheetsResponse
-	(*ListPayrollResultsRequest)(nil),         // 54: motivation.v1.ListPayrollResultsRequest
-	(*ListPayrollResultsResponse)(nil),        // 55: motivation.v1.ListPayrollResultsResponse
-	(*StreamPayrollResultsRequest)(nil),       // 56: motivation.v1.StreamPayrollResultsRequest
-	(*StreamPayrollResultsResponse)(nil),      // 57: motivation.v1.StreamPayrollResultsResponse
-	(*StartClosePeriodRequest)(nil),           // 58: motivation.v1.StartClosePeriodRequest
-	(*StartClosePeriodResponse)(nil),          // 59: motivation.v1.StartClosePeriodResponse
-	(*GetClosePeriodOperationRequest)(nil),    // 60: motivation.v1.GetClosePeriodOperationRequest
-	(*GetClosePeriodOperationResponse)(nil),   // 61: motivation.v1.GetClosePeriodOperationResponse
-	(*WatchClosePeriodOperationRequest)(nil),  // 62: motivation.v1.WatchClosePeriodOperationRequest
-	(*WatchClosePeriodOperationResponse)(nil), // 63: motivation.v1.WatchClosePeriodOperationResponse
-	(*timestamppb.Timestamp)(nil),             // 64: google.protobuf.Timestamp
-	(*status.Status)(nil),                     // 65: google.rpc.Status
-	(*fieldmaskpb.FieldMask)(nil),             // 66: google.protobuf.FieldMask
-	(*descriptorpb.FieldOptions)(nil),         // 67: google.protobuf.FieldOptions
+	(*ListCoefficientCapHistoryRequest)(nil),  // 30: motivation.v1.ListCoefficientCapHistoryRequest
+	(*CoefficientCapHistoryBaseline)(nil),     // 31: motivation.v1.CoefficientCapHistoryBaseline
+	(*CoefficientCapHistoryEntry)(nil),        // 32: motivation.v1.CoefficientCapHistoryEntry
+	(*ListCoefficientCapHistoryResponse)(nil), // 33: motivation.v1.ListCoefficientCapHistoryResponse
+	(*OpenPeriodRequest)(nil),                 // 34: motivation.v1.OpenPeriodRequest
+	(*OpenPeriodResponse)(nil),                // 35: motivation.v1.OpenPeriodResponse
+	(*ReopenPeriodRequest)(nil),               // 36: motivation.v1.ReopenPeriodRequest
+	(*ReopenPeriodResponse)(nil),              // 37: motivation.v1.ReopenPeriodResponse
+	(*GetPeriodRequest)(nil),                  // 38: motivation.v1.GetPeriodRequest
+	(*GetPeriodResponse)(nil),                 // 39: motivation.v1.GetPeriodResponse
+	(*ListPeriodsRequest)(nil),                // 40: motivation.v1.ListPeriodsRequest
+	(*ListPeriodsResponse)(nil),               // 41: motivation.v1.ListPeriodsResponse
+	(*IncludeUserRequest)(nil),                // 42: motivation.v1.IncludeUserRequest
+	(*IncludeUserResponse)(nil),               // 43: motivation.v1.IncludeUserResponse
+	(*SetCriterionScoreRequest)(nil),          // 44: motivation.v1.SetCriterionScoreRequest
+	(*SetCriterionScoreResponse)(nil),         // 45: motivation.v1.SetCriterionScoreResponse
+	(*SetAdjustmentRequest)(nil),              // 46: motivation.v1.SetAdjustmentRequest
+	(*SetAdjustmentResponse)(nil),             // 47: motivation.v1.SetAdjustmentResponse
+	(*SaveSheetScoreChange)(nil),              // 48: motivation.v1.SaveSheetScoreChange
+	(*SaveSheetAdjustmentChange)(nil),         // 49: motivation.v1.SaveSheetAdjustmentChange
+	(*SavePerformanceSheetRequest)(nil),       // 50: motivation.v1.SavePerformanceSheetRequest
+	(*SavePerformanceSheetResponse)(nil),      // 51: motivation.v1.SavePerformanceSheetResponse
+	(*GetPerformanceSheetRequest)(nil),        // 52: motivation.v1.GetPerformanceSheetRequest
+	(*GetPerformanceSheetResponse)(nil),       // 53: motivation.v1.GetPerformanceSheetResponse
+	(*ListPerformanceSheetsRequest)(nil),      // 54: motivation.v1.ListPerformanceSheetsRequest
+	(*ListPerformanceSheetsResponse)(nil),     // 55: motivation.v1.ListPerformanceSheetsResponse
+	(*StreamPerformanceSheetsRequest)(nil),    // 56: motivation.v1.StreamPerformanceSheetsRequest
+	(*StreamPerformanceSheetsResponse)(nil),   // 57: motivation.v1.StreamPerformanceSheetsResponse
+	(*ListPayrollResultsRequest)(nil),         // 58: motivation.v1.ListPayrollResultsRequest
+	(*ListPayrollResultsResponse)(nil),        // 59: motivation.v1.ListPayrollResultsResponse
+	(*StreamPayrollResultsRequest)(nil),       // 60: motivation.v1.StreamPayrollResultsRequest
+	(*StreamPayrollResultsResponse)(nil),      // 61: motivation.v1.StreamPayrollResultsResponse
+	(*StartClosePeriodRequest)(nil),           // 62: motivation.v1.StartClosePeriodRequest
+	(*StartClosePeriodResponse)(nil),          // 63: motivation.v1.StartClosePeriodResponse
+	(*GetClosePeriodOperationRequest)(nil),    // 64: motivation.v1.GetClosePeriodOperationRequest
+	(*GetClosePeriodOperationResponse)(nil),   // 65: motivation.v1.GetClosePeriodOperationResponse
+	(*WatchClosePeriodOperationRequest)(nil),  // 66: motivation.v1.WatchClosePeriodOperationRequest
+	(*WatchClosePeriodOperationResponse)(nil), // 67: motivation.v1.WatchClosePeriodOperationResponse
+	(*timestamppb.Timestamp)(nil),             // 68: google.protobuf.Timestamp
+	(*status.Status)(nil),                     // 69: google.rpc.Status
+	(*fieldmaskpb.FieldMask)(nil),             // 70: google.protobuf.FieldMask
+	(*descriptorpb.FieldOptions)(nil),         // 71: google.protobuf.FieldOptions
 }
 var file_api_motivation_v1_service_proto_depIdxs = []int32{
 	2,  // 0: motivation.v1.BaseCriteria.valid_from:type_name -> motivation.v1.Date
@@ -4155,7 +4428,7 @@ var file_api_motivation_v1_service_proto_depIdxs = []int32{
 	3,  // 8: motivation.v1.Period.stamped_cap:type_name -> motivation.v1.Coefficient
 	3,  // 9: motivation.v1.PerformanceSheetSummary.coefficient:type_name -> motivation.v1.Coefficient
 	9,  // 10: motivation.v1.PerformanceSheetSummary.actions:type_name -> motivation.v1.SheetActions
-	64, // 11: motivation.v1.ScoreChange.changed_at:type_name -> google.protobuf.Timestamp
+	68, // 11: motivation.v1.ScoreChange.changed_at:type_name -> google.protobuf.Timestamp
 	10, // 12: motivation.v1.SheetCriterion.history:type_name -> motivation.v1.ScoreChange
 	10, // 13: motivation.v1.Adjustment.history:type_name -> motivation.v1.ScoreChange
 	8,  // 14: motivation.v1.PerformanceSheet.summary:type_name -> motivation.v1.PerformanceSheetSummary
@@ -4164,15 +4437,15 @@ var file_api_motivation_v1_service_proto_depIdxs = []int32{
 	3,  // 17: motivation.v1.PayrollResult.coefficient:type_name -> motivation.v1.Coefficient
 	3,  // 18: motivation.v1.CoefficientCap.value:type_name -> motivation.v1.Coefficient
 	1,  // 19: motivation.v1.ClosePeriodOperation.state:type_name -> motivation.v1.ClosePeriodOperationState
-	64, // 20: motivation.v1.ClosePeriodOperation.created_at:type_name -> google.protobuf.Timestamp
-	64, // 21: motivation.v1.ClosePeriodOperation.started_at:type_name -> google.protobuf.Timestamp
-	64, // 22: motivation.v1.ClosePeriodOperation.finished_at:type_name -> google.protobuf.Timestamp
+	68, // 20: motivation.v1.ClosePeriodOperation.created_at:type_name -> google.protobuf.Timestamp
+	68, // 21: motivation.v1.ClosePeriodOperation.started_at:type_name -> google.protobuf.Timestamp
+	68, // 22: motivation.v1.ClosePeriodOperation.finished_at:type_name -> google.protobuf.Timestamp
 	7,  // 23: motivation.v1.ClosePeriodOperation.result:type_name -> motivation.v1.Period
-	65, // 24: motivation.v1.ClosePeriodOperation.error:type_name -> google.rpc.Status
+	69, // 24: motivation.v1.ClosePeriodOperation.error:type_name -> google.rpc.Status
 	2,  // 25: motivation.v1.CreateBaseCriteriaRequest.valid_from:type_name -> motivation.v1.Date
 	2,  // 26: motivation.v1.CreateBaseCriteriaRequest.valid_to:type_name -> motivation.v1.Date
 	4,  // 27: motivation.v1.CreateBaseCriteriaResponse.base_criteria:type_name -> motivation.v1.BaseCriteria
-	66, // 28: motivation.v1.UpdateBaseCriteriaRequest.update_mask:type_name -> google.protobuf.FieldMask
+	70, // 28: motivation.v1.UpdateBaseCriteriaRequest.update_mask:type_name -> google.protobuf.FieldMask
 	2,  // 29: motivation.v1.UpdateBaseCriteriaRequest.valid_from:type_name -> motivation.v1.Date
 	2,  // 30: motivation.v1.UpdateBaseCriteriaRequest.valid_to:type_name -> motivation.v1.Date
 	4,  // 31: motivation.v1.UpdateBaseCriteriaResponse.base_criteria:type_name -> motivation.v1.BaseCriteria
@@ -4181,76 +4454,85 @@ var file_api_motivation_v1_service_proto_depIdxs = []int32{
 	4,  // 34: motivation.v1.ListBaseCriteriaResponse.base_criteria:type_name -> motivation.v1.BaseCriteria
 	15, // 35: motivation.v1.GetCoefficientCapResponse.coefficient_cap:type_name -> motivation.v1.CoefficientCap
 	15, // 36: motivation.v1.SetCoefficientCapResponse.coefficient_cap:type_name -> motivation.v1.CoefficientCap
-	7,  // 37: motivation.v1.OpenPeriodResponse.period:type_name -> motivation.v1.Period
-	7,  // 38: motivation.v1.ReopenPeriodResponse.period:type_name -> motivation.v1.Period
-	7,  // 39: motivation.v1.GetPeriodResponse.period:type_name -> motivation.v1.Period
-	6,  // 40: motivation.v1.ListPeriodsResponse.periods:type_name -> motivation.v1.PeriodSummary
-	13, // 41: motivation.v1.IncludeUserResponse.performance_sheet:type_name -> motivation.v1.PerformanceSheet
-	11, // 42: motivation.v1.SetCriterionScoreResponse.sheet_criterion:type_name -> motivation.v1.SheetCriterion
-	12, // 43: motivation.v1.SetAdjustmentResponse.adjustment:type_name -> motivation.v1.Adjustment
-	44, // 44: motivation.v1.SavePerformanceSheetRequest.scores:type_name -> motivation.v1.SaveSheetScoreChange
-	45, // 45: motivation.v1.SavePerformanceSheetRequest.adjustment:type_name -> motivation.v1.SaveSheetAdjustmentChange
-	13, // 46: motivation.v1.SavePerformanceSheetResponse.performance_sheet:type_name -> motivation.v1.PerformanceSheet
-	13, // 47: motivation.v1.GetPerformanceSheetResponse.performance_sheet:type_name -> motivation.v1.PerformanceSheet
-	16, // 48: motivation.v1.ListPerformanceSheetsRequest.user_id_filter:type_name -> motivation.v1.UserIDFilter
-	8,  // 49: motivation.v1.ListPerformanceSheetsResponse.performance_sheets:type_name -> motivation.v1.PerformanceSheetSummary
-	16, // 50: motivation.v1.StreamPerformanceSheetsRequest.user_id_filter:type_name -> motivation.v1.UserIDFilter
-	8,  // 51: motivation.v1.StreamPerformanceSheetsResponse.performance_sheet:type_name -> motivation.v1.PerformanceSheetSummary
-	14, // 52: motivation.v1.ListPayrollResultsResponse.payroll_results:type_name -> motivation.v1.PayrollResult
-	14, // 53: motivation.v1.StreamPayrollResultsResponse.payroll_result:type_name -> motivation.v1.PayrollResult
-	17, // 54: motivation.v1.StartClosePeriodResponse.operation:type_name -> motivation.v1.ClosePeriodOperation
-	17, // 55: motivation.v1.GetClosePeriodOperationResponse.operation:type_name -> motivation.v1.ClosePeriodOperation
-	17, // 56: motivation.v1.WatchClosePeriodOperationResponse.operation:type_name -> motivation.v1.ClosePeriodOperation
-	67, // 57: motivation.v1.allowed_field_mask_path:extendee -> google.protobuf.FieldOptions
-	18, // 58: motivation.v1.PerformanceEvaluationService.CreateBaseCriteria:input_type -> motivation.v1.CreateBaseCriteriaRequest
-	20, // 59: motivation.v1.PerformanceEvaluationService.UpdateBaseCriteria:input_type -> motivation.v1.UpdateBaseCriteriaRequest
-	22, // 60: motivation.v1.PerformanceEvaluationService.GetBaseCriteria:input_type -> motivation.v1.GetBaseCriteriaRequest
-	24, // 61: motivation.v1.PerformanceEvaluationService.ListBaseCriteria:input_type -> motivation.v1.ListBaseCriteriaRequest
-	26, // 62: motivation.v1.PerformanceEvaluationService.GetCoefficientCap:input_type -> motivation.v1.GetCoefficientCapRequest
-	28, // 63: motivation.v1.PerformanceEvaluationService.SetCoefficientCap:input_type -> motivation.v1.SetCoefficientCapRequest
-	30, // 64: motivation.v1.PerformanceEvaluationService.OpenPeriod:input_type -> motivation.v1.OpenPeriodRequest
-	32, // 65: motivation.v1.PerformanceEvaluationService.ReopenPeriod:input_type -> motivation.v1.ReopenPeriodRequest
-	34, // 66: motivation.v1.PerformanceEvaluationService.GetPeriod:input_type -> motivation.v1.GetPeriodRequest
-	36, // 67: motivation.v1.PerformanceEvaluationService.ListPeriods:input_type -> motivation.v1.ListPeriodsRequest
-	38, // 68: motivation.v1.PerformanceEvaluationService.IncludeUser:input_type -> motivation.v1.IncludeUserRequest
-	40, // 69: motivation.v1.PerformanceEvaluationService.SetCriterionScore:input_type -> motivation.v1.SetCriterionScoreRequest
-	42, // 70: motivation.v1.PerformanceEvaluationService.SetAdjustment:input_type -> motivation.v1.SetAdjustmentRequest
-	46, // 71: motivation.v1.PerformanceEvaluationService.SavePerformanceSheet:input_type -> motivation.v1.SavePerformanceSheetRequest
-	48, // 72: motivation.v1.PerformanceEvaluationService.GetPerformanceSheet:input_type -> motivation.v1.GetPerformanceSheetRequest
-	50, // 73: motivation.v1.PerformanceEvaluationService.ListPerformanceSheets:input_type -> motivation.v1.ListPerformanceSheetsRequest
-	52, // 74: motivation.v1.PerformanceEvaluationService.StreamPerformanceSheets:input_type -> motivation.v1.StreamPerformanceSheetsRequest
-	54, // 75: motivation.v1.PerformanceEvaluationService.ListPayrollResults:input_type -> motivation.v1.ListPayrollResultsRequest
-	56, // 76: motivation.v1.PerformanceEvaluationService.StreamPayrollResults:input_type -> motivation.v1.StreamPayrollResultsRequest
-	58, // 77: motivation.v1.PerformanceEvaluationService.StartClosePeriod:input_type -> motivation.v1.StartClosePeriodRequest
-	60, // 78: motivation.v1.PerformanceEvaluationService.GetClosePeriodOperation:input_type -> motivation.v1.GetClosePeriodOperationRequest
-	62, // 79: motivation.v1.PerformanceEvaluationService.WatchClosePeriodOperation:input_type -> motivation.v1.WatchClosePeriodOperationRequest
-	19, // 80: motivation.v1.PerformanceEvaluationService.CreateBaseCriteria:output_type -> motivation.v1.CreateBaseCriteriaResponse
-	21, // 81: motivation.v1.PerformanceEvaluationService.UpdateBaseCriteria:output_type -> motivation.v1.UpdateBaseCriteriaResponse
-	23, // 82: motivation.v1.PerformanceEvaluationService.GetBaseCriteria:output_type -> motivation.v1.GetBaseCriteriaResponse
-	25, // 83: motivation.v1.PerformanceEvaluationService.ListBaseCriteria:output_type -> motivation.v1.ListBaseCriteriaResponse
-	27, // 84: motivation.v1.PerformanceEvaluationService.GetCoefficientCap:output_type -> motivation.v1.GetCoefficientCapResponse
-	29, // 85: motivation.v1.PerformanceEvaluationService.SetCoefficientCap:output_type -> motivation.v1.SetCoefficientCapResponse
-	31, // 86: motivation.v1.PerformanceEvaluationService.OpenPeriod:output_type -> motivation.v1.OpenPeriodResponse
-	33, // 87: motivation.v1.PerformanceEvaluationService.ReopenPeriod:output_type -> motivation.v1.ReopenPeriodResponse
-	35, // 88: motivation.v1.PerformanceEvaluationService.GetPeriod:output_type -> motivation.v1.GetPeriodResponse
-	37, // 89: motivation.v1.PerformanceEvaluationService.ListPeriods:output_type -> motivation.v1.ListPeriodsResponse
-	39, // 90: motivation.v1.PerformanceEvaluationService.IncludeUser:output_type -> motivation.v1.IncludeUserResponse
-	41, // 91: motivation.v1.PerformanceEvaluationService.SetCriterionScore:output_type -> motivation.v1.SetCriterionScoreResponse
-	43, // 92: motivation.v1.PerformanceEvaluationService.SetAdjustment:output_type -> motivation.v1.SetAdjustmentResponse
-	47, // 93: motivation.v1.PerformanceEvaluationService.SavePerformanceSheet:output_type -> motivation.v1.SavePerformanceSheetResponse
-	49, // 94: motivation.v1.PerformanceEvaluationService.GetPerformanceSheet:output_type -> motivation.v1.GetPerformanceSheetResponse
-	51, // 95: motivation.v1.PerformanceEvaluationService.ListPerformanceSheets:output_type -> motivation.v1.ListPerformanceSheetsResponse
-	53, // 96: motivation.v1.PerformanceEvaluationService.StreamPerformanceSheets:output_type -> motivation.v1.StreamPerformanceSheetsResponse
-	55, // 97: motivation.v1.PerformanceEvaluationService.ListPayrollResults:output_type -> motivation.v1.ListPayrollResultsResponse
-	57, // 98: motivation.v1.PerformanceEvaluationService.StreamPayrollResults:output_type -> motivation.v1.StreamPayrollResultsResponse
-	59, // 99: motivation.v1.PerformanceEvaluationService.StartClosePeriod:output_type -> motivation.v1.StartClosePeriodResponse
-	61, // 100: motivation.v1.PerformanceEvaluationService.GetClosePeriodOperation:output_type -> motivation.v1.GetClosePeriodOperationResponse
-	63, // 101: motivation.v1.PerformanceEvaluationService.WatchClosePeriodOperation:output_type -> motivation.v1.WatchClosePeriodOperationResponse
-	80, // [80:102] is the sub-list for method output_type
-	58, // [58:80] is the sub-list for method input_type
-	58, // [58:58] is the sub-list for extension type_name
-	57, // [57:58] is the sub-list for extension extendee
-	0,  // [0:57] is the sub-list for field type_name
+	3,  // 37: motivation.v1.CoefficientCapHistoryBaseline.coefficient_cap:type_name -> motivation.v1.Coefficient
+	68, // 38: motivation.v1.CoefficientCapHistoryBaseline.recorded_at:type_name -> google.protobuf.Timestamp
+	68, // 39: motivation.v1.CoefficientCapHistoryEntry.recorded_at:type_name -> google.protobuf.Timestamp
+	3,  // 40: motivation.v1.CoefficientCapHistoryEntry.previous_cap:type_name -> motivation.v1.Coefficient
+	3,  // 41: motivation.v1.CoefficientCapHistoryEntry.new_cap:type_name -> motivation.v1.Coefficient
+	31, // 42: motivation.v1.ListCoefficientCapHistoryResponse.baseline:type_name -> motivation.v1.CoefficientCapHistoryBaseline
+	32, // 43: motivation.v1.ListCoefficientCapHistoryResponse.entries:type_name -> motivation.v1.CoefficientCapHistoryEntry
+	7,  // 44: motivation.v1.OpenPeriodResponse.period:type_name -> motivation.v1.Period
+	7,  // 45: motivation.v1.ReopenPeriodResponse.period:type_name -> motivation.v1.Period
+	7,  // 46: motivation.v1.GetPeriodResponse.period:type_name -> motivation.v1.Period
+	6,  // 47: motivation.v1.ListPeriodsResponse.periods:type_name -> motivation.v1.PeriodSummary
+	13, // 48: motivation.v1.IncludeUserResponse.performance_sheet:type_name -> motivation.v1.PerformanceSheet
+	11, // 49: motivation.v1.SetCriterionScoreResponse.sheet_criterion:type_name -> motivation.v1.SheetCriterion
+	12, // 50: motivation.v1.SetAdjustmentResponse.adjustment:type_name -> motivation.v1.Adjustment
+	48, // 51: motivation.v1.SavePerformanceSheetRequest.scores:type_name -> motivation.v1.SaveSheetScoreChange
+	49, // 52: motivation.v1.SavePerformanceSheetRequest.adjustment:type_name -> motivation.v1.SaveSheetAdjustmentChange
+	13, // 53: motivation.v1.SavePerformanceSheetResponse.performance_sheet:type_name -> motivation.v1.PerformanceSheet
+	13, // 54: motivation.v1.GetPerformanceSheetResponse.performance_sheet:type_name -> motivation.v1.PerformanceSheet
+	16, // 55: motivation.v1.ListPerformanceSheetsRequest.user_id_filter:type_name -> motivation.v1.UserIDFilter
+	8,  // 56: motivation.v1.ListPerformanceSheetsResponse.performance_sheets:type_name -> motivation.v1.PerformanceSheetSummary
+	16, // 57: motivation.v1.StreamPerformanceSheetsRequest.user_id_filter:type_name -> motivation.v1.UserIDFilter
+	8,  // 58: motivation.v1.StreamPerformanceSheetsResponse.performance_sheet:type_name -> motivation.v1.PerformanceSheetSummary
+	14, // 59: motivation.v1.ListPayrollResultsResponse.payroll_results:type_name -> motivation.v1.PayrollResult
+	14, // 60: motivation.v1.StreamPayrollResultsResponse.payroll_result:type_name -> motivation.v1.PayrollResult
+	17, // 61: motivation.v1.StartClosePeriodResponse.operation:type_name -> motivation.v1.ClosePeriodOperation
+	17, // 62: motivation.v1.GetClosePeriodOperationResponse.operation:type_name -> motivation.v1.ClosePeriodOperation
+	17, // 63: motivation.v1.WatchClosePeriodOperationResponse.operation:type_name -> motivation.v1.ClosePeriodOperation
+	71, // 64: motivation.v1.allowed_field_mask_path:extendee -> google.protobuf.FieldOptions
+	18, // 65: motivation.v1.PerformanceEvaluationService.CreateBaseCriteria:input_type -> motivation.v1.CreateBaseCriteriaRequest
+	20, // 66: motivation.v1.PerformanceEvaluationService.UpdateBaseCriteria:input_type -> motivation.v1.UpdateBaseCriteriaRequest
+	22, // 67: motivation.v1.PerformanceEvaluationService.GetBaseCriteria:input_type -> motivation.v1.GetBaseCriteriaRequest
+	24, // 68: motivation.v1.PerformanceEvaluationService.ListBaseCriteria:input_type -> motivation.v1.ListBaseCriteriaRequest
+	26, // 69: motivation.v1.PerformanceEvaluationService.GetCoefficientCap:input_type -> motivation.v1.GetCoefficientCapRequest
+	28, // 70: motivation.v1.PerformanceEvaluationService.SetCoefficientCap:input_type -> motivation.v1.SetCoefficientCapRequest
+	30, // 71: motivation.v1.PerformanceEvaluationService.ListCoefficientCapHistory:input_type -> motivation.v1.ListCoefficientCapHistoryRequest
+	34, // 72: motivation.v1.PerformanceEvaluationService.OpenPeriod:input_type -> motivation.v1.OpenPeriodRequest
+	36, // 73: motivation.v1.PerformanceEvaluationService.ReopenPeriod:input_type -> motivation.v1.ReopenPeriodRequest
+	38, // 74: motivation.v1.PerformanceEvaluationService.GetPeriod:input_type -> motivation.v1.GetPeriodRequest
+	40, // 75: motivation.v1.PerformanceEvaluationService.ListPeriods:input_type -> motivation.v1.ListPeriodsRequest
+	42, // 76: motivation.v1.PerformanceEvaluationService.IncludeUser:input_type -> motivation.v1.IncludeUserRequest
+	44, // 77: motivation.v1.PerformanceEvaluationService.SetCriterionScore:input_type -> motivation.v1.SetCriterionScoreRequest
+	46, // 78: motivation.v1.PerformanceEvaluationService.SetAdjustment:input_type -> motivation.v1.SetAdjustmentRequest
+	50, // 79: motivation.v1.PerformanceEvaluationService.SavePerformanceSheet:input_type -> motivation.v1.SavePerformanceSheetRequest
+	52, // 80: motivation.v1.PerformanceEvaluationService.GetPerformanceSheet:input_type -> motivation.v1.GetPerformanceSheetRequest
+	54, // 81: motivation.v1.PerformanceEvaluationService.ListPerformanceSheets:input_type -> motivation.v1.ListPerformanceSheetsRequest
+	56, // 82: motivation.v1.PerformanceEvaluationService.StreamPerformanceSheets:input_type -> motivation.v1.StreamPerformanceSheetsRequest
+	58, // 83: motivation.v1.PerformanceEvaluationService.ListPayrollResults:input_type -> motivation.v1.ListPayrollResultsRequest
+	60, // 84: motivation.v1.PerformanceEvaluationService.StreamPayrollResults:input_type -> motivation.v1.StreamPayrollResultsRequest
+	62, // 85: motivation.v1.PerformanceEvaluationService.StartClosePeriod:input_type -> motivation.v1.StartClosePeriodRequest
+	64, // 86: motivation.v1.PerformanceEvaluationService.GetClosePeriodOperation:input_type -> motivation.v1.GetClosePeriodOperationRequest
+	66, // 87: motivation.v1.PerformanceEvaluationService.WatchClosePeriodOperation:input_type -> motivation.v1.WatchClosePeriodOperationRequest
+	19, // 88: motivation.v1.PerformanceEvaluationService.CreateBaseCriteria:output_type -> motivation.v1.CreateBaseCriteriaResponse
+	21, // 89: motivation.v1.PerformanceEvaluationService.UpdateBaseCriteria:output_type -> motivation.v1.UpdateBaseCriteriaResponse
+	23, // 90: motivation.v1.PerformanceEvaluationService.GetBaseCriteria:output_type -> motivation.v1.GetBaseCriteriaResponse
+	25, // 91: motivation.v1.PerformanceEvaluationService.ListBaseCriteria:output_type -> motivation.v1.ListBaseCriteriaResponse
+	27, // 92: motivation.v1.PerformanceEvaluationService.GetCoefficientCap:output_type -> motivation.v1.GetCoefficientCapResponse
+	29, // 93: motivation.v1.PerformanceEvaluationService.SetCoefficientCap:output_type -> motivation.v1.SetCoefficientCapResponse
+	33, // 94: motivation.v1.PerformanceEvaluationService.ListCoefficientCapHistory:output_type -> motivation.v1.ListCoefficientCapHistoryResponse
+	35, // 95: motivation.v1.PerformanceEvaluationService.OpenPeriod:output_type -> motivation.v1.OpenPeriodResponse
+	37, // 96: motivation.v1.PerformanceEvaluationService.ReopenPeriod:output_type -> motivation.v1.ReopenPeriodResponse
+	39, // 97: motivation.v1.PerformanceEvaluationService.GetPeriod:output_type -> motivation.v1.GetPeriodResponse
+	41, // 98: motivation.v1.PerformanceEvaluationService.ListPeriods:output_type -> motivation.v1.ListPeriodsResponse
+	43, // 99: motivation.v1.PerformanceEvaluationService.IncludeUser:output_type -> motivation.v1.IncludeUserResponse
+	45, // 100: motivation.v1.PerformanceEvaluationService.SetCriterionScore:output_type -> motivation.v1.SetCriterionScoreResponse
+	47, // 101: motivation.v1.PerformanceEvaluationService.SetAdjustment:output_type -> motivation.v1.SetAdjustmentResponse
+	51, // 102: motivation.v1.PerformanceEvaluationService.SavePerformanceSheet:output_type -> motivation.v1.SavePerformanceSheetResponse
+	53, // 103: motivation.v1.PerformanceEvaluationService.GetPerformanceSheet:output_type -> motivation.v1.GetPerformanceSheetResponse
+	55, // 104: motivation.v1.PerformanceEvaluationService.ListPerformanceSheets:output_type -> motivation.v1.ListPerformanceSheetsResponse
+	57, // 105: motivation.v1.PerformanceEvaluationService.StreamPerformanceSheets:output_type -> motivation.v1.StreamPerformanceSheetsResponse
+	59, // 106: motivation.v1.PerformanceEvaluationService.ListPayrollResults:output_type -> motivation.v1.ListPayrollResultsResponse
+	61, // 107: motivation.v1.PerformanceEvaluationService.StreamPayrollResults:output_type -> motivation.v1.StreamPayrollResultsResponse
+	63, // 108: motivation.v1.PerformanceEvaluationService.StartClosePeriod:output_type -> motivation.v1.StartClosePeriodResponse
+	65, // 109: motivation.v1.PerformanceEvaluationService.GetClosePeriodOperation:output_type -> motivation.v1.GetClosePeriodOperationResponse
+	67, // 110: motivation.v1.PerformanceEvaluationService.WatchClosePeriodOperation:output_type -> motivation.v1.WatchClosePeriodOperationResponse
+	88, // [88:111] is the sub-list for method output_type
+	65, // [65:88] is the sub-list for method input_type
+	65, // [65:65] is the sub-list for extension type_name
+	64, // [64:65] is the sub-list for extension extendee
+	0,  // [0:64] is the sub-list for field type_name
 }
 
 func init() { file_api_motivation_v1_service_proto_init() }
@@ -4270,28 +4552,28 @@ func file_api_motivation_v1_service_proto_init() {
 	file_api_motivation_v1_service_proto_msgTypes[16].OneofWrappers = []any{}
 	file_api_motivation_v1_service_proto_msgTypes[18].OneofWrappers = []any{}
 	file_api_motivation_v1_service_proto_msgTypes[22].OneofWrappers = []any{}
-	file_api_motivation_v1_service_proto_msgTypes[38].OneofWrappers = []any{
+	file_api_motivation_v1_service_proto_msgTypes[42].OneofWrappers = []any{
 		(*SetCriterionScoreRequest_Score)(nil),
 	}
-	file_api_motivation_v1_service_proto_msgTypes[40].OneofWrappers = []any{
+	file_api_motivation_v1_service_proto_msgTypes[44].OneofWrappers = []any{
 		(*SetAdjustmentRequest_Value)(nil),
 	}
-	file_api_motivation_v1_service_proto_msgTypes[42].OneofWrappers = []any{
+	file_api_motivation_v1_service_proto_msgTypes[46].OneofWrappers = []any{
 		(*SaveSheetScoreChange_Score)(nil),
 	}
-	file_api_motivation_v1_service_proto_msgTypes[43].OneofWrappers = []any{
+	file_api_motivation_v1_service_proto_msgTypes[47].OneofWrappers = []any{
 		(*SaveSheetAdjustmentChange_Value)(nil),
 	}
-	file_api_motivation_v1_service_proto_msgTypes[44].OneofWrappers = []any{}
 	file_api_motivation_v1_service_proto_msgTypes[48].OneofWrappers = []any{}
-	file_api_motivation_v1_service_proto_msgTypes[50].OneofWrappers = []any{}
+	file_api_motivation_v1_service_proto_msgTypes[52].OneofWrappers = []any{}
+	file_api_motivation_v1_service_proto_msgTypes[54].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_motivation_v1_service_proto_rawDesc), len(file_api_motivation_v1_service_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   62,
+			NumMessages:   66,
 			NumExtensions: 1,
 			NumServices:   1,
 		},

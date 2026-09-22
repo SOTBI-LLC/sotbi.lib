@@ -44,6 +44,14 @@ service PerformanceEvaluationService {
   rpc GetCoefficientCap(GetCoefficientCapRequest) returns (GetCoefficientCapResponse);
   rpc SetCoefficientCap(SetCoefficientCapRequest) returns (SetCoefficientCapResponse);
 
+  // ListCoefficientCapHistory returns the complete durable audit history of
+  // the global cap since the audit baseline from one consistent snapshot in
+  // reverse committed order. There is no period, year or user filter and no
+  // idempotency key. The baseline declares the trustworthy beginning of
+  // coverage; earlier history is unavailable by design, never invented.
+  // Reading requires the admin or rpg role; mutation stays admin-only.
+  rpc ListCoefficientCapHistory(ListCoefficientCapHistoryRequest) returns (ListCoefficientCapHistoryResponse);
+
   rpc OpenPeriod(OpenPeriodRequest) returns (OpenPeriodResponse);
   rpc ReopenPeriod(ReopenPeriodRequest) returns (ReopenPeriodResponse);
   rpc GetPeriod(GetPeriodRequest) returns (GetPeriodResponse);
@@ -329,10 +337,46 @@ message GetCoefficientCapResponse {
 message SetCoefficientCapRequest {
   string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
   uint32 ten_thousandths = 2 [(validate.rules).uint32.gt = 0];
+
+  // Optional audit comment. Omission and empty are equivalent; supplied text
+  // is retained verbatim without trimming. A non-empty comment participates
+  // in canonical command identity, so the same key with a different comment
+  // conflicts. Actor, time and previous value stay server-derived.
+  string comment = 3;
 }
 
 message SetCoefficientCapResponse {
   CoefficientCap coefficient_cap = 1 [(validate.rules).message.required = true];
+}
+
+message ListCoefficientCapHistoryRequest {}
+
+message CoefficientCapHistoryBaseline {
+  // The actual cap value and the server time when durable audit coverage
+  // started. The baseline is not a user save and has no actor.
+  Coefficient coefficient_cap = 1 [(validate.rules).message.required = true];
+  google.protobuf.Timestamp recorded_at = 2 [(validate.rules).timestamp.required = true];
+}
+
+message CoefficientCapHistoryEntry {
+  string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  int64 actor_user_id = 2 [(validate.rules).int64.gt = 0];
+  google.protobuf.Timestamp recorded_at = 3 [(validate.rules).timestamp.required = true];
+  Coefficient previous_cap = 4 [(validate.rules).message.required = true];
+  Coefficient new_cap = 5 [(validate.rules).message.required = true];
+  string comment = 6;
+}
+
+message ListCoefficientCapHistoryResponse {
+  CoefficientCapHistoryBaseline baseline = 1 [(validate.rules).message.required = true];
+
+  // Always true in v1: coverage is complete only since the baseline, never
+  // for the time before it.
+  bool earlier_history_unavailable = 2 [(validate.rules).bool.const = true];
+
+  // All accepted saves since the baseline in reverse committed order,
+  // including equal recorded_at timestamps. Unpaginated.
+  repeated CoefficientCapHistoryEntry entries = 3;
 }
 
 message OpenPeriodRequest {

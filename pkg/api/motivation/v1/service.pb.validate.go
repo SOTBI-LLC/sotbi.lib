@@ -4789,6 +4789,8 @@ func (m *SetCoefficientCapRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for Comment
+
 	if len(errors) > 0 {
 		return SetCoefficientCapRequestMultiError(errors)
 	}
@@ -5020,6 +5022,694 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SetCoefficientCapResponseValidationError{}
+
+// Validate checks the field values on ListCoefficientCapHistoryRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *ListCoefficientCapHistoryRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListCoefficientCapHistoryRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ListCoefficientCapHistoryRequestMultiError, or nil if none found.
+func (m *ListCoefficientCapHistoryRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListCoefficientCapHistoryRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ListCoefficientCapHistoryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListCoefficientCapHistoryRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// ListCoefficientCapHistoryRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListCoefficientCapHistoryRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListCoefficientCapHistoryRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListCoefficientCapHistoryRequestMultiError) AllErrors() []error { return m }
+
+// ListCoefficientCapHistoryRequestValidationError is the validation error
+// returned by ListCoefficientCapHistoryRequest.Validate if the designated
+// constraints aren't met.
+type ListCoefficientCapHistoryRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListCoefficientCapHistoryRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListCoefficientCapHistoryRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListCoefficientCapHistoryRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListCoefficientCapHistoryRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListCoefficientCapHistoryRequestValidationError) ErrorName() string {
+	return "ListCoefficientCapHistoryRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListCoefficientCapHistoryRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListCoefficientCapHistoryRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListCoefficientCapHistoryRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListCoefficientCapHistoryRequestValidationError{}
+
+// Validate checks the field values on CoefficientCapHistoryBaseline with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CoefficientCapHistoryBaseline) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CoefficientCapHistoryBaseline with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// CoefficientCapHistoryBaselineMultiError, or nil if none found.
+func (m *CoefficientCapHistoryBaseline) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CoefficientCapHistoryBaseline) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetCoefficientCap() == nil {
+		err := CoefficientCapHistoryBaselineValidationError{
+			field:  "CoefficientCap",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetCoefficientCap()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CoefficientCapHistoryBaselineValidationError{
+					field:  "CoefficientCap",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CoefficientCapHistoryBaselineValidationError{
+					field:  "CoefficientCap",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCoefficientCap()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CoefficientCapHistoryBaselineValidationError{
+				field:  "CoefficientCap",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.GetRecordedAt() == nil {
+		err := CoefficientCapHistoryBaselineValidationError{
+			field:  "RecordedAt",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return CoefficientCapHistoryBaselineMultiError(errors)
+	}
+
+	return nil
+}
+
+// CoefficientCapHistoryBaselineMultiError is an error wrapping multiple
+// validation errors returned by CoefficientCapHistoryBaseline.ValidateAll()
+// if the designated constraints aren't met.
+type CoefficientCapHistoryBaselineMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CoefficientCapHistoryBaselineMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CoefficientCapHistoryBaselineMultiError) AllErrors() []error { return m }
+
+// CoefficientCapHistoryBaselineValidationError is the validation error
+// returned by CoefficientCapHistoryBaseline.Validate if the designated
+// constraints aren't met.
+type CoefficientCapHistoryBaselineValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CoefficientCapHistoryBaselineValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CoefficientCapHistoryBaselineValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CoefficientCapHistoryBaselineValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CoefficientCapHistoryBaselineValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CoefficientCapHistoryBaselineValidationError) ErrorName() string {
+	return "CoefficientCapHistoryBaselineValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CoefficientCapHistoryBaselineValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCoefficientCapHistoryBaseline.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CoefficientCapHistoryBaselineValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CoefficientCapHistoryBaselineValidationError{}
+
+// Validate checks the field values on CoefficientCapHistoryEntry with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CoefficientCapHistoryEntry) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CoefficientCapHistoryEntry with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CoefficientCapHistoryEntryMultiError, or nil if none found.
+func (m *CoefficientCapHistoryEntry) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CoefficientCapHistoryEntry) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateUuid(m.GetId()); err != nil {
+		err = CoefficientCapHistoryEntryValidationError{
+			field:  "Id",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_CoefficientCapHistoryEntry_Id_Pattern.MatchString(m.GetId()) {
+		err := CoefficientCapHistoryEntryValidationError{
+			field:  "Id",
+			reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetActorUserId() <= 0 {
+		err := CoefficientCapHistoryEntryValidationError{
+			field:  "ActorUserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetRecordedAt() == nil {
+		err := CoefficientCapHistoryEntryValidationError{
+			field:  "RecordedAt",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetPreviousCap() == nil {
+		err := CoefficientCapHistoryEntryValidationError{
+			field:  "PreviousCap",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPreviousCap()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CoefficientCapHistoryEntryValidationError{
+					field:  "PreviousCap",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CoefficientCapHistoryEntryValidationError{
+					field:  "PreviousCap",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPreviousCap()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CoefficientCapHistoryEntryValidationError{
+				field:  "PreviousCap",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.GetNewCap() == nil {
+		err := CoefficientCapHistoryEntryValidationError{
+			field:  "NewCap",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetNewCap()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CoefficientCapHistoryEntryValidationError{
+					field:  "NewCap",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CoefficientCapHistoryEntryValidationError{
+					field:  "NewCap",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetNewCap()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CoefficientCapHistoryEntryValidationError{
+				field:  "NewCap",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Comment
+
+	if len(errors) > 0 {
+		return CoefficientCapHistoryEntryMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *CoefficientCapHistoryEntry) _validateUuid(uuid string) error {
+	if matched := _service_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
+	}
+
+	return nil
+}
+
+// CoefficientCapHistoryEntryMultiError is an error wrapping multiple
+// validation errors returned by CoefficientCapHistoryEntry.ValidateAll() if
+// the designated constraints aren't met.
+type CoefficientCapHistoryEntryMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CoefficientCapHistoryEntryMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CoefficientCapHistoryEntryMultiError) AllErrors() []error { return m }
+
+// CoefficientCapHistoryEntryValidationError is the validation error returned
+// by CoefficientCapHistoryEntry.Validate if the designated constraints aren't met.
+type CoefficientCapHistoryEntryValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CoefficientCapHistoryEntryValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CoefficientCapHistoryEntryValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CoefficientCapHistoryEntryValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CoefficientCapHistoryEntryValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CoefficientCapHistoryEntryValidationError) ErrorName() string {
+	return "CoefficientCapHistoryEntryValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CoefficientCapHistoryEntryValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCoefficientCapHistoryEntry.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CoefficientCapHistoryEntryValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CoefficientCapHistoryEntryValidationError{}
+
+var _CoefficientCapHistoryEntry_Id_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+// Validate checks the field values on ListCoefficientCapHistoryResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *ListCoefficientCapHistoryResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListCoefficientCapHistoryResponse
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// ListCoefficientCapHistoryResponseMultiError, or nil if none found.
+func (m *ListCoefficientCapHistoryResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListCoefficientCapHistoryResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetBaseline() == nil {
+		err := ListCoefficientCapHistoryResponseValidationError{
+			field:  "Baseline",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetBaseline()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListCoefficientCapHistoryResponseValidationError{
+					field:  "Baseline",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListCoefficientCapHistoryResponseValidationError{
+					field:  "Baseline",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBaseline()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListCoefficientCapHistoryResponseValidationError{
+				field:  "Baseline",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.GetEarlierHistoryUnavailable() != true {
+		err := ListCoefficientCapHistoryResponseValidationError{
+			field:  "EarlierHistoryUnavailable",
+			reason: "value must equal true",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetEntries() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListCoefficientCapHistoryResponseValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListCoefficientCapHistoryResponseValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListCoefficientCapHistoryResponseValidationError{
+					field:  fmt.Sprintf("Entries[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListCoefficientCapHistoryResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListCoefficientCapHistoryResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// ListCoefficientCapHistoryResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListCoefficientCapHistoryResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListCoefficientCapHistoryResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListCoefficientCapHistoryResponseMultiError) AllErrors() []error { return m }
+
+// ListCoefficientCapHistoryResponseValidationError is the validation error
+// returned by ListCoefficientCapHistoryResponse.Validate if the designated
+// constraints aren't met.
+type ListCoefficientCapHistoryResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListCoefficientCapHistoryResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListCoefficientCapHistoryResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListCoefficientCapHistoryResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListCoefficientCapHistoryResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListCoefficientCapHistoryResponseValidationError) ErrorName() string {
+	return "ListCoefficientCapHistoryResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListCoefficientCapHistoryResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListCoefficientCapHistoryResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListCoefficientCapHistoryResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListCoefficientCapHistoryResponseValidationError{}
 
 // Validate checks the field values on OpenPeriodRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the

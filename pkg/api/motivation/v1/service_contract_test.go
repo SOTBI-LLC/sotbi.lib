@@ -2,6 +2,7 @@ package motivationv1_test
 
 import (
 	"testing"
+	"time"
 
 	statuspb "google.golang.org/genproto/googleapis/rpc/status"
 	"google.golang.org/protobuf/proto"
@@ -66,6 +67,12 @@ func TestPerformanceEvaluationServiceDescriptor(t *testing.T) {
 			"SetCoefficientCap",
 			"motivation.v1.SetCoefficientCapRequest",
 			"motivation.v1.SetCoefficientCapResponse",
+			false,
+		},
+		{
+			"ListCoefficientCapHistory",
+			"motivation.v1.ListCoefficientCapHistoryRequest",
+			"motivation.v1.ListCoefficientCapHistoryResponse",
 			false,
 		},
 		{
@@ -765,5 +772,480 @@ func TestSummaryFieldNumbersUnchanged(t *testing.T) {
 		if field.Kind() != protoreflect.BoolKind {
 			t.Errorf("SheetActions.%s kind = %s, want bool", name, field.Kind())
 		}
+	}
+}
+
+func TestSetCoefficientCapCommentContract(t *testing.T) {
+	t.Parallel()
+
+	request := (&motivationv1.SetCoefficientCapRequest{}).ProtoReflect().Descriptor()
+
+	fieldNumbers := map[protoreflect.Name]int{
+		"idempotency_key": 1,
+		"ten_thousandths": 2,
+		"comment":         3,
+	}
+	for name, number := range fieldNumbers {
+		field := request.Fields().ByName(name)
+		if field == nil {
+			t.Errorf("SetCoefficientCapRequest.%s is missing", name)
+			continue
+		}
+
+		if int(field.Number()) != number {
+			t.Errorf(
+				"SetCoefficientCapRequest.%s number = %d, want %d",
+				name,
+				field.Number(),
+				number,
+			)
+		}
+	}
+
+	comment := request.Fields().ByName("comment")
+	if comment != nil && comment.Kind() != protoreflect.StringKind {
+		t.Errorf("SetCoefficientCapRequest.comment kind = %s, want string", comment.Kind())
+	}
+
+	if comment != nil && comment.HasPresence() {
+		t.Error("SetCoefficientCapRequest.comment must not distinguish omission from empty")
+	}
+
+	for _, forbidden := range []protoreflect.Name{
+		"actor_user_id",
+		"audit_timestamp",
+		"changed_at",
+		"recorded_at",
+		"previous_cap",
+	} {
+		if request.Fields().ByName(forbidden) != nil {
+			t.Errorf("SetCoefficientCapRequest lets the caller set %s", forbidden)
+		}
+	}
+
+	legacy := &motivationv1.SetCoefficientCapRequest{
+		IdempotencyKey: "12345678-1234-4234-8234-123456789abc",
+		TenThousandths: 30000,
+	}
+
+	legacyBytes, err := proto.Marshal(legacy)
+	if err != nil {
+		t.Fatalf("marshal commentless request: %v", err)
+	}
+
+	var decoded motivationv1.SetCoefficientCapRequest
+	if err := proto.Unmarshal(legacyBytes, &decoded); err != nil {
+		t.Fatalf("unmarshal commentless request: %v", err)
+	}
+
+	if decoded.GetComment() != "" {
+		t.Errorf("legacy commentless payload decoded comment = %q, want empty", decoded.GetComment())
+	}
+
+	if !proto.Equal(legacy, &decoded) {
+		t.Error("legacy commentless payload did not round trip")
+	}
+
+	retained := &motivationv1.SetCoefficientCapRequest{
+		IdempotencyKey: "12345678-1234-4234-8234-123456789abc",
+		TenThousandths: 30000,
+		Comment:        "  решение коллегии 2026-09-22 ✅  ",
+	}
+
+	retainedBytes, err := proto.Marshal(retained)
+	if err != nil {
+		t.Fatalf("marshal comment request: %v", err)
+	}
+
+	var retainedDecoded motivationv1.SetCoefficientCapRequest
+	if err := proto.Unmarshal(retainedBytes, &retainedDecoded); err != nil {
+		t.Fatalf("unmarshal comment request: %v", err)
+	}
+
+	if retainedDecoded.GetComment() != retained.GetComment() {
+		t.Errorf(
+			"comment = %q, want verbatim %q",
+			retainedDecoded.GetComment(),
+			retained.GetComment(),
+		)
+	}
+
+	if err := retained.ValidateAll(); err != nil {
+		t.Errorf("verbose comment rejected by validation: %v", err)
+	}
+}
+
+func TestCoefficientCapHistoryMessageShapes(t *testing.T) {
+	t.Parallel()
+
+	file := motivationv1.File_api_motivation_v1_service_proto
+
+	readRequest := file.Messages().ByName("ListCoefficientCapHistoryRequest")
+	if readRequest == nil {
+		t.Fatal("ListCoefficientCapHistoryRequest is missing")
+	}
+
+	if readRequest.Fields().Len() != 0 {
+		t.Errorf(
+			"ListCoefficientCapHistoryRequest fields = %d, want none (no filters, no idempotency key)",
+			readRequest.Fields().Len(),
+		)
+	}
+
+	baseline := (&motivationv1.CoefficientCapHistoryBaseline{}).ProtoReflect().Descriptor()
+	baselineFields := map[protoreflect.Name]int{
+		"coefficient_cap": 1,
+		"recorded_at":     2,
+	}
+	for name, number := range baselineFields {
+		field := baseline.Fields().ByName(name)
+		if field == nil {
+			t.Errorf("CoefficientCapHistoryBaseline.%s is missing", name)
+			continue
+		}
+
+		if int(field.Number()) != number {
+			t.Errorf(
+				"CoefficientCapHistoryBaseline.%s number = %d, want %d",
+				name,
+				field.Number(),
+				number,
+			)
+		}
+	}
+
+	if cap := baseline.Fields().ByName("coefficient_cap"); cap != nil {
+		if got := cap.Message().FullName(); got != "motivation.v1.Coefficient" {
+			t.Errorf("CoefficientCapHistoryBaseline.coefficient_cap type = %s, want motivation.v1.Coefficient", got)
+		}
+	}
+
+	if recorded := baseline.Fields().ByName("recorded_at"); recorded != nil {
+		if got := recorded.Message().FullName(); got != "google.protobuf.Timestamp" {
+			t.Errorf("CoefficientCapHistoryBaseline.recorded_at type = %s, want google.protobuf.Timestamp", got)
+		}
+	}
+
+	for _, forbidden := range []protoreflect.Name{"actor_user_id", "id"} {
+		if baseline.Fields().ByName(forbidden) != nil {
+			t.Errorf("CoefficientCapHistoryBaseline must not claim %s", forbidden)
+		}
+	}
+
+	entry := (&motivationv1.CoefficientCapHistoryEntry{}).ProtoReflect().Descriptor()
+	entryFields := map[protoreflect.Name]int{
+		"id":            1,
+		"actor_user_id": 2,
+		"recorded_at":   3,
+		"previous_cap":  4,
+		"new_cap":       5,
+		"comment":       6,
+	}
+	for name, number := range entryFields {
+		field := entry.Fields().ByName(name)
+		if field == nil {
+			t.Errorf("CoefficientCapHistoryEntry.%s is missing", name)
+			continue
+		}
+
+		if int(field.Number()) != number {
+			t.Errorf(
+				"CoefficientCapHistoryEntry.%s number = %d, want %d",
+				name,
+				field.Number(),
+				number,
+			)
+		}
+	}
+
+	exactKinds := map[protoreflect.Name]protoreflect.Kind{
+		"id":            protoreflect.StringKind,
+		"actor_user_id": protoreflect.Int64Kind,
+		"comment":       protoreflect.StringKind,
+	}
+	for name, kind := range exactKinds {
+		if field := entry.Fields().ByName(name); field != nil && field.Kind() != kind {
+			t.Errorf("CoefficientCapHistoryEntry.%s kind = %s, want %s", name, field.Kind(), kind)
+		}
+	}
+
+	if actor := entry.Fields().ByName("actor_user_id"); actor != nil {
+		if got := actor.Message(); got != nil {
+			t.Errorf("CoefficientCapHistoryEntry.actor_user_id type = %s, want plain int64", got.FullName())
+		}
+	}
+
+	for _, name := range []protoreflect.Name{"recorded_at", "previous_cap", "new_cap"} {
+		field := entry.Fields().ByName(name)
+		if field == nil {
+			continue
+		}
+
+		if field.Message() == nil {
+			t.Errorf("CoefficientCapHistoryEntry.%s must be a message field", name)
+			continue
+		}
+
+		want := protoreflect.FullName("google.protobuf.Timestamp")
+		if name != "recorded_at" {
+			want = "motivation.v1.Coefficient"
+		}
+
+		if got := field.Message().FullName(); got != want {
+			t.Errorf("CoefficientCapHistoryEntry.%s type = %s, want %s", name, got, want)
+		}
+	}
+
+	response := (&motivationv1.ListCoefficientCapHistoryResponse{}).ProtoReflect().Descriptor()
+	responseFields := map[protoreflect.Name]int{
+		"baseline":                    1,
+		"earlier_history_unavailable": 2,
+		"entries":                     3,
+	}
+	for name, number := range responseFields {
+		field := response.Fields().ByName(name)
+		if field == nil {
+			t.Errorf("ListCoefficientCapHistoryResponse.%s is missing", name)
+			continue
+		}
+
+		if int(field.Number()) != number {
+			t.Errorf(
+				"ListCoefficientCapHistoryResponse.%s number = %d, want %d",
+				name,
+				field.Number(),
+				number,
+			)
+		}
+	}
+
+	if indicator := response.Fields().ByName("earlier_history_unavailable"); indicator != nil {
+		if indicator.Kind() != protoreflect.BoolKind {
+			t.Errorf(
+				"ListCoefficientCapHistoryResponse.earlier_history_unavailable kind = %s, want bool",
+				indicator.Kind(),
+			)
+		}
+	}
+
+	if entries := response.Fields().ByName("entries"); entries != nil {
+		if !entries.IsList() {
+			t.Error("ListCoefficientCapHistoryResponse.entries must be repeated")
+		} else if got := entries.Message().FullName(); got != "motivation.v1.CoefficientCapHistoryEntry" {
+			t.Errorf("ListCoefficientCapHistoryResponse.entries type = %s, want motivation.v1.CoefficientCapHistoryEntry", got)
+		}
+	}
+}
+
+func TestCoefficientCapHistoryValidation(t *testing.T) {
+	t.Parallel()
+
+	recordedAt := timestamppb.New(time.Date(2026, 9, 22, 12, 0, 0, 0, time.UTC))
+
+	validEntry := &motivationv1.CoefficientCapHistoryEntry{
+		Id:          "550e8400-e29b-41d4-a716-446655440000",
+		ActorUserId: 9007199254740993,
+		RecordedAt:  recordedAt,
+		PreviousCap: &motivationv1.Coefficient{TenThousandths: 30000},
+		NewCap:      &motivationv1.Coefficient{TenThousandths: 45000},
+	}
+
+	validResponse := &motivationv1.ListCoefficientCapHistoryResponse{
+		Baseline: &motivationv1.CoefficientCapHistoryBaseline{
+			CoefficientCap: &motivationv1.Coefficient{TenThousandths: 45000},
+			RecordedAt:     recordedAt,
+		},
+		EarlierHistoryUnavailable: true,
+		Entries:                   []*motivationv1.CoefficientCapHistoryEntry{validEntry},
+	}
+
+	if err := validResponse.ValidateAll(); err != nil {
+		t.Fatalf("valid history response rejected: %v", err)
+	}
+
+	if err := (&motivationv1.ListCoefficientCapHistoryRequest{}).ValidateAll(); err != nil {
+		t.Errorf("empty history request rejected: %v", err)
+	}
+
+	tests := []struct {
+		name     string
+		response *motivationv1.ListCoefficientCapHistoryResponse
+	}{
+		{
+			name: "earlier_history_unavailable false is rejected",
+			response: &motivationv1.ListCoefficientCapHistoryResponse{
+				Baseline: validResponse.GetBaseline(),
+			},
+		},
+		{
+			name: "missing baseline is rejected",
+			response: &motivationv1.ListCoefficientCapHistoryResponse{
+				EarlierHistoryUnavailable: true,
+			},
+		},
+		{
+			name: "baseline without cap is rejected",
+			response: &motivationv1.ListCoefficientCapHistoryResponse{
+				Baseline: &motivationv1.CoefficientCapHistoryBaseline{
+					RecordedAt: recordedAt,
+				},
+				EarlierHistoryUnavailable: true,
+			},
+		},
+		{
+			name: "baseline without recorded_at is rejected",
+			response: &motivationv1.ListCoefficientCapHistoryResponse{
+				Baseline: &motivationv1.CoefficientCapHistoryBaseline{
+					CoefficientCap: &motivationv1.Coefficient{TenThousandths: 45000},
+				},
+				EarlierHistoryUnavailable: true,
+			},
+		},
+		{
+			name: "entry with non-UUID id is rejected",
+			response: &motivationv1.ListCoefficientCapHistoryResponse{
+				Baseline:                  validResponse.GetBaseline(),
+				EarlierHistoryUnavailable: true,
+				Entries: []*motivationv1.CoefficientCapHistoryEntry{
+					{Id: "not-a-uuid", ActorUserId: 42, RecordedAt: recordedAt,
+						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1},
+						NewCap:      &motivationv1.Coefficient{TenThousandths: 2}},
+				},
+			},
+		},
+		{
+			name: "entry with zero actor is rejected",
+			response: &motivationv1.ListCoefficientCapHistoryResponse{
+				Baseline:                  validResponse.GetBaseline(),
+				EarlierHistoryUnavailable: true,
+				Entries: []*motivationv1.CoefficientCapHistoryEntry{
+					{Id: "550e8400-e29b-41d4-a716-446655440000", RecordedAt: recordedAt,
+						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1},
+						NewCap:      &motivationv1.Coefficient{TenThousandths: 2}},
+				},
+			},
+		},
+		{
+			name: "entry with negative actor is rejected",
+			response: &motivationv1.ListCoefficientCapHistoryResponse{
+				Baseline:                  validResponse.GetBaseline(),
+				EarlierHistoryUnavailable: true,
+				Entries: []*motivationv1.CoefficientCapHistoryEntry{
+					{Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: -1, RecordedAt: recordedAt,
+						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1},
+						NewCap:      &motivationv1.Coefficient{TenThousandths: 2}},
+				},
+			},
+		},
+		{
+			name: "entry without recorded_at is rejected",
+			response: &motivationv1.ListCoefficientCapHistoryResponse{
+				Baseline:                  validResponse.GetBaseline(),
+				EarlierHistoryUnavailable: true,
+				Entries: []*motivationv1.CoefficientCapHistoryEntry{
+					{Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: 42,
+						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1},
+						NewCap:      &motivationv1.Coefficient{TenThousandths: 2}},
+				},
+			},
+		},
+		{
+			name: "entry without previous cap is rejected",
+			response: &motivationv1.ListCoefficientCapHistoryResponse{
+				Baseline:                  validResponse.GetBaseline(),
+				EarlierHistoryUnavailable: true,
+				Entries: []*motivationv1.CoefficientCapHistoryEntry{
+					{Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: 42, RecordedAt: recordedAt,
+						NewCap: &motivationv1.Coefficient{TenThousandths: 2}},
+				},
+			},
+		},
+		{
+			name: "entry without new cap is rejected",
+			response: &motivationv1.ListCoefficientCapHistoryResponse{
+				Baseline:                  validResponse.GetBaseline(),
+				EarlierHistoryUnavailable: true,
+				Entries: []*motivationv1.CoefficientCapHistoryEntry{
+					{Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: 42, RecordedAt: recordedAt,
+						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1}},
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			if err := test.response.ValidateAll(); err == nil {
+				t.Error("invalid history response accepted by validation")
+			}
+		})
+	}
+}
+
+func TestCoefficientCapHistoryRoundTrip(t *testing.T) {
+	t.Parallel()
+
+	recordedAt := timestamppb.New(time.Date(2026, 9, 22, 12, 1, 0, 0, time.UTC))
+
+	original := &motivationv1.ListCoefficientCapHistoryResponse{
+		Baseline: &motivationv1.CoefficientCapHistoryBaseline{
+			CoefficientCap: &motivationv1.Coefficient{TenThousandths: 4294967295},
+			RecordedAt:     recordedAt,
+		},
+		EarlierHistoryUnavailable: true,
+		Entries: []*motivationv1.CoefficientCapHistoryEntry{
+			{
+				Id:          "550e8400-e29b-41d4-a716-446655440000",
+				ActorUserId: 9007199254740993,
+				RecordedAt:  recordedAt,
+				PreviousCap: &motivationv1.Coefficient{TenThousandths: 45000},
+				NewCap:      &motivationv1.Coefficient{TenThousandths: 30000},
+				Comment:     "same timestamp 1",
+			},
+			{
+				Id:          "661f9500-f30c-42e5-b827-557766555111",
+				ActorUserId: 42,
+				RecordedAt:  recordedAt,
+				PreviousCap: &motivationv1.Coefficient{TenThousandths: 30000},
+				NewCap:      &motivationv1.Coefficient{TenThousandths: 30000},
+			},
+		},
+	}
+
+	encoded, err := proto.Marshal(original)
+	if err != nil {
+		t.Fatalf("marshal history: %v", err)
+	}
+
+	var decoded motivationv1.ListCoefficientCapHistoryResponse
+	if err := proto.Unmarshal(encoded, &decoded); err != nil {
+		t.Fatalf("unmarshal history: %v", err)
+	}
+
+	if !proto.Equal(original, &decoded) {
+		t.Fatalf("round trip changed history\n got: %v\nwant: %v", &decoded, original)
+	}
+
+	if got := decoded.GetEntries()[0].GetActorUserId(); got != 9007199254740993 {
+		t.Errorf("actor above 2^53 = %d, want 9007199254740993", got)
+	}
+
+	if got := decoded.GetBaseline().GetCoefficientCap().GetTenThousandths(); got != 4294967295 {
+		t.Errorf("baseline cap = %d, want 4294967295", got)
+	}
+
+	if got := decoded.GetEntries()[1].GetPreviousCap().GetTenThousandths(); got != 30000 {
+		t.Errorf("unchanged save previous cap = %d, want 30000", got)
+	}
+
+	if len(decoded.GetEntries()) != 2 {
+		t.Fatalf("entry count = %d, want 2", len(decoded.GetEntries()))
+	}
+
+	if decoded.GetEntries()[0].GetComment() != "same timestamp 1" {
+		t.Errorf("entry order changed: first comment = %q", decoded.GetEntries()[0].GetComment())
 	}
 }

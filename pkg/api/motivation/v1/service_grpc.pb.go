@@ -25,6 +25,7 @@ const (
 	PerformanceEvaluationService_ListBaseCriteria_FullMethodName          = "/motivation.v1.PerformanceEvaluationService/ListBaseCriteria"
 	PerformanceEvaluationService_GetCoefficientCap_FullMethodName         = "/motivation.v1.PerformanceEvaluationService/GetCoefficientCap"
 	PerformanceEvaluationService_SetCoefficientCap_FullMethodName         = "/motivation.v1.PerformanceEvaluationService/SetCoefficientCap"
+	PerformanceEvaluationService_ListCoefficientCapHistory_FullMethodName = "/motivation.v1.PerformanceEvaluationService/ListCoefficientCapHistory"
 	PerformanceEvaluationService_OpenPeriod_FullMethodName                = "/motivation.v1.PerformanceEvaluationService/OpenPeriod"
 	PerformanceEvaluationService_ReopenPeriod_FullMethodName              = "/motivation.v1.PerformanceEvaluationService/ReopenPeriod"
 	PerformanceEvaluationService_GetPeriod_FullMethodName                 = "/motivation.v1.PerformanceEvaluationService/GetPeriod"
@@ -72,6 +73,13 @@ type PerformanceEvaluationServiceClient interface {
 	ListBaseCriteria(ctx context.Context, in *ListBaseCriteriaRequest, opts ...grpc.CallOption) (*ListBaseCriteriaResponse, error)
 	GetCoefficientCap(ctx context.Context, in *GetCoefficientCapRequest, opts ...grpc.CallOption) (*GetCoefficientCapResponse, error)
 	SetCoefficientCap(ctx context.Context, in *SetCoefficientCapRequest, opts ...grpc.CallOption) (*SetCoefficientCapResponse, error)
+	// ListCoefficientCapHistory returns the complete durable audit history of
+	// the global cap since the audit baseline from one consistent snapshot in
+	// reverse committed order. There is no period, year or user filter and no
+	// idempotency key. The baseline declares the trustworthy beginning of
+	// coverage; earlier history is unavailable by design, never invented.
+	// Reading requires the admin or rpg role; mutation stays admin-only.
+	ListCoefficientCapHistory(ctx context.Context, in *ListCoefficientCapHistoryRequest, opts ...grpc.CallOption) (*ListCoefficientCapHistoryResponse, error)
 	OpenPeriod(ctx context.Context, in *OpenPeriodRequest, opts ...grpc.CallOption) (*OpenPeriodResponse, error)
 	ReopenPeriod(ctx context.Context, in *ReopenPeriodRequest, opts ...grpc.CallOption) (*ReopenPeriodResponse, error)
 	GetPeriod(ctx context.Context, in *GetPeriodRequest, opts ...grpc.CallOption) (*GetPeriodResponse, error)
@@ -175,6 +183,16 @@ func (c *performanceEvaluationServiceClient) SetCoefficientCap(ctx context.Conte
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SetCoefficientCapResponse)
 	err := c.cc.Invoke(ctx, PerformanceEvaluationService_SetCoefficientCap_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *performanceEvaluationServiceClient) ListCoefficientCapHistory(ctx context.Context, in *ListCoefficientCapHistoryRequest, opts ...grpc.CallOption) (*ListCoefficientCapHistoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCoefficientCapHistoryResponse)
+	err := c.cc.Invoke(ctx, PerformanceEvaluationService_ListCoefficientCapHistory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -397,6 +415,13 @@ type PerformanceEvaluationServiceServer interface {
 	ListBaseCriteria(context.Context, *ListBaseCriteriaRequest) (*ListBaseCriteriaResponse, error)
 	GetCoefficientCap(context.Context, *GetCoefficientCapRequest) (*GetCoefficientCapResponse, error)
 	SetCoefficientCap(context.Context, *SetCoefficientCapRequest) (*SetCoefficientCapResponse, error)
+	// ListCoefficientCapHistory returns the complete durable audit history of
+	// the global cap since the audit baseline from one consistent snapshot in
+	// reverse committed order. There is no period, year or user filter and no
+	// idempotency key. The baseline declares the trustworthy beginning of
+	// coverage; earlier history is unavailable by design, never invented.
+	// Reading requires the admin or rpg role; mutation stays admin-only.
+	ListCoefficientCapHistory(context.Context, *ListCoefficientCapHistoryRequest) (*ListCoefficientCapHistoryResponse, error)
 	OpenPeriod(context.Context, *OpenPeriodRequest) (*OpenPeriodResponse, error)
 	ReopenPeriod(context.Context, *ReopenPeriodRequest) (*ReopenPeriodResponse, error)
 	GetPeriod(context.Context, *GetPeriodRequest) (*GetPeriodResponse, error)
@@ -463,6 +488,9 @@ func (UnimplementedPerformanceEvaluationServiceServer) GetCoefficientCap(context
 }
 func (UnimplementedPerformanceEvaluationServiceServer) SetCoefficientCap(context.Context, *SetCoefficientCapRequest) (*SetCoefficientCapResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetCoefficientCap not implemented")
+}
+func (UnimplementedPerformanceEvaluationServiceServer) ListCoefficientCapHistory(context.Context, *ListCoefficientCapHistoryRequest) (*ListCoefficientCapHistoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCoefficientCapHistory not implemented")
 }
 func (UnimplementedPerformanceEvaluationServiceServer) OpenPeriod(context.Context, *OpenPeriodRequest) (*OpenPeriodResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OpenPeriod not implemented")
@@ -638,6 +666,24 @@ func _PerformanceEvaluationService_SetCoefficientCap_Handler(srv interface{}, ct
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PerformanceEvaluationServiceServer).SetCoefficientCap(ctx, req.(*SetCoefficientCapRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PerformanceEvaluationService_ListCoefficientCapHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCoefficientCapHistoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PerformanceEvaluationServiceServer).ListCoefficientCapHistory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PerformanceEvaluationService_ListCoefficientCapHistory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PerformanceEvaluationServiceServer).ListCoefficientCapHistory(ctx, req.(*ListCoefficientCapHistoryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -939,6 +985,10 @@ var PerformanceEvaluationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetCoefficientCap",
 			Handler:    _PerformanceEvaluationService_SetCoefficientCap_Handler,
+		},
+		{
+			MethodName: "ListCoefficientCapHistory",
+			Handler:    _PerformanceEvaluationService_ListCoefficientCapHistory_Handler,
 		},
 		{
 			MethodName: "OpenPeriod",
