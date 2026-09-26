@@ -57,6 +57,55 @@ func TestDirectoryUserWireShape(t *testing.T) {
 	}
 }
 
+func TestDirectoryPositionWireShape(t *testing.T) {
+	t.Parallel()
+
+	descriptor := directoryv1.File_api_directory_v1_service_proto.Messages().
+		ByName("DirectoryPosition")
+	if descriptor == nil {
+		t.Fatal("DirectoryPosition descriptor is missing")
+	}
+
+	if descriptor.Fields().Len() != 1 {
+		t.Fatalf("field count = %d, want exactly one", descriptor.Fields().Len())
+	}
+
+	field := descriptor.Fields().ByName("id")
+	if field == nil || field.Number() != 1 || field.Kind() != protoreflect.Uint64Kind {
+		t.Fatalf("DirectoryPosition.id has unexpected shape: %v", field)
+	}
+
+	for _, forbidden := range []protoreflect.Name{"name", "display_name", "users", "staff"} {
+		if descriptor.Fields().ByName(forbidden) != nil {
+			t.Errorf("forbidden field %s is present", forbidden)
+		}
+	}
+}
+
+func TestGetPositionPreservesLargeIdentifier(t *testing.T) {
+	t.Parallel()
+
+	const largePositionID uint64 = 1<<64 - 1
+
+	response := &directoryv1.GetPositionResponse{
+		Position: &directoryv1.DirectoryPosition{Id: largePositionID},
+	}
+
+	encoded, err := proto.Marshal(response)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+
+	decoded := &directoryv1.GetPositionResponse{}
+	if err := proto.Unmarshal(encoded, decoded); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+
+	if decoded.GetPosition().GetId() != largePositionID {
+		t.Fatalf("position ID = %d, want %d", decoded.GetPosition().GetId(), largePositionID)
+	}
+}
+
 func TestMaximumDirectoryResponsesRoundTripUnderSendLimit(t *testing.T) {
 	t.Parallel()
 

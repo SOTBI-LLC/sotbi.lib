@@ -34,6 +34,7 @@ func TestDirectoryServiceDescriptor(t *testing.T) {
 			"directory.v1.ListDirectReportsRequest",
 			"directory.v1.ListDirectReportsResponse",
 		},
+		{"GetPosition", "directory.v1.GetPositionRequest", "directory.v1.GetPositionResponse"},
 	}
 
 	if service.Methods().Len() != len(want) {

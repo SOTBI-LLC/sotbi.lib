@@ -22,6 +22,7 @@ const (
 	DirectoryService_GetRosterSnapshot_FullMethodName = "/directory.v1.DirectoryService/GetRosterSnapshot"
 	DirectoryService_GetUser_FullMethodName           = "/directory.v1.DirectoryService/GetUser"
 	DirectoryService_ListDirectReports_FullMethodName = "/directory.v1.DirectoryService/ListDirectReports"
+	DirectoryService_GetPosition_FullMethodName       = "/directory.v1.DirectoryService/GetPosition"
 )
 
 // DirectoryServiceClient is the client API for DirectoryService service.
@@ -31,13 +32,15 @@ const (
 // DirectoryService provides one bounded, current, read-only organization view.
 //
 // Errors use standard gRPC status codes with google.rpc.ErrorInfo reasons:
-// USER_NOT_FOUND, DIRECTORY_DATA_INCONSISTENT, ROSTER_LIMIT_EXCEEDED,
-// DIRECT_REPORT_LIMIT_EXCEEDED, RATE_LIMITED, and AUTH_ROLE_MISSING. Only
-// temporary RATE_LIMITED responses include google.rpc.RetryInfo.
+// USER_NOT_FOUND, POSITION_NOT_FOUND, DIRECTORY_DATA_INCONSISTENT,
+// ROSTER_LIMIT_EXCEEDED, DIRECT_REPORT_LIMIT_EXCEEDED, RATE_LIMITED, and
+// AUTH_ROLE_MISSING. Only temporary RATE_LIMITED responses include
+// google.rpc.RetryInfo.
 type DirectoryServiceClient interface {
 	GetRosterSnapshot(ctx context.Context, in *GetRosterSnapshotRequest, opts ...grpc.CallOption) (*GetRosterSnapshotResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	ListDirectReports(ctx context.Context, in *ListDirectReportsRequest, opts ...grpc.CallOption) (*ListDirectReportsResponse, error)
+	GetPosition(ctx context.Context, in *GetPositionRequest, opts ...grpc.CallOption) (*GetPositionResponse, error)
 }
 
 type directoryServiceClient struct {
@@ -78,6 +81,16 @@ func (c *directoryServiceClient) ListDirectReports(ctx context.Context, in *List
 	return out, nil
 }
 
+func (c *directoryServiceClient) GetPosition(ctx context.Context, in *GetPositionRequest, opts ...grpc.CallOption) (*GetPositionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPositionResponse)
+	err := c.cc.Invoke(ctx, DirectoryService_GetPosition_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DirectoryServiceServer is the server API for DirectoryService service.
 // All implementations must embed UnimplementedDirectoryServiceServer
 // for forward compatibility.
@@ -85,13 +98,15 @@ func (c *directoryServiceClient) ListDirectReports(ctx context.Context, in *List
 // DirectoryService provides one bounded, current, read-only organization view.
 //
 // Errors use standard gRPC status codes with google.rpc.ErrorInfo reasons:
-// USER_NOT_FOUND, DIRECTORY_DATA_INCONSISTENT, ROSTER_LIMIT_EXCEEDED,
-// DIRECT_REPORT_LIMIT_EXCEEDED, RATE_LIMITED, and AUTH_ROLE_MISSING. Only
-// temporary RATE_LIMITED responses include google.rpc.RetryInfo.
+// USER_NOT_FOUND, POSITION_NOT_FOUND, DIRECTORY_DATA_INCONSISTENT,
+// ROSTER_LIMIT_EXCEEDED, DIRECT_REPORT_LIMIT_EXCEEDED, RATE_LIMITED, and
+// AUTH_ROLE_MISSING. Only temporary RATE_LIMITED responses include
+// google.rpc.RetryInfo.
 type DirectoryServiceServer interface {
 	GetRosterSnapshot(context.Context, *GetRosterSnapshotRequest) (*GetRosterSnapshotResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	ListDirectReports(context.Context, *ListDirectReportsRequest) (*ListDirectReportsResponse, error)
+	GetPosition(context.Context, *GetPositionRequest) (*GetPositionResponse, error)
 	mustEmbedUnimplementedDirectoryServiceServer()
 }
 
@@ -110,6 +125,9 @@ func (UnimplementedDirectoryServiceServer) GetUser(context.Context, *GetUserRequ
 }
 func (UnimplementedDirectoryServiceServer) ListDirectReports(context.Context, *ListDirectReportsRequest) (*ListDirectReportsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDirectReports not implemented")
+}
+func (UnimplementedDirectoryServiceServer) GetPosition(context.Context, *GetPositionRequest) (*GetPositionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPosition not implemented")
 }
 func (UnimplementedDirectoryServiceServer) mustEmbedUnimplementedDirectoryServiceServer() {}
 func (UnimplementedDirectoryServiceServer) testEmbeddedByValue()                          {}
@@ -186,6 +204,24 @@ func _DirectoryService_ListDirectReports_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DirectoryService_GetPosition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPositionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DirectoryServiceServer).GetPosition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DirectoryService_GetPosition_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DirectoryServiceServer).GetPosition(ctx, req.(*GetPositionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DirectoryService_ServiceDesc is the grpc.ServiceDesc for DirectoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -204,6 +240,10 @@ var DirectoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListDirectReports",
 			Handler:    _DirectoryService_ListDirectReports_Handler,
+		},
+		{
+			MethodName: "GetPosition",
+			Handler:    _DirectoryService_GetPosition_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

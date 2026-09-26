@@ -12,7 +12,8 @@ option go_package = "github.com/SOTBI-LLC/sotbi.lib/pkg/api/motivation/v1;motiva
 
 // FieldMask paths are declared in the descriptor because PGV does not inspect
 // paths inside the google.protobuf.FieldMask well-known type. Go consumers use
-// ValidateUpdateBaseCriteriaRequest to compose PGV and this allowlist.
+// ValidateUpdateBaseCriteriaRequest and ValidateUpdateCriterionRequest to
+// compose PGV and these allowlists.
 extend google.protobuf.FieldOptions {
   repeated string allowed_field_mask_path = 50001;
 }
@@ -40,6 +41,16 @@ service PerformanceEvaluationService {
   rpc UpdateBaseCriteria(UpdateBaseCriteriaRequest) returns (UpdateBaseCriteriaResponse);
   rpc GetBaseCriteria(GetBaseCriteriaRequest) returns (GetBaseCriteriaResponse);
   rpc ListBaseCriteria(ListBaseCriteriaRequest) returns (ListBaseCriteriaResponse);
+
+  // CreateCriterion, UpdateCriterion, GetCriterion and ListCriteria manage the
+  // separate special criteria catalog, one Criterion per external position.
+  // Mutations require admin; reads are open to authenticated evaluation users.
+  // CreateCriterion verifies the position through authoritative Directory;
+  // existing resources, replays and reads never revalidate the position.
+  rpc CreateCriterion(CreateCriterionRequest) returns (CreateCriterionResponse);
+  rpc UpdateCriterion(UpdateCriterionRequest) returns (UpdateCriterionResponse);
+  rpc GetCriterion(GetCriterionRequest) returns (GetCriterionResponse);
+  rpc ListCriteria(ListCriteriaRequest) returns (ListCriteriaResponse);
 
   rpc GetCoefficientCap(GetCoefficientCapRequest) returns (GetCoefficientCapResponse);
   rpc SetCoefficientCap(SetCoefficientCapRequest) returns (SetCoefficientCapResponse);
@@ -132,6 +143,15 @@ enum ClosePeriodOperationState {
   CLOSE_PERIOD_OPERATION_STATE_FAILED = 4;
 }
 
+// CriterionType distinguishes the frozen snapshot kind. BASE entries refer to
+// the global BaseCriteria catalog and have no position; SPECIAL entries refer
+// to the separate Criterion catalog and carry one frozen position.
+enum CriterionType {
+  CRITERION_TYPE_UNSPECIFIED = 0;
+  CRITERION_TYPE_BASE = 1;
+  CRITERION_TYPE_SPECIAL = 2;
+}
+
 message BaseCriteria {
   string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
   string name = 2 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
@@ -141,12 +161,39 @@ message BaseCriteria {
   optional Date valid_to = 6;
 }
 
+// Criterion is one special catalog entry scoped to exactly one external
+// position. PositionID is an int64 signed external identifier and never
+// changes after creation.
+message Criterion {
+  string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string name = 2 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
+  string description = 3;
+  int32 max_score = 4 [(validate.rules).int32.gt = 0];
+  Date valid_from = 5 [(validate.rules).message.required = true];
+  optional Date valid_to = 6;
+  int64 position_id = 7 [(validate.rules).int64.gt = 0];
+}
+
 message PeriodCriterion {
   string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
-  string base_criteria_id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+
+  // Exactly one frozen catalog source. BASE entries carry base_criteria_id and
+  // no position; SPECIAL entries carry criterion_id and a positive position.
+  oneof source {
+    option (validate.required) = true;
+    string base_criteria_id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+    string criterion_id = 6 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  }
   string name = 3 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
   string description = 4;
   int32 max_score = 5 [(validate.rules).int32.gt = 0];
+  CriterionType type = 7 [(validate.rules).enum = {
+    defined_only: true,
+    not_in: 0
+  }];
+
+  // Present only for SPECIAL entries; absence marks BASE.
+  optional int64 position_id = 8 [(validate.rules).int64.gt = 0];
 }
 
 message PeriodSummary {
@@ -213,6 +260,20 @@ message SheetCriterion {
 
   // History is in committed event order, including equal-timestamp events.
   repeated ScoreChange history = 7;
+  CriterionType type = 8 [(validate.rules).enum = {
+    defined_only: true,
+    not_in: 0
+  }];
+
+  // Exactly one frozen catalog source, mirroring the PeriodCriterion snapshot.
+  oneof source {
+    option (validate.required) = true;
+    string base_criteria_id = 9 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+    string criterion_id = 10 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  }
+
+  // Present only for SPECIAL entries; absence marks BASE.
+  optional int64 position_id = 11 [(validate.rules).int64.gt = 0];
 }
 
 message Adjustment {
@@ -295,14 +356,16 @@ message UpdateBaseCriteriaRequest {
     (validate.rules).message.required = true,
     (allowed_field_mask_path) = "name",
     (allowed_field_mask_path) = "description",
-    (allowed_field_mask_path) = "max_score",
-    (allowed_field_mask_path) = "valid_from",
     (allowed_field_mask_path) = "valid_to"
   ];
   optional string name = 4 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
   optional string description = 5;
-  optional int32 max_score = 6 [(validate.rules).int32.gt = 0];
-  optional Date valid_from = 7;
+
+  // Structural fields max_score (6) and valid_from (7) were removed from the
+  // update contract; their numbers and names are reserved forever.
+  reserved 6, 7;
+  reserved "max_score", "valid_from";
+
   optional Date valid_to = 8;
 }
 
@@ -326,6 +389,62 @@ message ListBaseCriteriaRequest {
 
 message ListBaseCriteriaResponse {
   repeated BaseCriteria base_criteria = 1;
+}
+
+message CreateCriterionRequest {
+  string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  int64 position_id = 2 [(validate.rules).int64.gt = 0];
+  string name = 3 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
+  string description = 4;
+  int32 max_score = 5 [(validate.rules).int32.gt = 0];
+  Date valid_from = 6 [(validate.rules).message.required = true];
+  optional Date valid_to = 7;
+}
+
+message CreateCriterionResponse {
+  Criterion criterion = 1 [(validate.rules).message.required = true];
+}
+
+message UpdateCriterionRequest {
+  string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  string id = 2 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+  google.protobuf.FieldMask update_mask = 3 [
+    (validate.rules).message.required = true,
+    (allowed_field_mask_path) = "name",
+    (allowed_field_mask_path) = "description",
+    (allowed_field_mask_path) = "valid_to"
+  ];
+  optional string name = 4 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
+  optional string description = 5;
+
+  // Absence deliberately clears the nullable validity end.
+  optional Date valid_to = 6;
+}
+
+message UpdateCriterionResponse {
+  Criterion criterion = 1 [(validate.rules).message.required = true];
+}
+
+message GetCriterionRequest {
+  string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
+}
+
+message GetCriterionResponse {
+  Criterion criterion = 1 [(validate.rules).message.required = true];
+}
+
+message ListCriteriaRequest {
+  // Optional positive external position filter.
+  optional int64 position_id = 1 [(validate.rules).int64.gt = 0];
+
+  // Absence lists all specials. Presence selects specials whose inclusive
+  // validity interval contains this date. When both filters are present their
+  // intersection applies.
+  optional Date active_on = 2;
+}
+
+message ListCriteriaResponse {
+  repeated Criterion criteria = 1;
 }
 
 message GetCoefficientCapRequest {}

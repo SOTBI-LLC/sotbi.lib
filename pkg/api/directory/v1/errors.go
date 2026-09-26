@@ -15,6 +15,7 @@ type ErrorReason string
 
 const (
 	ErrorReasonUserNotFound              ErrorReason = "USER_NOT_FOUND"
+	ErrorReasonPositionNotFound          ErrorReason = "POSITION_NOT_FOUND"
 	ErrorReasonDataInconsistent          ErrorReason = "DIRECTORY_DATA_INCONSISTENT"
 	ErrorReasonRosterLimitExceeded       ErrorReason = "ROSTER_LIMIT_EXCEEDED"
 	ErrorReasonDirectReportLimitExceeded ErrorReason = "DIRECT_REPORT_LIMIT_EXCEEDED"
@@ -50,7 +51,7 @@ func NewStatusError(reason ErrorReason) error {
 
 func codeForErrorReason(reason ErrorReason) codes.Code {
 	switch reason {
-	case ErrorReasonUserNotFound:
+	case ErrorReasonUserNotFound, ErrorReasonPositionNotFound:
 		return codes.NotFound
 	case ErrorReasonDataInconsistent:
 		return codes.FailedPrecondition

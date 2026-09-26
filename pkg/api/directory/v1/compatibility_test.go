@@ -22,6 +22,9 @@ func TestDirectoryV1Compatibility(t *testing.T) {
 		{"ListDirectReportsRequest", []fieldShape{{"manager_user_id", 1, protoreflect.Uint64Kind}}},
 		{"GetRosterSnapshotResponse", []fieldShape{{"snapshot_at", 1, protoreflect.MessageKind}, {"version", 2, protoreflect.StringKind}, {"users", 3, protoreflect.MessageKind}}},
 		{"ListDirectReportsResponse", []fieldShape{{"snapshot_at", 1, protoreflect.MessageKind}, {"version", 2, protoreflect.StringKind}, {"user_ids", 3, protoreflect.Uint64Kind}}},
+		{"DirectoryPosition", []fieldShape{{"id", 1, protoreflect.Uint64Kind}}},
+		{"GetPositionRequest", []fieldShape{{"position_id", 1, protoreflect.Uint64Kind}}},
+		{"GetPositionResponse", []fieldShape{{"position", 1, protoreflect.MessageKind}}},
 	} {
 		message := file.Messages().ByName(protoreflect.Name(expected.message))
 		if err := checkFieldShapes(message, expected.fields); err != nil {
