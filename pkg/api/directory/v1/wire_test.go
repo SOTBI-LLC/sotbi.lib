@@ -60,7 +60,8 @@ func TestDirectoryUserWireShape(t *testing.T) {
 func TestDirectoryPositionWireShape(t *testing.T) {
 	t.Parallel()
 
-	descriptor := directoryv1.File_api_directory_v1_service_proto.Messages().ByName("DirectoryPosition")
+	descriptor := directoryv1.File_api_directory_v1_service_proto.Messages().
+		ByName("DirectoryPosition")
 	if descriptor == nil {
 		t.Fatal("DirectoryPosition descriptor is missing")
 	}

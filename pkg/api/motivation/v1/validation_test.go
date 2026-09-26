@@ -654,20 +654,24 @@ func TestCriterionScopeValidation(t *testing.T) {
 
 	baseSnapshot := func() *motivationv1.PeriodCriterion {
 		return &motivationv1.PeriodCriterion{
-			Id:             resourceID,
-			Name:           "Base quality",
-			MaxScore:       40,
-			Type:           motivationv1.CriterionType_CRITERION_TYPE_BASE,
-			Source:         &motivationv1.PeriodCriterion_BaseCriteriaId{BaseCriteriaId: "11111111-1111-4111-8111-111111111111"},
+			Id:       resourceID,
+			Name:     "Base quality",
+			MaxScore: 40,
+			Type:     motivationv1.CriterionType_CRITERION_TYPE_BASE,
+			Source: &motivationv1.PeriodCriterion_BaseCriteriaId{
+				BaseCriteriaId: "11111111-1111-4111-8111-111111111111",
+			},
 		}
 	}
 	specialSnapshot := func() *motivationv1.PeriodCriterion {
 		return &motivationv1.PeriodCriterion{
-			Id:         resourceID,
-			Name:       "Special quality",
-			MaxScore:   60,
-			Type:       motivationv1.CriterionType_CRITERION_TYPE_SPECIAL,
-			Source:     &motivationv1.PeriodCriterion_CriterionId{CriterionId: "22222222-2222-4222-8222-222222222222"},
+			Id:       resourceID,
+			Name:     "Special quality",
+			MaxScore: 60,
+			Type:     motivationv1.CriterionType_CRITERION_TYPE_SPECIAL,
+			Source: &motivationv1.PeriodCriterion_CriterionId{
+				CriterionId: "22222222-2222-4222-8222-222222222222",
+			},
 			PositionId: proto.Int64(200),
 		}
 	}
@@ -697,7 +701,9 @@ func TestCriterionScopeValidation(t *testing.T) {
 			name: "base snapshot with special source is contradictory",
 			message: func() proto.Message {
 				value := baseSnapshot()
-				value.Source = &motivationv1.PeriodCriterion_CriterionId{CriterionId: "22222222-2222-4222-8222-222222222222"}
+				value.Source = &motivationv1.PeriodCriterion_CriterionId{
+					CriterionId: "22222222-2222-4222-8222-222222222222",
+				}
 
 				return value
 			}(),
@@ -707,7 +713,9 @@ func TestCriterionScopeValidation(t *testing.T) {
 			name: "special snapshot with base source is contradictory",
 			message: func() proto.Message {
 				value := specialSnapshot()
-				value.Source = &motivationv1.PeriodCriterion_BaseCriteriaId{BaseCriteriaId: "11111111-1111-4111-8111-111111111111"}
+				value.Source = &motivationv1.PeriodCriterion_BaseCriteriaId{
+					BaseCriteriaId: "11111111-1111-4111-8111-111111111111",
+				}
 
 				return value
 			}(),
@@ -734,8 +742,15 @@ func TestCriterionScopeValidation(t *testing.T) {
 			wantErrText: "must not carry a position_id",
 		},
 		{
-			name:        "unspecified snapshot type is rejected",
-			message:     &motivationv1.PeriodCriterion{Id: resourceID, Name: "Broken", MaxScore: 10, Source: &motivationv1.PeriodCriterion_BaseCriteriaId{BaseCriteriaId: "11111111-1111-4111-8111-111111111111"}},
+			name: "unspecified snapshot type is rejected",
+			message: &motivationv1.PeriodCriterion{
+				Id:       resourceID,
+				Name:     "Broken",
+				MaxScore: 10,
+				Source: &motivationv1.PeriodCriterion_BaseCriteriaId{
+					BaseCriteriaId: "11111111-1111-4111-8111-111111111111",
+				},
+			},
 			wantErrText: "CRITERION_TYPE_UNSPECIFIED",
 		},
 		{
@@ -746,7 +761,9 @@ func TestCriterionScopeValidation(t *testing.T) {
 				Name:              "Base quality",
 				MaxScore:          40,
 				Type:              motivationv1.CriterionType_CRITERION_TYPE_BASE,
-				Source:            &motivationv1.SheetCriterion_BaseCriteriaId{BaseCriteriaId: "11111111-1111-4111-8111-111111111111"},
+				Source: &motivationv1.SheetCriterion_BaseCriteriaId{
+					BaseCriteriaId: "11111111-1111-4111-8111-111111111111",
+				},
 			},
 		},
 		{
@@ -757,8 +774,10 @@ func TestCriterionScopeValidation(t *testing.T) {
 				Name:              "Special quality",
 				MaxScore:          60,
 				Type:              motivationv1.CriterionType_CRITERION_TYPE_SPECIAL,
-				Source:            &motivationv1.SheetCriterion_CriterionId{CriterionId: "22222222-2222-4222-8222-222222222222"},
-				PositionId:        proto.Int64(200),
+				Source: &motivationv1.SheetCriterion_CriterionId{
+					CriterionId: "22222222-2222-4222-8222-222222222222",
+				},
+				PositionId: proto.Int64(200),
 			},
 		},
 		{
@@ -769,7 +788,9 @@ func TestCriterionScopeValidation(t *testing.T) {
 				Name:              "Special quality",
 				MaxScore:          60,
 				Type:              motivationv1.CriterionType_CRITERION_TYPE_SPECIAL,
-				Source:            &motivationv1.SheetCriterion_CriterionId{CriterionId: "22222222-2222-4222-8222-222222222222"},
+				Source: &motivationv1.SheetCriterion_CriterionId{
+					CriterionId: "22222222-2222-4222-8222-222222222222",
+				},
 			},
 			wantErrText: "positive position_id",
 		},

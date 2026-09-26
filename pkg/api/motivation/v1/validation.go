@@ -118,7 +118,10 @@ func validateUpdateMaskPathValue(message protoreflect.Message, path, prefix stri
 	return nil
 }
 
-func allowedFieldMaskPaths(message protoreflect.Message, prefix string) (map[string]struct{}, error) {
+func allowedFieldMaskPaths(
+	message protoreflect.Message,
+	prefix string,
+) (map[string]struct{}, error) {
 	descriptor := message.Descriptor().Fields().ByName("update_mask")
 
 	options, ok := descriptor.Options().(*descriptorpb.FieldOptions)
@@ -172,7 +175,7 @@ func ValidateSavePerformanceSheetRequest(request *SavePerformanceSheetRequest) e
 	return nil
 }
 
-func validateUpdateBaseCriteriaPathValue(request *UpdateBaseCriteriaRequest, path string) error {
+func validateUpdateBaseCriteriaPathValue(request *UpdateBaseCriteriaRequest, path string) error {//nolint:unused
 	if path == "valid_to" {
 		// Absence deliberately clears the nullable validity end.
 		return nil
@@ -191,7 +194,7 @@ func validateUpdateBaseCriteriaPathValue(request *UpdateBaseCriteriaRequest, pat
 	return nil
 }
 
-func updateBaseCriteriaAllowedPaths() (map[string]struct{}, error) {
+func updateBaseCriteriaAllowedPaths() (map[string]struct{}, error) {//nolint:unused
 	descriptor := (&UpdateBaseCriteriaRequest{}).ProtoReflect().
 		Descriptor().
 		Fields().
@@ -230,11 +233,21 @@ func validateSemanticRules(message protoreflect.Message) error {
 			return err
 		}
 	case *PeriodCriterion:
-		if err := validateCriterionScope(value.GetType(), value.GetBaseCriteriaId(), value.GetCriterionId(), value.GetPositionId()); err != nil {
+		if err := validateCriterionScope(
+			value.GetType(),
+			value.GetBaseCriteriaId(),
+			value.GetCriterionId(),
+			value.GetPositionId(),
+		); err != nil {
 			return err
 		}
 	case *SheetCriterion:
-		if err := validateCriterionScope(value.GetType(), value.GetBaseCriteriaId(), value.GetCriterionId(), value.GetPositionId()); err != nil {
+		if err := validateCriterionScope(
+			value.GetType(),
+			value.GetBaseCriteriaId(),
+			value.GetCriterionId(),
+			value.GetPositionId(),
+		); err != nil {
 			return err
 		}
 	case *CreateBaseCriteriaRequest:

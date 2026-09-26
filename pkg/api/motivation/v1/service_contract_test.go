@@ -701,7 +701,12 @@ func TestSavePerformanceSheetRequestShape(t *testing.T) {
 		}
 
 		if int(field.Number()) != number {
-			t.Errorf("SavePerformanceSheetRequest.%s number = %d, want %d", name, field.Number(), number)
+			t.Errorf(
+				"SavePerformanceSheetRequest.%s number = %d, want %d",
+				name,
+				field.Number(),
+				number,
+			)
 		}
 	}
 
@@ -710,11 +715,13 @@ func TestSavePerformanceSheetRequestShape(t *testing.T) {
 		t.Error("SavePerformanceSheetRequest.scores must be repeated")
 	}
 
-	if adjustment := request.Fields().ByName("adjustment"); adjustment != nil && !adjustment.HasPresence() {
+	if adjustment := request.Fields().ByName("adjustment"); adjustment != nil &&
+		!adjustment.HasPresence() {
 		t.Error("SavePerformanceSheetRequest.adjustment must preserve presence")
 	}
 
 	scoreChange := (&motivationv1.SaveSheetScoreChange{}).ProtoReflect().Descriptor()
+
 	scoreChangeNumbers := map[protoreflect.Name]int{
 		"sheet_criterion_id": 1,
 		"score":              2,
@@ -867,7 +874,10 @@ func TestSetCoefficientCapCommentContract(t *testing.T) {
 	}
 
 	if decoded.GetComment() != "" {
-		t.Errorf("legacy commentless payload decoded comment = %q, want empty", decoded.GetComment())
+		t.Errorf(
+			"legacy commentless payload decoded comment = %q, want empty",
+			decoded.GetComment(),
+		)
 	}
 
 	if !proto.Equal(legacy, &decoded) {
@@ -921,6 +931,7 @@ func TestCoefficientCapHistoryMessageShapes(t *testing.T) {
 	}
 
 	baseline := (&motivationv1.CoefficientCapHistoryBaseline{}).ProtoReflect().Descriptor()
+
 	baselineFields := map[protoreflect.Name]int{
 		"coefficient_cap": 1,
 		"recorded_at":     2,
@@ -944,13 +955,19 @@ func TestCoefficientCapHistoryMessageShapes(t *testing.T) {
 
 	if cap := baseline.Fields().ByName("coefficient_cap"); cap != nil {
 		if got := cap.Message().FullName(); got != "motivation.v1.Coefficient" {
-			t.Errorf("CoefficientCapHistoryBaseline.coefficient_cap type = %s, want motivation.v1.Coefficient", got)
+			t.Errorf(
+				"CoefficientCapHistoryBaseline.coefficient_cap type = %s, want motivation.v1.Coefficient",
+				got,
+			)
 		}
 	}
 
 	if recorded := baseline.Fields().ByName("recorded_at"); recorded != nil {
 		if got := recorded.Message().FullName(); got != "google.protobuf.Timestamp" {
-			t.Errorf("CoefficientCapHistoryBaseline.recorded_at type = %s, want google.protobuf.Timestamp", got)
+			t.Errorf(
+				"CoefficientCapHistoryBaseline.recorded_at type = %s, want google.protobuf.Timestamp",
+				got,
+			)
 		}
 	}
 
@@ -961,6 +978,7 @@ func TestCoefficientCapHistoryMessageShapes(t *testing.T) {
 	}
 
 	entry := (&motivationv1.CoefficientCapHistoryEntry{}).ProtoReflect().Descriptor()
+
 	entryFields := map[protoreflect.Name]int{
 		"id":            1,
 		"actor_user_id": 2,
@@ -999,7 +1017,10 @@ func TestCoefficientCapHistoryMessageShapes(t *testing.T) {
 
 	if actor := entry.Fields().ByName("actor_user_id"); actor != nil {
 		if got := actor.Message(); got != nil {
-			t.Errorf("CoefficientCapHistoryEntry.actor_user_id type = %s, want plain int64", got.FullName())
+			t.Errorf(
+				"CoefficientCapHistoryEntry.actor_user_id type = %s, want plain int64",
+				got.FullName(),
+			)
 		}
 	}
 
@@ -1025,6 +1046,7 @@ func TestCoefficientCapHistoryMessageShapes(t *testing.T) {
 	}
 
 	response := (&motivationv1.ListCoefficientCapHistoryResponse{}).ProtoReflect().Descriptor()
+
 	responseFields := map[protoreflect.Name]int{
 		"baseline":                    1,
 		"earlier_history_unavailable": 2,
@@ -1135,9 +1157,11 @@ func TestCoefficientCapHistoryValidation(t *testing.T) {
 				Baseline:                  validResponse.GetBaseline(),
 				EarlierHistoryUnavailable: true,
 				Entries: []*motivationv1.CoefficientCapHistoryEntry{
-					{Id: "not-a-uuid", ActorUserId: 42, RecordedAt: recordedAt,
+					{
+						Id: "not-a-uuid", ActorUserId: 42, RecordedAt: recordedAt,
 						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1},
-						NewCap:      &motivationv1.Coefficient{TenThousandths: 2}},
+						NewCap:      &motivationv1.Coefficient{TenThousandths: 2},
+					},
 				},
 			},
 		},
@@ -1147,9 +1171,11 @@ func TestCoefficientCapHistoryValidation(t *testing.T) {
 				Baseline:                  validResponse.GetBaseline(),
 				EarlierHistoryUnavailable: true,
 				Entries: []*motivationv1.CoefficientCapHistoryEntry{
-					{Id: "550e8400-e29b-41d4-a716-446655440000", RecordedAt: recordedAt,
+					{
+						Id: "550e8400-e29b-41d4-a716-446655440000", RecordedAt: recordedAt,
 						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1},
-						NewCap:      &motivationv1.Coefficient{TenThousandths: 2}},
+						NewCap:      &motivationv1.Coefficient{TenThousandths: 2},
+					},
 				},
 			},
 		},
@@ -1159,9 +1185,11 @@ func TestCoefficientCapHistoryValidation(t *testing.T) {
 				Baseline:                  validResponse.GetBaseline(),
 				EarlierHistoryUnavailable: true,
 				Entries: []*motivationv1.CoefficientCapHistoryEntry{
-					{Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: -1, RecordedAt: recordedAt,
+					{
+						Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: -1, RecordedAt: recordedAt,
 						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1},
-						NewCap:      &motivationv1.Coefficient{TenThousandths: 2}},
+						NewCap:      &motivationv1.Coefficient{TenThousandths: 2},
+					},
 				},
 			},
 		},
@@ -1171,9 +1199,11 @@ func TestCoefficientCapHistoryValidation(t *testing.T) {
 				Baseline:                  validResponse.GetBaseline(),
 				EarlierHistoryUnavailable: true,
 				Entries: []*motivationv1.CoefficientCapHistoryEntry{
-					{Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: 42,
+					{
+						Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: 42,
 						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1},
-						NewCap:      &motivationv1.Coefficient{TenThousandths: 2}},
+						NewCap:      &motivationv1.Coefficient{TenThousandths: 2},
+					},
 				},
 			},
 		},
@@ -1183,8 +1213,10 @@ func TestCoefficientCapHistoryValidation(t *testing.T) {
 				Baseline:                  validResponse.GetBaseline(),
 				EarlierHistoryUnavailable: true,
 				Entries: []*motivationv1.CoefficientCapHistoryEntry{
-					{Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: 42, RecordedAt: recordedAt,
-						NewCap: &motivationv1.Coefficient{TenThousandths: 2}},
+					{
+						Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: 42, RecordedAt: recordedAt,
+						NewCap: &motivationv1.Coefficient{TenThousandths: 2},
+					},
 				},
 			},
 		},
@@ -1194,8 +1226,10 @@ func TestCoefficientCapHistoryValidation(t *testing.T) {
 				Baseline:                  validResponse.GetBaseline(),
 				EarlierHistoryUnavailable: true,
 				Entries: []*motivationv1.CoefficientCapHistoryEntry{
-					{Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: 42, RecordedAt: recordedAt,
-						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1}},
+					{
+						Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: 42, RecordedAt: recordedAt,
+						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1},
+					},
 				},
 			},
 		},
