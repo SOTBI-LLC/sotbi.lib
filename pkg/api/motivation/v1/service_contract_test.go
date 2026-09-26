@@ -58,6 +58,30 @@ func TestPerformanceEvaluationServiceDescriptor(t *testing.T) {
 			false,
 		},
 		{
+			"CreateCriterion",
+			"motivation.v1.CreateCriterionRequest",
+			"motivation.v1.CreateCriterionResponse",
+			false,
+		},
+		{
+			"UpdateCriterion",
+			"motivation.v1.UpdateCriterionRequest",
+			"motivation.v1.UpdateCriterionResponse",
+			false,
+		},
+		{
+			"GetCriterion",
+			"motivation.v1.GetCriterionRequest",
+			"motivation.v1.GetCriterionResponse",
+			false,
+		},
+		{
+			"ListCriteria",
+			"motivation.v1.ListCriteriaRequest",
+			"motivation.v1.ListCriteriaResponse",
+			false,
+		},
+		{
 			"GetCoefficientCap",
 			"motivation.v1.GetCoefficientCapRequest",
 			"motivation.v1.GetCoefficientCapResponse",
@@ -204,7 +228,7 @@ func TestPerformanceEvaluationServiceDescriptor(t *testing.T) {
 		})
 	}
 
-	for _, forbidden := range []protoreflect.Name{"Ping", "ClosePeriod", "CancelClosePeriod", "CancelOperation", "DeleteBaseCriteria"} {
+	for _, forbidden := range []protoreflect.Name{"Ping", "ClosePeriod", "CancelClosePeriod", "CancelOperation", "DeleteBaseCriteria", "DeleteCriterion"} {
 		if method := service.Methods().ByName(forbidden); method != nil {
 			t.Errorf("forbidden method %s is present", forbidden)
 		}
@@ -560,6 +584,8 @@ func TestCommandAndFilterRequestShapes(t *testing.T) {
 	mutationRequests := []protoreflect.Name{
 		"CreateBaseCriteriaRequest",
 		"UpdateBaseCriteriaRequest",
+		"CreateCriterionRequest",
+		"UpdateCriterionRequest",
 		"SetCoefficientCapRequest",
 		"OpenPeriodRequest",
 		"ReopenPeriodRequest",
@@ -637,6 +663,8 @@ func TestGeneratedValidationAPI(t *testing.T) {
 	validators := []validateAller{
 		&motivationv1.CreateBaseCriteriaRequest{},
 		&motivationv1.UpdateBaseCriteriaRequest{},
+		&motivationv1.CreateCriterionRequest{},
+		&motivationv1.UpdateCriterionRequest{},
 		&motivationv1.SetCoefficientCapRequest{},
 		&motivationv1.OpenPeriodRequest{},
 		&motivationv1.ReopenPeriodRequest{},

@@ -117,5 +117,32 @@ func Scenarios() []Scenario {
 			ExpectedCode:  codes.NotFound,
 			ExpectedError: directoryv1.ErrorReasonUserNotFound,
 		},
+		{
+			Name:    "vacant position lookup",
+			Request: &directoryv1.GetPositionRequest{PositionId: 42},
+			Response: &directoryv1.GetPositionResponse{
+				Position: &directoryv1.DirectoryPosition{Id: 42},
+			},
+			ValidResponse: true,
+		},
+		{
+			Name:    "large position identifier",
+			Request: &directoryv1.GetPositionRequest{PositionId: ^uint64(0)},
+			Response: &directoryv1.GetPositionResponse{
+				Position: &directoryv1.DirectoryPosition{Id: ^uint64(0)},
+			},
+			ValidResponse: true,
+		},
+		{
+			Name:         "zero position identifier",
+			Request:      &directoryv1.GetPositionRequest{},
+			ExpectedCode: codes.InvalidArgument,
+		},
+		{
+			Name:          "position not found",
+			Request:       &directoryv1.GetPositionRequest{PositionId: 42},
+			ExpectedCode:  codes.NotFound,
+			ExpectedError: directoryv1.ErrorReasonPositionNotFound,
+		},
 	}
 }

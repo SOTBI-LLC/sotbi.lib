@@ -978,3 +978,371 @@ var _ interface {
 } = ListDirectReportsResponseValidationError{}
 
 var _ListDirectReportsResponse_Version_Pattern = regexp.MustCompile("^[0-9a-f]{64}$")
+
+// Validate checks the field values on DirectoryPosition with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DirectoryPosition) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DirectoryPosition with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DirectoryPositionMultiError, or nil if none found.
+func (m *DirectoryPosition) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DirectoryPosition) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetId() <= 0 {
+		err := DirectoryPositionValidationError{
+			field:  "Id",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DirectoryPositionMultiError(errors)
+	}
+
+	return nil
+}
+
+// DirectoryPositionMultiError is an error wrapping multiple validation errors
+// returned by DirectoryPosition.ValidateAll() if the designated constraints
+// aren't met.
+type DirectoryPositionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DirectoryPositionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DirectoryPositionMultiError) AllErrors() []error { return m }
+
+// DirectoryPositionValidationError is the validation error returned by
+// DirectoryPosition.Validate if the designated constraints aren't met.
+type DirectoryPositionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DirectoryPositionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DirectoryPositionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DirectoryPositionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DirectoryPositionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DirectoryPositionValidationError) ErrorName() string {
+	return "DirectoryPositionValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DirectoryPositionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDirectoryPosition.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DirectoryPositionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DirectoryPositionValidationError{}
+
+// Validate checks the field values on GetPositionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetPositionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetPositionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetPositionRequestMultiError, or nil if none found.
+func (m *GetPositionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetPositionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPositionId() <= 0 {
+		err := GetPositionRequestValidationError{
+			field:  "PositionId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GetPositionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetPositionRequestMultiError is an error wrapping multiple validation errors
+// returned by GetPositionRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetPositionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetPositionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetPositionRequestMultiError) AllErrors() []error { return m }
+
+// GetPositionRequestValidationError is the validation error returned by
+// GetPositionRequest.Validate if the designated constraints aren't met.
+type GetPositionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetPositionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetPositionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetPositionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetPositionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetPositionRequestValidationError) ErrorName() string {
+	return "GetPositionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetPositionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetPositionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetPositionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetPositionRequestValidationError{}
+
+// Validate checks the field values on GetPositionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetPositionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetPositionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetPositionResponseMultiError, or nil if none found.
+func (m *GetPositionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetPositionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPosition() == nil {
+		err := GetPositionResponseValidationError{
+			field:  "Position",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPosition()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetPositionResponseValidationError{
+					field:  "Position",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetPositionResponseValidationError{
+					field:  "Position",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPosition()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetPositionResponseValidationError{
+				field:  "Position",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetPositionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetPositionResponseMultiError is an error wrapping multiple validation
+// errors returned by GetPositionResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetPositionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetPositionResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetPositionResponseMultiError) AllErrors() []error { return m }
+
+// GetPositionResponseValidationError is the validation error returned by
+// GetPositionResponse.Validate if the designated constraints aren't met.
+type GetPositionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetPositionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetPositionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetPositionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetPositionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetPositionResponseValidationError) ErrorName() string {
+	return "GetPositionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetPositionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetPositionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetPositionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetPositionResponseValidationError{}

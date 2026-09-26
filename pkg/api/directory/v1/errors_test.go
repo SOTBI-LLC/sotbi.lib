@@ -20,6 +20,7 @@ func TestDirectoryStatusErrors(t *testing.T) {
 		wantRetryInfo bool
 	}{
 		{"absent user", directoryv1.ErrorReasonUserNotFound, codes.NotFound, false},
+		{"absent position", directoryv1.ErrorReasonPositionNotFound, codes.NotFound, false},
 		{
 			"inconsistent data",
 			directoryv1.ErrorReasonDataInconsistent,

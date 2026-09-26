@@ -381,6 +381,140 @@ func (x *ListDirectReportsResponse) GetUserIds() []uint64 {
 	return nil
 }
 
+// DirectoryPosition is the minimal position catalog fact. It carries no user
+// profiles, staff assignments or display names.
+type DirectoryPosition struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DirectoryPosition) Reset() {
+	*x = DirectoryPosition{}
+	mi := &file_api_directory_v1_service_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DirectoryPosition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DirectoryPosition) ProtoMessage() {}
+
+func (x *DirectoryPosition) ProtoReflect() protoreflect.Message {
+	mi := &file_api_directory_v1_service_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DirectoryPosition.ProtoReflect.Descriptor instead.
+func (*DirectoryPosition) Descriptor() ([]byte, []int) {
+	return file_api_directory_v1_service_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *DirectoryPosition) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type GetPositionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PositionId    uint64                 `protobuf:"varint,1,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPositionRequest) Reset() {
+	*x = GetPositionRequest{}
+	mi := &file_api_directory_v1_service_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPositionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPositionRequest) ProtoMessage() {}
+
+func (x *GetPositionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_directory_v1_service_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPositionRequest.ProtoReflect.Descriptor instead.
+func (*GetPositionRequest) Descriptor() ([]byte, []int) {
+	return file_api_directory_v1_service_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetPositionRequest) GetPositionId() uint64 {
+	if x != nil {
+		return x.PositionId
+	}
+	return 0
+}
+
+type GetPositionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Position      *DirectoryPosition     `protobuf:"bytes,1,opt,name=position,proto3" json:"position,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPositionResponse) Reset() {
+	*x = GetPositionResponse{}
+	mi := &file_api_directory_v1_service_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPositionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPositionResponse) ProtoMessage() {}
+
+func (x *GetPositionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_directory_v1_service_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPositionResponse.ProtoReflect.Descriptor instead.
+func (*GetPositionResponse) Descriptor() ([]byte, []int) {
+	return file_api_directory_v1_service_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetPositionResponse) GetPosition() *DirectoryPosition {
+	if x != nil {
+		return x.Position
+	}
+	return nil
+}
+
 var File_api_directory_v1_service_proto protoreflect.FileDescriptor
 
 const file_api_directory_v1_service_proto_rawDesc = "" +
@@ -409,11 +543,19 @@ const file_api_directory_v1_service_proto_rawDesc = "" +
 	"\vsnapshot_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampB\b\xfaB\x05\xb2\x01\x02\b\x01R\n" +
 	"snapshotAt\x12/\n" +
 	"\aversion\x18\x02 \x01(\tB\x15\xfaB\x12r\x102\x0e^[0-9a-f]{64}$R\aversion\x12,\n" +
-	"\buser_ids\x18\x03 \x03(\x04B\x11\xfaB\x0e\x92\x01\v\x10\x88'\x18\x01\"\x042\x02 \x00R\auserIds2\xa6\x02\n" +
+	"\buser_ids\x18\x03 \x03(\x04B\x11\xfaB\x0e\x92\x01\v\x10\x88'\x18\x01\"\x042\x02 \x00R\auserIds\",\n" +
+	"\x11DirectoryPosition\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x04B\a\xfaB\x042\x02 \x00R\x02id\">\n" +
+	"\x12GetPositionRequest\x12(\n" +
+	"\vposition_id\x18\x01 \x01(\x04B\a\xfaB\x042\x02 \x00R\n" +
+	"positionId\"\\\n" +
+	"\x13GetPositionResponse\x12E\n" +
+	"\bposition\x18\x01 \x01(\v2\x1f.directory.v1.DirectoryPositionB\b\xfaB\x05\x8a\x01\x02\x10\x01R\bposition2\xfa\x02\n" +
 	"\x10DirectoryService\x12d\n" +
 	"\x11GetRosterSnapshot\x12&.directory.v1.GetRosterSnapshotRequest\x1a'.directory.v1.GetRosterSnapshotResponse\x12F\n" +
 	"\aGetUser\x12\x1c.directory.v1.GetUserRequest\x1a\x1d.directory.v1.GetUserResponse\x12d\n" +
-	"\x11ListDirectReports\x12&.directory.v1.ListDirectReportsRequest\x1a'.directory.v1.ListDirectReportsResponseBAZ?github.com/SOTBI-LLC/sotbi.lib/pkg/api/directory/v1;directoryv1b\x06proto3"
+	"\x11ListDirectReports\x12&.directory.v1.ListDirectReportsRequest\x1a'.directory.v1.ListDirectReportsResponse\x12R\n" +
+	"\vGetPosition\x12 .directory.v1.GetPositionRequest\x1a!.directory.v1.GetPositionResponseBAZ?github.com/SOTBI-LLC/sotbi.lib/pkg/api/directory/v1;directoryv1b\x06proto3"
 
 var (
 	file_api_directory_v1_service_proto_rawDescOnce sync.Once
@@ -427,7 +569,7 @@ func file_api_directory_v1_service_proto_rawDescGZIP() []byte {
 	return file_api_directory_v1_service_proto_rawDescData
 }
 
-var file_api_directory_v1_service_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_api_directory_v1_service_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_api_directory_v1_service_proto_goTypes = []any{
 	(*DirectoryUser)(nil),             // 0: directory.v1.DirectoryUser
 	(*GetRosterSnapshotRequest)(nil),  // 1: directory.v1.GetRosterSnapshotRequest
@@ -436,24 +578,30 @@ var file_api_directory_v1_service_proto_goTypes = []any{
 	(*GetUserResponse)(nil),           // 4: directory.v1.GetUserResponse
 	(*ListDirectReportsRequest)(nil),  // 5: directory.v1.ListDirectReportsRequest
 	(*ListDirectReportsResponse)(nil), // 6: directory.v1.ListDirectReportsResponse
-	(*timestamppb.Timestamp)(nil),     // 7: google.protobuf.Timestamp
+	(*DirectoryPosition)(nil),         // 7: directory.v1.DirectoryPosition
+	(*GetPositionRequest)(nil),        // 8: directory.v1.GetPositionRequest
+	(*GetPositionResponse)(nil),       // 9: directory.v1.GetPositionResponse
+	(*timestamppb.Timestamp)(nil),     // 10: google.protobuf.Timestamp
 }
 var file_api_directory_v1_service_proto_depIdxs = []int32{
-	7, // 0: directory.v1.GetRosterSnapshotResponse.snapshot_at:type_name -> google.protobuf.Timestamp
-	0, // 1: directory.v1.GetRosterSnapshotResponse.users:type_name -> directory.v1.DirectoryUser
-	0, // 2: directory.v1.GetUserResponse.user:type_name -> directory.v1.DirectoryUser
-	7, // 3: directory.v1.ListDirectReportsResponse.snapshot_at:type_name -> google.protobuf.Timestamp
-	1, // 4: directory.v1.DirectoryService.GetRosterSnapshot:input_type -> directory.v1.GetRosterSnapshotRequest
-	3, // 5: directory.v1.DirectoryService.GetUser:input_type -> directory.v1.GetUserRequest
-	5, // 6: directory.v1.DirectoryService.ListDirectReports:input_type -> directory.v1.ListDirectReportsRequest
-	2, // 7: directory.v1.DirectoryService.GetRosterSnapshot:output_type -> directory.v1.GetRosterSnapshotResponse
-	4, // 8: directory.v1.DirectoryService.GetUser:output_type -> directory.v1.GetUserResponse
-	6, // 9: directory.v1.DirectoryService.ListDirectReports:output_type -> directory.v1.ListDirectReportsResponse
-	7, // [7:10] is the sub-list for method output_type
-	4, // [4:7] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	10, // 0: directory.v1.GetRosterSnapshotResponse.snapshot_at:type_name -> google.protobuf.Timestamp
+	0,  // 1: directory.v1.GetRosterSnapshotResponse.users:type_name -> directory.v1.DirectoryUser
+	0,  // 2: directory.v1.GetUserResponse.user:type_name -> directory.v1.DirectoryUser
+	10, // 3: directory.v1.ListDirectReportsResponse.snapshot_at:type_name -> google.protobuf.Timestamp
+	7,  // 4: directory.v1.GetPositionResponse.position:type_name -> directory.v1.DirectoryPosition
+	1,  // 5: directory.v1.DirectoryService.GetRosterSnapshot:input_type -> directory.v1.GetRosterSnapshotRequest
+	3,  // 6: directory.v1.DirectoryService.GetUser:input_type -> directory.v1.GetUserRequest
+	5,  // 7: directory.v1.DirectoryService.ListDirectReports:input_type -> directory.v1.ListDirectReportsRequest
+	8,  // 8: directory.v1.DirectoryService.GetPosition:input_type -> directory.v1.GetPositionRequest
+	2,  // 9: directory.v1.DirectoryService.GetRosterSnapshot:output_type -> directory.v1.GetRosterSnapshotResponse
+	4,  // 10: directory.v1.DirectoryService.GetUser:output_type -> directory.v1.GetUserResponse
+	6,  // 11: directory.v1.DirectoryService.ListDirectReports:output_type -> directory.v1.ListDirectReportsResponse
+	9,  // 12: directory.v1.DirectoryService.GetPosition:output_type -> directory.v1.GetPositionResponse
+	9,  // [9:13] is the sub-list for method output_type
+	5,  // [5:9] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_api_directory_v1_service_proto_init() }
@@ -468,7 +616,7 @@ func file_api_directory_v1_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_directory_v1_service_proto_rawDesc), len(file_api_directory_v1_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

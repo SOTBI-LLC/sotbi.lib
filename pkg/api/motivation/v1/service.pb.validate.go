@@ -512,6 +512,259 @@ var _BaseCriteria_Id_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9
 
 var _BaseCriteria_Name_Pattern = regexp.MustCompile("\\S")
 
+// Validate checks the field values on Criterion with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Criterion) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Criterion with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CriterionMultiError, or nil
+// if none found.
+func (m *Criterion) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Criterion) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateUuid(m.GetId()); err != nil {
+		err = CriterionValidationError{
+			field:  "Id",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_Criterion_Id_Pattern.MatchString(m.GetId()) {
+		err := CriterionValidationError{
+			field:  "Id",
+			reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetName()) < 1 {
+		err := CriterionValidationError{
+			field:  "Name",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_Criterion_Name_Pattern.MatchString(m.GetName()) {
+		err := CriterionValidationError{
+			field:  "Name",
+			reason: "value does not match regex pattern \"\\\\S\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Description
+
+	if m.GetMaxScore() <= 0 {
+		err := CriterionValidationError{
+			field:  "MaxScore",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetValidFrom() == nil {
+		err := CriterionValidationError{
+			field:  "ValidFrom",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetValidFrom()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CriterionValidationError{
+					field:  "ValidFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CriterionValidationError{
+					field:  "ValidFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetValidFrom()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CriterionValidationError{
+				field:  "ValidFrom",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.GetPositionId() <= 0 {
+		err := CriterionValidationError{
+			field:  "PositionId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.ValidTo != nil {
+
+		if all {
+			switch v := interface{}(m.GetValidTo()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CriterionValidationError{
+						field:  "ValidTo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CriterionValidationError{
+						field:  "ValidTo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetValidTo()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CriterionValidationError{
+					field:  "ValidTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return CriterionMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *Criterion) _validateUuid(uuid string) error {
+	if matched := _service_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
+	}
+
+	return nil
+}
+
+// CriterionMultiError is an error wrapping multiple validation errors returned
+// by Criterion.ValidateAll() if the designated constraints aren't met.
+type CriterionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CriterionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CriterionMultiError) AllErrors() []error { return m }
+
+// CriterionValidationError is the validation error returned by
+// Criterion.Validate if the designated constraints aren't met.
+type CriterionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CriterionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CriterionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CriterionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CriterionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CriterionValidationError) ErrorName() string { return "CriterionValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CriterionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCriterion.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CriterionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CriterionValidationError{}
+
+var _Criterion_Id_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+var _Criterion_Name_Pattern = regexp.MustCompile("\\S")
+
 // Validate checks the field values on PeriodCriterion with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -557,29 +810,6 @@ func (m *PeriodCriterion) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if err := m._validateUuid(m.GetBaseCriteriaId()); err != nil {
-		err = PeriodCriterionValidationError{
-			field:  "BaseCriteriaId",
-			reason: "value must be a valid UUID",
-			cause:  err,
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if !_PeriodCriterion_BaseCriteriaId_Pattern.MatchString(m.GetBaseCriteriaId()) {
-		err := PeriodCriterionValidationError{
-			field:  "BaseCriteriaId",
-			reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if utf8.RuneCountInString(m.GetName()) < 1 {
 		err := PeriodCriterionValidationError{
 			field:  "Name",
@@ -613,6 +843,131 @@ func (m *PeriodCriterion) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if _, ok := _PeriodCriterion_Type_NotInLookup[m.GetType()]; ok {
+		err := PeriodCriterionValidationError{
+			field:  "Type",
+			reason: "value must not be in list [CRITERION_TYPE_UNSPECIFIED]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := CriterionType_name[int32(m.GetType())]; !ok {
+		err := PeriodCriterionValidationError{
+			field:  "Type",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	oneofSourcePresent := false
+	switch v := m.Source.(type) {
+	case *PeriodCriterion_BaseCriteriaId:
+		if v == nil {
+			err := PeriodCriterionValidationError{
+				field:  "Source",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofSourcePresent = true
+
+		if err := m._validateUuid(m.GetBaseCriteriaId()); err != nil {
+			err = PeriodCriterionValidationError{
+				field:  "BaseCriteriaId",
+				reason: "value must be a valid UUID",
+				cause:  err,
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if !_PeriodCriterion_BaseCriteriaId_Pattern.MatchString(m.GetBaseCriteriaId()) {
+			err := PeriodCriterionValidationError{
+				field:  "BaseCriteriaId",
+				reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	case *PeriodCriterion_CriterionId:
+		if v == nil {
+			err := PeriodCriterionValidationError{
+				field:  "Source",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofSourcePresent = true
+
+		if err := m._validateUuid(m.GetCriterionId()); err != nil {
+			err = PeriodCriterionValidationError{
+				field:  "CriterionId",
+				reason: "value must be a valid UUID",
+				cause:  err,
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if !_PeriodCriterion_CriterionId_Pattern.MatchString(m.GetCriterionId()) {
+			err := PeriodCriterionValidationError{
+				field:  "CriterionId",
+				reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
+	if !oneofSourcePresent {
+		err := PeriodCriterionValidationError{
+			field:  "Source",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.PositionId != nil {
+
+		if m.GetPositionId() <= 0 {
+			err := PeriodCriterionValidationError{
+				field:  "PositionId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -705,7 +1060,13 @@ var _PeriodCriterion_Id_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[
 
 var _PeriodCriterion_BaseCriteriaId_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
+var _PeriodCriterion_CriterionId_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
 var _PeriodCriterion_Name_Pattern = regexp.MustCompile("\\S")
+
+var _PeriodCriterion_Type_NotInLookup = map[CriterionType]struct{}{
+	0: {},
+}
 
 // Validate checks the field values on PeriodSummary with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -1847,8 +2208,133 @@ func (m *SheetCriterion) validate(all bool) error {
 
 	}
 
+	if _, ok := _SheetCriterion_Type_NotInLookup[m.GetType()]; ok {
+		err := SheetCriterionValidationError{
+			field:  "Type",
+			reason: "value must not be in list [CRITERION_TYPE_UNSPECIFIED]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := CriterionType_name[int32(m.GetType())]; !ok {
+		err := SheetCriterionValidationError{
+			field:  "Type",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	oneofSourcePresent := false
+	switch v := m.Source.(type) {
+	case *SheetCriterion_BaseCriteriaId:
+		if v == nil {
+			err := SheetCriterionValidationError{
+				field:  "Source",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofSourcePresent = true
+
+		if err := m._validateUuid(m.GetBaseCriteriaId()); err != nil {
+			err = SheetCriterionValidationError{
+				field:  "BaseCriteriaId",
+				reason: "value must be a valid UUID",
+				cause:  err,
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if !_SheetCriterion_BaseCriteriaId_Pattern.MatchString(m.GetBaseCriteriaId()) {
+			err := SheetCriterionValidationError{
+				field:  "BaseCriteriaId",
+				reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	case *SheetCriterion_CriterionId:
+		if v == nil {
+			err := SheetCriterionValidationError{
+				field:  "Source",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofSourcePresent = true
+
+		if err := m._validateUuid(m.GetCriterionId()); err != nil {
+			err = SheetCriterionValidationError{
+				field:  "CriterionId",
+				reason: "value must be a valid UUID",
+				cause:  err,
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if !_SheetCriterion_CriterionId_Pattern.MatchString(m.GetCriterionId()) {
+			err := SheetCriterionValidationError{
+				field:  "CriterionId",
+				reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
+	if !oneofSourcePresent {
+		err := SheetCriterionValidationError{
+			field:  "Source",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.Score != nil {
 		// no validation rules for Score
+	}
+
+	if m.PositionId != nil {
+
+		if m.GetPositionId() <= 0 {
+			err := SheetCriterionValidationError{
+				field:  "PositionId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -1942,6 +2428,14 @@ var _SheetCriterion_Id_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0
 var _SheetCriterion_PeriodCriterionId_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
 var _SheetCriterion_Name_Pattern = regexp.MustCompile("\\S")
+
+var _SheetCriterion_Type_NotInLookup = map[CriterionType]struct{}{
+	0: {},
+}
+
+var _SheetCriterion_BaseCriteriaId_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+var _SheetCriterion_CriterionId_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
 // Validate checks the field values on Adjustment with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -3624,54 +4118,6 @@ func (m *UpdateBaseCriteriaRequest) validate(all bool) error {
 		// no validation rules for Description
 	}
 
-	if m.MaxScore != nil {
-
-		if m.GetMaxScore() <= 0 {
-			err := UpdateBaseCriteriaRequestValidationError{
-				field:  "MaxScore",
-				reason: "value must be greater than 0",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.ValidFrom != nil {
-
-		if all {
-			switch v := interface{}(m.GetValidFrom()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UpdateBaseCriteriaRequestValidationError{
-						field:  "ValidFrom",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UpdateBaseCriteriaRequestValidationError{
-						field:  "ValidFrom",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetValidFrom()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UpdateBaseCriteriaRequestValidationError{
-					field:  "ValidFrom",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if m.ValidTo != nil {
 
 		if all {
@@ -4488,6 +4934,1374 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListBaseCriteriaResponseValidationError{}
+
+// Validate checks the field values on CreateCriterionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateCriterionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateCriterionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateCriterionRequestMultiError, or nil if none found.
+func (m *CreateCriterionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateCriterionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateUuid(m.GetIdempotencyKey()); err != nil {
+		err = CreateCriterionRequestValidationError{
+			field:  "IdempotencyKey",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_CreateCriterionRequest_IdempotencyKey_Pattern.MatchString(m.GetIdempotencyKey()) {
+		err := CreateCriterionRequestValidationError{
+			field:  "IdempotencyKey",
+			reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetPositionId() <= 0 {
+		err := CreateCriterionRequestValidationError{
+			field:  "PositionId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetName()) < 1 {
+		err := CreateCriterionRequestValidationError{
+			field:  "Name",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_CreateCriterionRequest_Name_Pattern.MatchString(m.GetName()) {
+		err := CreateCriterionRequestValidationError{
+			field:  "Name",
+			reason: "value does not match regex pattern \"\\\\S\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Description
+
+	if m.GetMaxScore() <= 0 {
+		err := CreateCriterionRequestValidationError{
+			field:  "MaxScore",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetValidFrom() == nil {
+		err := CreateCriterionRequestValidationError{
+			field:  "ValidFrom",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetValidFrom()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateCriterionRequestValidationError{
+					field:  "ValidFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateCriterionRequestValidationError{
+					field:  "ValidFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetValidFrom()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateCriterionRequestValidationError{
+				field:  "ValidFrom",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.ValidTo != nil {
+
+		if all {
+			switch v := interface{}(m.GetValidTo()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateCriterionRequestValidationError{
+						field:  "ValidTo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateCriterionRequestValidationError{
+						field:  "ValidTo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetValidTo()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateCriterionRequestValidationError{
+					field:  "ValidTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return CreateCriterionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *CreateCriterionRequest) _validateUuid(uuid string) error {
+	if matched := _service_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
+	}
+
+	return nil
+}
+
+// CreateCriterionRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateCriterionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CreateCriterionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateCriterionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateCriterionRequestMultiError) AllErrors() []error { return m }
+
+// CreateCriterionRequestValidationError is the validation error returned by
+// CreateCriterionRequest.Validate if the designated constraints aren't met.
+type CreateCriterionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateCriterionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateCriterionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateCriterionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateCriterionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateCriterionRequestValidationError) ErrorName() string {
+	return "CreateCriterionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateCriterionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateCriterionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateCriterionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateCriterionRequestValidationError{}
+
+var _CreateCriterionRequest_IdempotencyKey_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+var _CreateCriterionRequest_Name_Pattern = regexp.MustCompile("\\S")
+
+// Validate checks the field values on CreateCriterionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateCriterionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateCriterionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateCriterionResponseMultiError, or nil if none found.
+func (m *CreateCriterionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateCriterionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetCriterion() == nil {
+		err := CreateCriterionResponseValidationError{
+			field:  "Criterion",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetCriterion()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateCriterionResponseValidationError{
+					field:  "Criterion",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateCriterionResponseValidationError{
+					field:  "Criterion",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCriterion()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateCriterionResponseValidationError{
+				field:  "Criterion",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateCriterionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateCriterionResponseMultiError is an error wrapping multiple validation
+// errors returned by CreateCriterionResponse.ValidateAll() if the designated
+// constraints aren't met.
+type CreateCriterionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateCriterionResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateCriterionResponseMultiError) AllErrors() []error { return m }
+
+// CreateCriterionResponseValidationError is the validation error returned by
+// CreateCriterionResponse.Validate if the designated constraints aren't met.
+type CreateCriterionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateCriterionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateCriterionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateCriterionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateCriterionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateCriterionResponseValidationError) ErrorName() string {
+	return "CreateCriterionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateCriterionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateCriterionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateCriterionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateCriterionResponseValidationError{}
+
+// Validate checks the field values on UpdateCriterionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateCriterionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateCriterionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateCriterionRequestMultiError, or nil if none found.
+func (m *UpdateCriterionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateCriterionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateUuid(m.GetIdempotencyKey()); err != nil {
+		err = UpdateCriterionRequestValidationError{
+			field:  "IdempotencyKey",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_UpdateCriterionRequest_IdempotencyKey_Pattern.MatchString(m.GetIdempotencyKey()) {
+		err := UpdateCriterionRequestValidationError{
+			field:  "IdempotencyKey",
+			reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if err := m._validateUuid(m.GetId()); err != nil {
+		err = UpdateCriterionRequestValidationError{
+			field:  "Id",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_UpdateCriterionRequest_Id_Pattern.MatchString(m.GetId()) {
+		err := UpdateCriterionRequestValidationError{
+			field:  "Id",
+			reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetUpdateMask() == nil {
+		err := UpdateCriterionRequestValidationError{
+			field:  "UpdateMask",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetUpdateMask()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateCriterionRequestValidationError{
+					field:  "UpdateMask",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateCriterionRequestValidationError{
+					field:  "UpdateMask",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdateMask()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateCriterionRequestValidationError{
+				field:  "UpdateMask",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.Name != nil {
+
+		if utf8.RuneCountInString(m.GetName()) < 1 {
+			err := UpdateCriterionRequestValidationError{
+				field:  "Name",
+				reason: "value length must be at least 1 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if !_UpdateCriterionRequest_Name_Pattern.MatchString(m.GetName()) {
+			err := UpdateCriterionRequestValidationError{
+				field:  "Name",
+				reason: "value does not match regex pattern \"\\\\S\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Description != nil {
+		// no validation rules for Description
+	}
+
+	if m.ValidTo != nil {
+
+		if all {
+			switch v := interface{}(m.GetValidTo()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateCriterionRequestValidationError{
+						field:  "ValidTo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateCriterionRequestValidationError{
+						field:  "ValidTo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetValidTo()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UpdateCriterionRequestValidationError{
+					field:  "ValidTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return UpdateCriterionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *UpdateCriterionRequest) _validateUuid(uuid string) error {
+	if matched := _service_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
+	}
+
+	return nil
+}
+
+// UpdateCriterionRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateCriterionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateCriterionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateCriterionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateCriterionRequestMultiError) AllErrors() []error { return m }
+
+// UpdateCriterionRequestValidationError is the validation error returned by
+// UpdateCriterionRequest.Validate if the designated constraints aren't met.
+type UpdateCriterionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateCriterionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateCriterionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateCriterionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateCriterionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateCriterionRequestValidationError) ErrorName() string {
+	return "UpdateCriterionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateCriterionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateCriterionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateCriterionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateCriterionRequestValidationError{}
+
+var _UpdateCriterionRequest_IdempotencyKey_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+var _UpdateCriterionRequest_Id_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+var _UpdateCriterionRequest_Name_Pattern = regexp.MustCompile("\\S")
+
+// Validate checks the field values on UpdateCriterionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateCriterionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateCriterionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateCriterionResponseMultiError, or nil if none found.
+func (m *UpdateCriterionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateCriterionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetCriterion() == nil {
+		err := UpdateCriterionResponseValidationError{
+			field:  "Criterion",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetCriterion()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateCriterionResponseValidationError{
+					field:  "Criterion",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateCriterionResponseValidationError{
+					field:  "Criterion",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCriterion()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateCriterionResponseValidationError{
+				field:  "Criterion",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateCriterionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateCriterionResponseMultiError is an error wrapping multiple validation
+// errors returned by UpdateCriterionResponse.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateCriterionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateCriterionResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateCriterionResponseMultiError) AllErrors() []error { return m }
+
+// UpdateCriterionResponseValidationError is the validation error returned by
+// UpdateCriterionResponse.Validate if the designated constraints aren't met.
+type UpdateCriterionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateCriterionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateCriterionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateCriterionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateCriterionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateCriterionResponseValidationError) ErrorName() string {
+	return "UpdateCriterionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateCriterionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateCriterionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateCriterionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateCriterionResponseValidationError{}
+
+// Validate checks the field values on GetCriterionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCriterionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCriterionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCriterionRequestMultiError, or nil if none found.
+func (m *GetCriterionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCriterionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateUuid(m.GetId()); err != nil {
+		err = GetCriterionRequestValidationError{
+			field:  "Id",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_GetCriterionRequest_Id_Pattern.MatchString(m.GetId()) {
+		err := GetCriterionRequestValidationError{
+			field:  "Id",
+			reason: "value does not match regex pattern \"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GetCriterionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *GetCriterionRequest) _validateUuid(uuid string) error {
+	if matched := _service_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
+	}
+
+	return nil
+}
+
+// GetCriterionRequestMultiError is an error wrapping multiple validation
+// errors returned by GetCriterionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetCriterionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCriterionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCriterionRequestMultiError) AllErrors() []error { return m }
+
+// GetCriterionRequestValidationError is the validation error returned by
+// GetCriterionRequest.Validate if the designated constraints aren't met.
+type GetCriterionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCriterionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCriterionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCriterionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCriterionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCriterionRequestValidationError) ErrorName() string {
+	return "GetCriterionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCriterionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCriterionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCriterionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCriterionRequestValidationError{}
+
+var _GetCriterionRequest_Id_Pattern = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+// Validate checks the field values on GetCriterionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCriterionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCriterionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCriterionResponseMultiError, or nil if none found.
+func (m *GetCriterionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCriterionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetCriterion() == nil {
+		err := GetCriterionResponseValidationError{
+			field:  "Criterion",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetCriterion()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetCriterionResponseValidationError{
+					field:  "Criterion",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetCriterionResponseValidationError{
+					field:  "Criterion",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCriterion()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetCriterionResponseValidationError{
+				field:  "Criterion",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetCriterionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCriterionResponseMultiError is an error wrapping multiple validation
+// errors returned by GetCriterionResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetCriterionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCriterionResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCriterionResponseMultiError) AllErrors() []error { return m }
+
+// GetCriterionResponseValidationError is the validation error returned by
+// GetCriterionResponse.Validate if the designated constraints aren't met.
+type GetCriterionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCriterionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCriterionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCriterionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCriterionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCriterionResponseValidationError) ErrorName() string {
+	return "GetCriterionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCriterionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCriterionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCriterionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCriterionResponseValidationError{}
+
+// Validate checks the field values on ListCriteriaRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListCriteriaRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListCriteriaRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListCriteriaRequestMultiError, or nil if none found.
+func (m *ListCriteriaRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListCriteriaRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.PositionId != nil {
+
+		if m.GetPositionId() <= 0 {
+			err := ListCriteriaRequestValidationError{
+				field:  "PositionId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.ActiveOn != nil {
+
+		if all {
+			switch v := interface{}(m.GetActiveOn()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListCriteriaRequestValidationError{
+						field:  "ActiveOn",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListCriteriaRequestValidationError{
+						field:  "ActiveOn",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetActiveOn()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListCriteriaRequestValidationError{
+					field:  "ActiveOn",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListCriteriaRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListCriteriaRequestMultiError is an error wrapping multiple validation
+// errors returned by ListCriteriaRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListCriteriaRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListCriteriaRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListCriteriaRequestMultiError) AllErrors() []error { return m }
+
+// ListCriteriaRequestValidationError is the validation error returned by
+// ListCriteriaRequest.Validate if the designated constraints aren't met.
+type ListCriteriaRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListCriteriaRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListCriteriaRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListCriteriaRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListCriteriaRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListCriteriaRequestValidationError) ErrorName() string {
+	return "ListCriteriaRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListCriteriaRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListCriteriaRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListCriteriaRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListCriteriaRequestValidationError{}
+
+// Validate checks the field values on ListCriteriaResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListCriteriaResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListCriteriaResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListCriteriaResponseMultiError, or nil if none found.
+func (m *ListCriteriaResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListCriteriaResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCriteria() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListCriteriaResponseValidationError{
+						field:  fmt.Sprintf("Criteria[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListCriteriaResponseValidationError{
+						field:  fmt.Sprintf("Criteria[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListCriteriaResponseValidationError{
+					field:  fmt.Sprintf("Criteria[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListCriteriaResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListCriteriaResponseMultiError is an error wrapping multiple validation
+// errors returned by ListCriteriaResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListCriteriaResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListCriteriaResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListCriteriaResponseMultiError) AllErrors() []error { return m }
+
+// ListCriteriaResponseValidationError is the validation error returned by
+// ListCriteriaResponse.Validate if the designated constraints aren't met.
+type ListCriteriaResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListCriteriaResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListCriteriaResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListCriteriaResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListCriteriaResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListCriteriaResponseValidationError) ErrorName() string {
+	return "ListCriteriaResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListCriteriaResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListCriteriaResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListCriteriaResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListCriteriaResponseValidationError{}
 
 // Validate checks the field values on GetCoefficientCapRequest with the rules
 // defined in the proto definition for this message. If any rules are

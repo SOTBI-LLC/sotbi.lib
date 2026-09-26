@@ -6,6 +6,7 @@ import (
 
 	statuspb "google.golang.org/genproto/googleapis/rpc/status"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -35,6 +36,65 @@ func TestGeneratedRequestValidation(t *testing.T) {
 					Name:           "Delivery quality",
 					MaxScore:       1,
 					ValidFrom:      validDate,
+				}).ValidateAll()
+			},
+		},
+		{
+			name: "create special accepts positive position",
+			validate: func() error {
+				return (&motivationv1.CreateCriterionRequest{
+					IdempotencyKey: idempotencyKey,
+					PositionId:     9007199254740993,
+					Name:           "Cash register quality",
+					MaxScore:       60,
+					ValidFrom:      validDate,
+				}).ValidateAll()
+			},
+		},
+		{
+			name: "create special without position is rejected",
+			validate: func() error {
+				return (&motivationv1.CreateCriterionRequest{
+					IdempotencyKey: idempotencyKey,
+					Name:           "Cash register quality",
+					MaxScore:       60,
+					ValidFrom:      validDate,
+				}).ValidateAll()
+			},
+			wantErr: true,
+		},
+		{
+			name: "create special with zero position is rejected",
+			validate: func() error {
+				return (&motivationv1.CreateCriterionRequest{
+					IdempotencyKey: idempotencyKey,
+					PositionId:     0,
+					Name:           "Cash register quality",
+					MaxScore:       60,
+					ValidFrom:      validDate,
+				}).ValidateAll()
+			},
+			wantErr: true,
+		},
+		{
+			name: "create special with negative position is rejected",
+			validate: func() error {
+				return (&motivationv1.CreateCriterionRequest{
+					IdempotencyKey: idempotencyKey,
+					PositionId:     -5,
+					Name:           "Cash register quality",
+					MaxScore:       60,
+					ValidFrom:      validDate,
+				}).ValidateAll()
+			},
+			wantErr: true,
+		},
+		{
+			name: "special list with optional filters is accepted",
+			validate: func() error {
+				return (&motivationv1.ListCriteriaRequest{
+					PositionId: proto.Int64(200),
+					ActiveOn:   &motivationv1.Date{Year: 2026, Month: 9, Day: 1},
 				}).ValidateAll()
 			},
 		},
@@ -426,10 +486,30 @@ func TestValidateUpdateBaseCriteriaRequest(t *testing.T) {
 			wantErrText: "unsupported path",
 		},
 		{
-			name: "non-nullable masked value is required",
+			name: "removed structural path max_score",
 			request: func() *motivationv1.UpdateBaseCriteriaRequest {
 				request := validRequest()
 				request.UpdateMask.Paths = []string{"max_score"}
+
+				return request
+			},
+			wantErrText: "unsupported path",
+		},
+		{
+			name: "removed structural path valid_from",
+			request: func() *motivationv1.UpdateBaseCriteriaRequest {
+				request := validRequest()
+				request.UpdateMask.Paths = []string{"valid_from"}
+
+				return request
+			},
+			wantErrText: "unsupported path",
+		},
+		{
+			name: "non-nullable masked value is required",
+			request: func() *motivationv1.UpdateBaseCriteriaRequest {
+				request := validRequest()
+				request.UpdateMask.Paths = []string{"description"}
 				request.Name = nil
 
 				return request
@@ -464,6 +544,243 @@ func TestValidateUpdateBaseCriteriaRequest(t *testing.T) {
 			t.Parallel()
 
 			err := motivationv1.ValidateUpdateBaseCriteriaRequest(test.request())
+			if test.wantErrText == "" && err != nil {
+				t.Fatalf("validation failed: %v", err)
+			}
+
+			if test.wantErrText != "" &&
+				(err == nil || !strings.Contains(err.Error(), test.wantErrText)) {
+				t.Fatalf("error = %v, want text %q", err, test.wantErrText)
+			}
+		})
+	}
+}
+
+func TestValidateUpdateCriterionRequest(t *testing.T) {
+	t.Parallel()
+
+	name := "Updated special name"
+	description := "Updated special description"
+	validRequest := func() *motivationv1.UpdateCriterionRequest {
+		return &motivationv1.UpdateCriterionRequest{
+			IdempotencyKey: idempotencyKey,
+			Id:             resourceID,
+			UpdateMask:     &fieldmaskpb.FieldMask{Paths: []string{"description"}},
+			Description:    &description,
+		}
+	}
+
+	tests := []struct {
+		name        string
+		request     func() *motivationv1.UpdateCriterionRequest
+		wantErrText string
+	}{
+		{
+			name: "allowed path",
+			request: func() *motivationv1.UpdateCriterionRequest {
+				request := validRequest()
+				request.UpdateMask.Paths = []string{"name"}
+				request.Description = nil
+				request.Name = &name
+
+				return request
+			},
+		},
+		{
+			name: "valid_to can be cleared by presence in mask",
+			request: func() *motivationv1.UpdateCriterionRequest {
+				request := validRequest()
+				request.UpdateMask.Paths = []string{"valid_to"}
+				request.Description = nil
+
+				return request
+			},
+		},
+		{
+			name: "structural path position_id is rejected",
+			request: func() *motivationv1.UpdateCriterionRequest {
+				request := validRequest()
+				request.UpdateMask.Paths = []string{"position_id"}
+
+				return request
+			},
+			wantErrText: "unsupported path",
+		},
+		{
+			name: "empty mask",
+			request: func() *motivationv1.UpdateCriterionRequest {
+				request := validRequest()
+				request.UpdateMask.Paths = nil
+
+				return request
+			},
+			wantErrText: "must not be empty",
+		},
+		{
+			name: "masked name without value is rejected",
+			request: func() *motivationv1.UpdateCriterionRequest {
+				request := validRequest()
+				request.UpdateMask.Paths = []string{"name"}
+				request.Description = nil
+
+				return request
+			},
+			wantErrText: "value for update_mask path",
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			err := motivationv1.ValidateUpdateCriterionRequest(test.request())
+			if test.wantErrText == "" && err != nil {
+				t.Fatalf("validation failed: %v", err)
+			}
+
+			if test.wantErrText != "" &&
+				(err == nil || !strings.Contains(err.Error(), test.wantErrText)) {
+				t.Fatalf("error = %v, want text %q", err, test.wantErrText)
+			}
+		})
+	}
+}
+
+func TestCriterionScopeValidation(t *testing.T) {
+	t.Parallel()
+
+	validDate := &motivationv1.Date{Year: 2026, Month: 8, Day: 1}
+
+	baseSnapshot := func() *motivationv1.PeriodCriterion {
+		return &motivationv1.PeriodCriterion{
+			Id:             resourceID,
+			Name:           "Base quality",
+			MaxScore:       40,
+			Type:           motivationv1.CriterionType_CRITERION_TYPE_BASE,
+			Source:         &motivationv1.PeriodCriterion_BaseCriteriaId{BaseCriteriaId: "11111111-1111-4111-8111-111111111111"},
+		}
+	}
+	specialSnapshot := func() *motivationv1.PeriodCriterion {
+		return &motivationv1.PeriodCriterion{
+			Id:         resourceID,
+			Name:       "Special quality",
+			MaxScore:   60,
+			Type:       motivationv1.CriterionType_CRITERION_TYPE_SPECIAL,
+			Source:     &motivationv1.PeriodCriterion_CriterionId{CriterionId: "22222222-2222-4222-8222-222222222222"},
+			PositionId: proto.Int64(200),
+		}
+	}
+
+	tests := []struct {
+		name        string
+		message     proto.Message
+		wantErrText string
+	}{
+		{name: "valid base snapshot", message: baseSnapshot()},
+		{
+			name: "valid special snapshot with position",
+			message: &motivationv1.Period{
+				Summary: &motivationv1.PeriodSummary{
+					Id:           resourceID,
+					Year:         2026,
+					Month:        8,
+					StartsAt:     validDate,
+					EndsAt:       validDate,
+					Status:       motivationv1.PeriodStatus_PERIOD_STATUS_OPEN,
+					EffectiveCap: &motivationv1.Coefficient{},
+				},
+				Criteria: []*motivationv1.PeriodCriterion{baseSnapshot(), specialSnapshot()},
+			},
+		},
+		{
+			name: "base snapshot with special source is contradictory",
+			message: func() proto.Message {
+				value := baseSnapshot()
+				value.Source = &motivationv1.PeriodCriterion_CriterionId{CriterionId: "22222222-2222-4222-8222-222222222222"}
+
+				return value
+			}(),
+			wantErrText: "base criterion must reference base_criteria_id",
+		},
+		{
+			name: "special snapshot with base source is contradictory",
+			message: func() proto.Message {
+				value := specialSnapshot()
+				value.Source = &motivationv1.PeriodCriterion_BaseCriteriaId{BaseCriteriaId: "11111111-1111-4111-8111-111111111111"}
+
+				return value
+			}(),
+			wantErrText: "special criterion must reference criterion_id",
+		},
+		{
+			name: "special snapshot without position is rejected",
+			message: func() proto.Message {
+				value := specialSnapshot()
+				value.PositionId = nil
+
+				return value
+			}(),
+			wantErrText: "positive position_id",
+		},
+		{
+			name: "base snapshot with position is rejected",
+			message: func() proto.Message {
+				value := baseSnapshot()
+				value.PositionId = proto.Int64(200)
+
+				return value
+			}(),
+			wantErrText: "must not carry a position_id",
+		},
+		{
+			name:        "unspecified snapshot type is rejected",
+			message:     &motivationv1.PeriodCriterion{Id: resourceID, Name: "Broken", MaxScore: 10, Source: &motivationv1.PeriodCriterion_BaseCriteriaId{BaseCriteriaId: "11111111-1111-4111-8111-111111111111"}},
+			wantErrText: "CRITERION_TYPE_UNSPECIFIED",
+		},
+		{
+			name: "valid base sheet line",
+			message: &motivationv1.SheetCriterion{
+				Id:                resourceID,
+				PeriodCriterionId: "33333333-3333-4333-8333-333333333333",
+				Name:              "Base quality",
+				MaxScore:          40,
+				Type:              motivationv1.CriterionType_CRITERION_TYPE_BASE,
+				Source:            &motivationv1.SheetCriterion_BaseCriteriaId{BaseCriteriaId: "11111111-1111-4111-8111-111111111111"},
+			},
+		},
+		{
+			name: "valid special sheet line",
+			message: &motivationv1.SheetCriterion{
+				Id:                resourceID,
+				PeriodCriterionId: "33333333-3333-4333-8333-333333333333",
+				Name:              "Special quality",
+				MaxScore:          60,
+				Type:              motivationv1.CriterionType_CRITERION_TYPE_SPECIAL,
+				Source:            &motivationv1.SheetCriterion_CriterionId{CriterionId: "22222222-2222-4222-8222-222222222222"},
+				PositionId:        proto.Int64(200),
+			},
+		},
+		{
+			name: "special sheet line without position is rejected",
+			message: &motivationv1.SheetCriterion{
+				Id:                resourceID,
+				PeriodCriterionId: "33333333-3333-4333-8333-333333333333",
+				Name:              "Special quality",
+				MaxScore:          60,
+				Type:              motivationv1.CriterionType_CRITERION_TYPE_SPECIAL,
+				Source:            &motivationv1.SheetCriterion_CriterionId{CriterionId: "22222222-2222-4222-8222-222222222222"},
+			},
+			wantErrText: "positive position_id",
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			err := motivationv1.ValidateMessage(test.message)
 			if test.wantErrText == "" && err != nil {
 				t.Fatalf("validation failed: %v", err)
 			}

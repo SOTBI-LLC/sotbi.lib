@@ -49,32 +49,96 @@ func ValidateUpdateBaseCriteriaRequest(request *UpdateBaseCriteriaRequest) error
 		return fmt.Errorf("validate update base criteria request: %w", err)
 	}
 
-	paths := request.GetUpdateMask().GetPaths()
-	if len(paths) == 0 {
-		return fmt.Errorf(
-			"validate update base criteria request: update_mask.paths must not be empty",
-		)
+	return validateUpdateMaskPaths(
+		request.ProtoReflect(),
+		"validate update base criteria request",
+	)
+}
+
+// ValidateUpdateCriterionRequest composes PGV validation with FieldMask path
+// validation, mirroring the narrowed update contract of the base catalog.
+func ValidateUpdateCriterionRequest(request *UpdateCriterionRequest) error {
+	if err := ValidateMessage(request); err != nil {
+		return fmt.Errorf("validate update criterion request: %w", err)
 	}
 
-	allowed, err := updateBaseCriteriaAllowedPaths()
+	return validateUpdateMaskPaths(
+		request.ProtoReflect(),
+		"validate update criterion request",
+	)
+}
+
+func validateUpdateMaskPaths(message protoreflect.Message, prefix string) error {
+	maskField := message.Descriptor().Fields().ByName("update_mask")
+	if maskField == nil || !message.Has(maskField) {
+		return fmt.Errorf("%s: update_mask is required", prefix)
+	}
+
+	mask := message.Get(maskField).Message()
+	pathsList := mask.Get(mask.Descriptor().Fields().ByName("paths")).List()
+
+	paths := make([]string, 0, pathsList.Len())
+	for index := 0; index < pathsList.Len(); index++ {
+		paths = append(paths, pathsList.Get(index).String())
+	}
+
+	if len(paths) == 0 {
+		return fmt.Errorf("%s: update_mask.paths must not be empty", prefix)
+	}
+
+	allowed, err := allowedFieldMaskPaths(message, prefix)
 	if err != nil {
 		return err
 	}
 
 	for _, path := range paths {
 		if _, ok := allowed[path]; !ok {
-			return fmt.Errorf(
-				"validate update base criteria request: update_mask.paths contains unsupported path %q",
-				path,
-			)
+			return fmt.Errorf("%s: update_mask.paths contains unsupported path %q", prefix, path)
 		}
 
-		if err := validateUpdateBaseCriteriaPathValue(request, path); err != nil {
+		if err := validateUpdateMaskPathValue(message, path, prefix); err != nil {
 			return err
 		}
 	}
 
 	return nil
+}
+
+func validateUpdateMaskPathValue(message protoreflect.Message, path, prefix string) error {
+	if path == "valid_to" {
+		// Absence deliberately clears the nullable validity end.
+		return nil
+	}
+
+	field := message.Descriptor().Fields().ByName(protoreflect.Name(path))
+	if field == nil || !message.Has(field) {
+		return fmt.Errorf("%s: value for update_mask path %q is required", prefix, path)
+	}
+
+	return nil
+}
+
+func allowedFieldMaskPaths(message protoreflect.Message, prefix string) (map[string]struct{}, error) {
+	descriptor := message.Descriptor().Fields().ByName("update_mask")
+
+	options, ok := descriptor.Options().(*descriptorpb.FieldOptions)
+	if !ok {
+		return nil, fmt.Errorf("%s: read update_mask options", prefix)
+	}
+
+	extension := proto.GetExtension(options, E_AllowedFieldMaskPath)
+
+	paths, ok := extension.([]string)
+	if !ok {
+		return nil, fmt.Errorf("%s: read allowed update_mask paths", prefix)
+	}
+
+	allowed := make(map[string]struct{}, len(paths))
+	for _, path := range paths {
+		allowed[path] = struct{}{}
+	}
+
+	return allowed, nil
 }
 
 // ValidateSavePerformanceSheetRequest composes PGV validation with the batch
@@ -165,6 +229,22 @@ func validateSemanticRules(message protoreflect.Message) error {
 		if err := validateClosePeriodOperationOutcome(value); err != nil {
 			return err
 		}
+	case *PeriodCriterion:
+		if err := validateCriterionScope(value.GetType(), value.GetBaseCriteriaId(), value.GetCriterionId(), value.GetPositionId()); err != nil {
+			return err
+		}
+	case *SheetCriterion:
+		if err := validateCriterionScope(value.GetType(), value.GetBaseCriteriaId(), value.GetCriterionId(), value.GetPositionId()); err != nil {
+			return err
+		}
+	case *CreateBaseCriteriaRequest:
+		if err := validateCatalogInterval(value.GetValidFrom(), value.GetValidTo()); err != nil {
+			return err
+		}
+	case *CreateCriterionRequest:
+		if err := validateCatalogInterval(value.GetValidFrom(), value.GetValidTo()); err != nil {
+			return err
+		}
 	}
 
 	fields := message.Descriptor().Fields()
@@ -235,6 +315,62 @@ func validateCalendarDate(date *Date) error {
 			date.GetMonth(),
 			date.GetDay(),
 		)
+	}
+
+	return nil
+}
+
+// validateCatalogInterval rejects a validity end before the validity start on
+// catalog creation requests; PGV cannot compare two message fields.
+func validateCatalogInterval(validFrom, validTo *Date) error {
+	if validTo == nil || validFrom == nil {
+		return nil
+	}
+
+	if dateDayNumber(validTo) < dateDayNumber(validFrom) {
+		return fmt.Errorf(
+			"valid_to %04d-%02d-%02d is before valid_from %04d-%02d-%02d",
+			validTo.GetYear(), validTo.GetMonth(), validTo.GetDay(),
+			validFrom.GetYear(), validFrom.GetMonth(), validFrom.GetDay(),
+		)
+	}
+
+	return nil
+}
+
+func dateDayNumber(date *Date) int {
+	return int(date.GetYear())*10000 + int(date.GetMonth())*100 + int(date.GetDay())
+}
+
+// validateCriterionScope enforces the frozen type/source/position contract
+// shared by PeriodCriterion and SheetCriterion: BASE refers to the base
+// catalog without a position, SPECIAL refers to the special catalog with a
+// positive position.
+func validateCriterionScope(
+	criterionType CriterionType,
+	baseCriteriaID string,
+	criterionID string,
+	positionID int64,
+) error {
+	switch criterionType {
+	case CriterionType_CRITERION_TYPE_BASE:
+		if baseCriteriaID == "" || criterionID != "" {
+			return fmt.Errorf("base criterion must reference base_criteria_id and no other source")
+		}
+
+		if positionID != 0 {
+			return fmt.Errorf("base criterion must not carry a position_id")
+		}
+	case CriterionType_CRITERION_TYPE_SPECIAL:
+		if criterionID == "" || baseCriteriaID != "" {
+			return fmt.Errorf("special criterion must reference criterion_id and no other source")
+		}
+
+		if positionID <= 0 {
+			return fmt.Errorf("special criterion must carry a positive position_id")
+		}
+	default:
+		return fmt.Errorf("criterion type must not be unspecified")
 	}
 
 	return nil

@@ -10,13 +10,15 @@ option go_package = "github.com/SOTBI-LLC/sotbi.lib/pkg/api/directory/v1;directo
 // DirectoryService provides one bounded, current, read-only organization view.
 //
 // Errors use standard gRPC status codes with google.rpc.ErrorInfo reasons:
-// USER_NOT_FOUND, DIRECTORY_DATA_INCONSISTENT, ROSTER_LIMIT_EXCEEDED,
-// DIRECT_REPORT_LIMIT_EXCEEDED, RATE_LIMITED, and AUTH_ROLE_MISSING. Only
-// temporary RATE_LIMITED responses include google.rpc.RetryInfo.
+// USER_NOT_FOUND, POSITION_NOT_FOUND, DIRECTORY_DATA_INCONSISTENT,
+// ROSTER_LIMIT_EXCEEDED, DIRECT_REPORT_LIMIT_EXCEEDED, RATE_LIMITED, and
+// AUTH_ROLE_MISSING. Only temporary RATE_LIMITED responses include
+// google.rpc.RetryInfo.
 service DirectoryService {
   rpc GetRosterSnapshot(GetRosterSnapshotRequest) returns (GetRosterSnapshotResponse);
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   rpc ListDirectReports(ListDirectReportsRequest) returns (ListDirectReportsResponse);
+  rpc GetPosition(GetPositionRequest) returns (GetPositionResponse);
 }
 
 // DirectoryUser is the complete evaluation-relevant organization fact for one
@@ -56,4 +58,18 @@ message ListDirectReportsResponse {
     unique: true,
     items: {uint64: {gt: 0}}
   }];
+}
+
+// DirectoryPosition is the minimal position catalog fact. It carries no user
+// profiles, staff assignments or display names.
+message DirectoryPosition {
+  uint64 id = 1 [(validate.rules).uint64.gt = 0];
+}
+
+message GetPositionRequest {
+  uint64 position_id = 1 [(validate.rules).uint64.gt = 0];
+}
+
+message GetPositionResponse {
+  DirectoryPosition position = 1 [(validate.rules).message.required = true];
 }

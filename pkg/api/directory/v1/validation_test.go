@@ -71,6 +71,26 @@ func TestGeneratedDirectoryValidation(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name: "positive position lookup is accepted",
+			validate: func() error {
+				return (&directoryv1.GetPositionRequest{PositionId: 42}).ValidateAll()
+			},
+		},
+		{
+			name: "zero position identifier is rejected",
+			validate: func() error {
+				return (&directoryv1.GetPositionRequest{}).ValidateAll()
+			},
+			wantErr: true,
+		},
+		{
+			name: "position response with missing position is rejected",
+			validate: func() error {
+				return (&directoryv1.GetPositionResponse{}).ValidateAll()
+			},
+			wantErr: true,
+		},
 	}
 
 	for _, test := range tests {
