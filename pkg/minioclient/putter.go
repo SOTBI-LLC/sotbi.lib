@@ -7,6 +7,7 @@ import (
 	"github.com/minio/minio-go/v7"
 )
 
+//DEPRECATED: use S3Client interface instead
 type Putter interface {
 	PutObject(
 		ctx context.Context,

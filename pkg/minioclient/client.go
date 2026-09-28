@@ -25,6 +25,7 @@ type PutRemover interface {
 	Stat
 }
 
+//DEPRECATED: use NewS3Client instead
 func New(conf *Config) *minio.Client {
 	tr := http.DefaultTransport.(*http.Transport).Clone() //nolint:errcheck
 	tr.TLSClientConfig = &tls.Config{
