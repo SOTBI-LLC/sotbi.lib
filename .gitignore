@@ -220,3 +220,4 @@ api/**/*.json
 api/**/*.desc
 migrattions/tmp/
 test-results.json
+.mimosa

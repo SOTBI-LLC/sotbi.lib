@@ -175,7 +175,10 @@ func ValidateSavePerformanceSheetRequest(request *SavePerformanceSheetRequest) e
 	return nil
 }
 
-func validateUpdateBaseCriteriaPathValue(request *UpdateBaseCriteriaRequest, path string) error {//nolint:unused
+func validateUpdateBaseCriteriaPathValue( //nolint:unused
+	request *UpdateBaseCriteriaRequest,
+	path string,
+) error {
 	if path == "valid_to" {
 		// Absence deliberately clears the nullable validity end.
 		return nil
@@ -194,7 +197,7 @@ func validateUpdateBaseCriteriaPathValue(request *UpdateBaseCriteriaRequest, pat
 	return nil
 }
 
-func updateBaseCriteriaAllowedPaths() (map[string]struct{}, error) {//nolint:unused
+func updateBaseCriteriaAllowedPaths() (map[string]struct{}, error) { //nolint:unused
 	descriptor := (&UpdateBaseCriteriaRequest{}).ProtoReflect().
 		Descriptor().
 		Fields().
