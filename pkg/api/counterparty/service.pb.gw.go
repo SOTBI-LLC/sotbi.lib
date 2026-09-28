@@ -41,7 +41,9 @@ func request_Counterparties_GetCounterparties_0(ctx context.Context, marshaler r
 		protoReq emptypb.Empty
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	msg, err := client.GetCounterparties(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
@@ -62,6 +64,9 @@ func request_Counterparties_CreateCounterparty_0(ctx context.Context, marshaler 
 	)
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
 	}
 	msg, err := client.CreateCounterparty(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -85,7 +90,6 @@ func request_Counterparties_GetCounterpartyByID_0(ctx context.Context, marshaler
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	io.Copy(io.Discard, req.Body)
 	val, ok := pathParams["id"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
@@ -93,6 +97,9 @@ func request_Counterparties_GetCounterpartyByID_0(ctx context.Context, marshaler
 	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
 	}
 	msg, err := client.GetCounterpartyByID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -122,7 +129,6 @@ func request_Counterparties_ArchiveCounterparty_0(ctx context.Context, marshaler
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	io.Copy(io.Discard, req.Body)
 	val, ok := pathParams["id"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
@@ -130,6 +136,9 @@ func request_Counterparties_ArchiveCounterparty_0(ctx context.Context, marshaler
 	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
 	}
 	msg, err := client.ArchiveCounterparty(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -170,6 +179,9 @@ func request_Counterparties_UpdateCounterparty_0(ctx context.Context, marshaler 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	msg, err := client.UpdateCounterparty(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
@@ -201,7 +213,6 @@ func request_Counterparties_GetBankDetailsByCounterpartyID_0(ctx context.Context
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	io.Copy(io.Discard, req.Body)
 	val, ok := pathParams["id"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
@@ -209,6 +220,9 @@ func request_Counterparties_GetBankDetailsByCounterpartyID_0(ctx context.Context
 	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
 	}
 	msg, err := client.GetBankDetailsByCounterpartyID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -249,6 +263,9 @@ func request_Counterparties_UpdateBankDetails_0(ctx context.Context, marshaler r
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	msg, err := client.UpdateBankDetails(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
@@ -280,7 +297,6 @@ func request_Counterparties_GetEmployeesByCounterpartyID_0(ctx context.Context, 
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	io.Copy(io.Discard, req.Body)
 	val, ok := pathParams["id"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
@@ -288,6 +304,9 @@ func request_Counterparties_GetEmployeesByCounterpartyID_0(ctx context.Context, 
 	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
 	}
 	msg, err := client.GetEmployeesByCounterpartyID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -317,7 +336,6 @@ func request_Counterparties_GetEmployeesByUserID_0(ctx context.Context, marshale
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	io.Copy(io.Discard, req.Body)
 	val, ok := pathParams["user_id"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
@@ -325,6 +343,9 @@ func request_Counterparties_GetEmployeesByUserID_0(ctx context.Context, marshale
 	protoReq.UserId, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
 	}
 	msg, err := client.GetEmployeesByUserID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -364,6 +385,9 @@ func request_Counterparties_UpdateEmployees_0(ctx context.Context, marshaler run
 	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
 	}
 	msg, err := client.UpdateEmployees(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -407,6 +431,9 @@ func request_Counterparties_UpdateEmployeesByUserID_0(ctx context.Context, marsh
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	msg, err := client.UpdateEmployeesByUserID(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
@@ -437,7 +464,9 @@ func request_Counterparties_GetRules_0(ctx context.Context, marshaler runtime.Ma
 		protoReq emptypb.Empty
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	msg, err := client.GetRules(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
@@ -458,6 +487,9 @@ func request_Counterparties_UpdateRules_0(ctx context.Context, marshaler runtime
 	)
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
 	}
 	msg, err := client.UpdateRules(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -1010,7 +1042,8 @@ type response_Counterparties_GetCounterparties_0 struct {
 }
 
 func (m response_Counterparties_GetCounterparties_0) XXX_ResponseBody() interface{} {
-	return m.Items
+	response := m.CounterpartiesResponse
+	return response.Items
 }
 
 type response_Counterparties_GetBankDetailsByCounterpartyID_0 struct {
@@ -1018,7 +1051,8 @@ type response_Counterparties_GetBankDetailsByCounterpartyID_0 struct {
 }
 
 func (m response_Counterparties_GetBankDetailsByCounterpartyID_0) XXX_ResponseBody() interface{} {
-	return m.BankDetails
+	response := m.BankDetailsResponse
+	return response.BankDetails
 }
 
 type response_Counterparties_UpdateBankDetails_0 struct {
@@ -1026,7 +1060,8 @@ type response_Counterparties_UpdateBankDetails_0 struct {
 }
 
 func (m response_Counterparties_UpdateBankDetails_0) XXX_ResponseBody() interface{} {
-	return m.BankDetails
+	response := m.BankDetailsResponse
+	return response.BankDetails
 }
 
 type response_Counterparties_GetEmployeesByCounterpartyID_0 struct {
@@ -1034,7 +1069,8 @@ type response_Counterparties_GetEmployeesByCounterpartyID_0 struct {
 }
 
 func (m response_Counterparties_GetEmployeesByCounterpartyID_0) XXX_ResponseBody() interface{} {
-	return m.Employees
+	response := m.EmployeesResponse
+	return response.Employees
 }
 
 type response_Counterparties_GetEmployeesByUserID_0 struct {
@@ -1042,7 +1078,8 @@ type response_Counterparties_GetEmployeesByUserID_0 struct {
 }
 
 func (m response_Counterparties_GetEmployeesByUserID_0) XXX_ResponseBody() interface{} {
-	return m.Employees
+	response := m.EmployeesResponse
+	return response.Employees
 }
 
 type response_Counterparties_UpdateEmployees_0 struct {
@@ -1050,7 +1087,8 @@ type response_Counterparties_UpdateEmployees_0 struct {
 }
 
 func (m response_Counterparties_UpdateEmployees_0) XXX_ResponseBody() interface{} {
-	return m.Employees
+	response := m.EmployeesResponse
+	return response.Employees
 }
 
 type response_Counterparties_UpdateEmployeesByUserID_0 struct {
@@ -1058,7 +1096,8 @@ type response_Counterparties_UpdateEmployeesByUserID_0 struct {
 }
 
 func (m response_Counterparties_UpdateEmployeesByUserID_0) XXX_ResponseBody() interface{} {
-	return m.Employees
+	response := m.EmployeesResponse
+	return response.Employees
 }
 
 var (
