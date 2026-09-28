@@ -6,7 +6,7 @@ import (
 	"github.com/minio/minio-go/v7"
 )
 
-//DEPRECATED: use S3Client interface instead
+// Deprecated: use S3Client interface instead.
 type Remover interface {
 	RemoveObject(
 		ctx context.Context,
