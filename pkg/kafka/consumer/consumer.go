@@ -41,11 +41,21 @@ type ConsumerOptions struct {
 	ReadEarliest bool
 }
 
+// messageReader — минимальная абстракция над kafka.Reader, необходимая
+// для наблюдения и тестирования без реального брокера. *kafka.Reader
+// реализует этот интерфейс.
+type messageReader interface {
+	FetchMessage(ctx context.Context) (kafka.Message, error)
+	CommitMessages(ctx context.Context, msgs ...kafka.Message) error
+	Close() error
+}
+
 type consumer[T proto.Message] struct {
-	reader      *kafka.Reader
+	reader      messageReader
 	logger      log.Logger
 	newInstance func() T
 	handleFunc  func(context.Context, T) error
+	observer    Observer
 }
 
 func NewConsumer[T proto.Message](
@@ -127,12 +137,17 @@ func NewConsumer[T proto.Message](
 		logger:      customOpts.logger,
 		newInstance: newInstance,
 		handleFunc:  handleFunc,
+		observer:    customOpts.observer,
 	}, nil
 }
 
 func (c *consumer[T]) fetchMessage(ctx context.Context) (*k.Message[T], error) {
+	fetchStart := time.Now()
+
 	msg, err := c.reader.FetchMessage(ctx)
 	if err != nil {
+		c.observeOperation(OpFetch, fetchStart, err)
+
 		switch {
 		case errors.Is(err, context.Canceled), errors.Is(err, context.DeadlineExceeded):
 			return nil, err
@@ -145,12 +160,23 @@ func (c *consumer[T]) fetchMessage(ctx context.Context) (*k.Message[T], error) {
 		}
 	}
 
+	c.observeOperation(OpFetch, fetchStart, nil)
+
+	decodeStart := time.Now()
+
+	resMsg, err := c.decodeMessage(&msg)
+	c.observeOperation(OpDecode, decodeStart, err)
+
+	return resMsg, err
+}
+
+func (c *consumer[T]) decodeMessage(msg *kafka.Message) (*k.Message[T], error) {
 	resMsg := &k.Message[T]{
 		Key:      msg.Key,
 		Value:    c.newInstance(),
 		Headers:  k.KafkaHeadersToHeaders(msg.Headers),
 		RawValue: msg.Value,
-		Msg:      &msg,
+		Msg:      msg,
 	}
 
 	var value proto.Message = c.newInstance()
@@ -192,7 +218,12 @@ func (c *consumer[T]) commitMessage(ctx context.Context, msg ...*k.Message[T]) e
 		cMsg = append(cMsg, *message.Msg)
 	}
 
-	if err := c.reader.CommitMessages(ctx, cMsg...); err != nil {
+	commitStart := time.Now()
+
+	err := c.reader.CommitMessages(ctx, cMsg...)
+	c.observeOperation(OpCommit, commitStart, err)
+
+	if err != nil {
 		switch {
 		case errors.Is(err, context.Canceled), errors.Is(err, context.DeadlineExceeded):
 			return err
@@ -266,7 +297,12 @@ func (c *consumer[T]) Consume(ctx context.Context) error {
 				}),
 			).Do(
 				func() error {
-					if err := c.handleMessage(ctx, msg.Value); err != nil {
+					handleStart := time.Now()
+
+					err := c.handleMessage(ctx, msg.Value)
+					c.observeOperation(OpHandler, handleStart, err)
+
+					if err != nil {
 						return fmt.Errorf("c.consumer.HandleMessage: %w", err)
 					}
 

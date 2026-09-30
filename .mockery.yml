@@ -1,0 +1,12 @@
+packages:
+  github.com/SOTBI-LLC/sotbi.lib/pkg/kafka/consumer:
+    interfaces:
+      Observer:
+      messageReader:
+  github.com/SOTBI-LLC/sotbi.lib/pkg/log:
+    config:
+      dir: "{{.InterfaceDir}}/mocks"
+      pkgname: mocks
+      filename: mocks.go
+    interfaces:
+      Logger:

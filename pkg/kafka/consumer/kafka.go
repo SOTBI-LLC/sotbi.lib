@@ -21,6 +21,7 @@ type kafkaFuncOpts struct {
 	dialerTimeout  time.Duration
 	logger         log.Logger
 	topic          string
+	observer       Observer
 }
 
 type consumerOptionFunc func(opts *kafkaFuncOpts)
@@ -67,5 +68,14 @@ func WithLogger(log log.Logger) consumerOptionFunc {
 func WithTopic(topic string) consumerOptionFunc {
 	return func(opts *kafkaFuncOpts) {
 		opts.topic = topic
+	}
+}
+
+// WithObserver подключает необязательный наблюдатель внутренних операций
+// consumer (fetch/decode/handler/commit). Без него поведение потребителя
+// не меняется.
+func WithObserver(observer Observer) consumerOptionFunc {
+	return func(opts *kafkaFuncOpts) {
+		opts.observer = observer
 	}
 }
