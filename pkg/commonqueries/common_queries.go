@@ -1,6 +1,8 @@
 package commonqueries
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func NamedTable(selectQuery, tableName string) string {
 	return fmt.Sprintf(`(%s) AS %q`, selectQuery, tableName)
