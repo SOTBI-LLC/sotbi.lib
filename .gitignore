@@ -221,3 +221,7 @@ api/**/*.desc
 migrattions/tmp/
 test-results.json
 .mimosa
+.codex/config.toml
+.serena
+.zcode
+.mcp.json
