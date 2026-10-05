@@ -1,7 +1,7 @@
 package uuid
 
 import (
-	"crypto/md5"
+	"crypto/md5" //nolint:gosec // не криптография: деривация UUID v3
 	"hash"
 	"uuid"
 )
