@@ -169,7 +169,10 @@ func TestObserver_CommitErrorThenSuccess(t *testing.T) {
 			return kafka.Message{}, context.Canceled
 		},
 	).Once()
-	reader.EXPECT().CommitMessages(mock.Anything, []kafka.Message{first}).Return(errors.New("commit failed")).Once()
+	reader.EXPECT().
+		CommitMessages(mock.Anything, []kafka.Message{first}).
+		Return(errors.New("commit failed")).
+		Once()
 	reader.EXPECT().CommitMessages(mock.Anything, []kafka.Message{second}).Return(nil).Once()
 
 	observer.EXPECT().ObserveOperation(OpFetch, ResultSuccess, mock.Anything).Times(2)

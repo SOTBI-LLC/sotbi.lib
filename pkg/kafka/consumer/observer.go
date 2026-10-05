@@ -54,7 +54,11 @@ type Observer interface {
 // ObserverFunc — адаптер функции к Observer.
 type ObserverFunc func(op Operation, result OperationResult, duration time.Duration)
 
-func (f ObserverFunc) ObserveOperation(op Operation, result OperationResult, duration time.Duration) {
+func (f ObserverFunc) ObserveOperation(
+	op Operation,
+	result OperationResult,
+	duration time.Duration,
+) {
 	f(op, result, duration)
 }
 
