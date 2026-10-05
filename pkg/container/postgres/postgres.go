@@ -11,7 +11,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
-	"github.com/moby/moby/api/types/network"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -38,6 +37,8 @@ type Service interface {
 	LoadFixture(context.Context, string) error
 	DSN(context.Context) (string, error)
 }
+
+var _ Service = (*Postgres)(nil)
 
 type Postgres struct {
 	db       *sqlx.DB
@@ -69,8 +70,9 @@ func New(options ...testcontainers.CustomizeRequestOption) *Postgres {
 	}
 }
 
-func (p *Postgres) Port(ctx context.Context, port nat.Port) (network.Port, error) {
-	return p.postgres.MappedPort(ctx, port.Port())
+func (p *Postgres) Port(ctx context.Context, port nat.Port) (nat.Port, error) {
+	prt, err := p.postgres.MappedPort(ctx, port.Port())
+	return nat.Port(prt.Port()), err
 }
 
 func (p *Postgres) Start(ctx context.Context, datTypeNames []string) error {

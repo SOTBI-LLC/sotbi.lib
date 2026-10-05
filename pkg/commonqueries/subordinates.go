@@ -3,9 +3,10 @@ package commonqueries
 import (
 	"fmt"
 
+	sq "github.com/n-r-w/squirrel"
+
 	"github.com/SOTBI-LLC/sotbi.lib/pkg/filtering/squirrel_fltering"
 	"github.com/SOTBI-LLC/sotbi.lib/pkg/utils"
-	sq "github.com/n-r-w/squirrel"
 )
 
 func BuildSubordinatesCostsSQL(

@@ -19,7 +19,6 @@ require (
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/minio/minio-go/v7 v7.3.0
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/moby/moby/api v1.56.1
 	github.com/n-r-w/squirrel v1.6.0
 	github.com/riferrei/srclient v0.7.4
 	github.com/rs/zerolog v1.35.1
@@ -31,7 +30,7 @@ require (
 	github.com/yuin/goldmark v1.8.6
 	golang.org/x/text v0.42.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20261005182115-fad411399dd8
 	google.golang.org/grpc v1.84.0
 	google.golang.org/protobuf v1.36.12
 	gorm.io/driver/postgres v1.6.3
@@ -96,6 +95,7 @@ require (
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/moby/go-archive v0.3.3 // indirect
+	github.com/moby/moby/api v1.56.1 // indirect
 	github.com/moby/moby/client v0.6.1 // indirect
 	github.com/moby/patternmatcher v0.6.1 // indirect
 	github.com/moby/sys/sequential v0.7.0 // indirect

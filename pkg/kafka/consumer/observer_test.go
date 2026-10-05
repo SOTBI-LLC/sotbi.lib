@@ -10,9 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/proto"
 
-	logmocks "github.com/SOTBI-LLC/sotbi.lib/pkg/log/mocks"
-
 	pb "github.com/SOTBI-LLC/sotbi.lib/pkg/api/notification"
+	logmocks "github.com/SOTBI-LLC/sotbi.lib/pkg/log/mocks"
 )
 
 func validNotificationMessage(t *testing.T) kafka.Message {
@@ -60,12 +59,14 @@ func TestObserver_FetchErrorAttemptsVisible(t *testing.T) {
 	defer cancel()
 
 	calls := 0
+
 	reader.EXPECT().FetchMessage(mock.Anything).RunAndReturn(
 		func(context.Context) (kafka.Message, error) {
 			calls++
 			if calls <= MaxAttempts {
 				return kafka.Message{}, errors.New("broker unavailable")
 			}
+
 			cancel()
 
 			return kafka.Message{}, context.Canceled
