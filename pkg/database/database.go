@@ -104,7 +104,7 @@ func (c *Conn) Ping(ctx context.Context) error {
 		return fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	c.Logger.Info(ctx, "database pinged successfully", "stats", c.db.Stats())
+	c.Logger.Info(ctx, "database pinged successfully: %+v", c.db.Stats())
 
 	return nil
 }
