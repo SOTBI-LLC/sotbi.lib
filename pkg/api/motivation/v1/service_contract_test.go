@@ -7,6 +7,7 @@ import (
 	statuspb "google.golang.org/genproto/googleapis/rpc/status"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/types/descriptorpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	motivationv1 "github.com/SOTBI-LLC/sotbi.lib/pkg/api/motivation/v1"
@@ -548,7 +549,12 @@ func TestCanonicalWireShapes(t *testing.T) {
 		})
 	}
 
-	if got := (&motivationv1.ScoreChange{}).ProtoReflect().Descriptor().Fields().ByName("changed_at").Message().FullName(); got != "google.protobuf.Timestamp" {
+	if got := (&motivationv1.ScoreChange{}).ProtoReflect().
+		Descriptor().
+		Fields().
+		ByName("changed_at").
+		Message().
+		FullName(); got != "google.protobuf.Timestamp" {
 		t.Errorf("ScoreChange.changed_at type = %s, want google.protobuf.Timestamp", got)
 	}
 
@@ -1082,7 +1088,10 @@ func TestCoefficientCapHistoryMessageShapes(t *testing.T) {
 		if !entries.IsList() {
 			t.Error("ListCoefficientCapHistoryResponse.entries must be repeated")
 		} else if got := entries.Message().FullName(); got != "motivation.v1.CoefficientCapHistoryEntry" {
-			t.Errorf("ListCoefficientCapHistoryResponse.entries type = %s, want motivation.v1.CoefficientCapHistoryEntry", got)
+			t.Errorf(
+				"ListCoefficientCapHistoryResponse.entries type = %s, want motivation.v1.CoefficientCapHistoryEntry",
+				got,
+			)
 		}
 	}
 }
@@ -1186,7 +1195,9 @@ func TestCoefficientCapHistoryValidation(t *testing.T) {
 				EarlierHistoryUnavailable: true,
 				Entries: []*motivationv1.CoefficientCapHistoryEntry{
 					{
-						Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: -1, RecordedAt: recordedAt,
+						Id:          "550e8400-e29b-41d4-a716-446655440000",
+						ActorUserId: -1,
+						RecordedAt:  recordedAt,
 						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1},
 						NewCap:      &motivationv1.Coefficient{TenThousandths: 2},
 					},
@@ -1214,8 +1225,10 @@ func TestCoefficientCapHistoryValidation(t *testing.T) {
 				EarlierHistoryUnavailable: true,
 				Entries: []*motivationv1.CoefficientCapHistoryEntry{
 					{
-						Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: 42, RecordedAt: recordedAt,
-						NewCap: &motivationv1.Coefficient{TenThousandths: 2},
+						Id:          "550e8400-e29b-41d4-a716-446655440000",
+						ActorUserId: 42,
+						RecordedAt:  recordedAt,
+						NewCap:      &motivationv1.Coefficient{TenThousandths: 2},
 					},
 				},
 			},
@@ -1227,7 +1240,9 @@ func TestCoefficientCapHistoryValidation(t *testing.T) {
 				EarlierHistoryUnavailable: true,
 				Entries: []*motivationv1.CoefficientCapHistoryEntry{
 					{
-						Id: "550e8400-e29b-41d4-a716-446655440000", ActorUserId: 42, RecordedAt: recordedAt,
+						Id:          "550e8400-e29b-41d4-a716-446655440000",
+						ActorUserId: 42,
+						RecordedAt:  recordedAt,
 						PreviousCap: &motivationv1.Coefficient{TenThousandths: 1},
 					},
 				},
@@ -1245,6 +1260,178 @@ func TestCoefficientCapHistoryValidation(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCriterionPositionSetContract(t *testing.T) {
+	t.Parallel()
+
+	criterion := (&motivationv1.Criterion{}).ProtoReflect().Descriptor()
+
+	positionIDs := criterion.Fields().ByName("position_ids")
+	if positionIDs == nil {
+		t.Fatal("Criterion.position_ids is missing")
+	}
+
+	if !positionIDs.IsList() || positionIDs.Kind() != protoreflect.Int64Kind {
+		t.Errorf(
+			"Criterion.position_ids kind = %s, want repeated int64",
+			positionIDs.Kind(),
+		)
+	}
+
+	if int(positionIDs.Number()) != 8 {
+		t.Errorf("Criterion.position_ids number = %d, want 8", positionIDs.Number())
+	}
+
+	if !containsReservedNumber(criterion, 7) {
+		t.Error("Criterion field number 7 must be reserved, not reused")
+	}
+
+	if !containsReservedName(criterion, "position_id") {
+		t.Error("Criterion name position_id must be reserved, not reused")
+	}
+
+	createRequest := (&motivationv1.CreateCriterionRequest{}).ProtoReflect().Descriptor()
+
+	createPositionIDs := createRequest.Fields().ByName("position_ids")
+	if createPositionIDs == nil {
+		t.Fatal("CreateCriterionRequest.position_ids is missing")
+	}
+
+	if !createPositionIDs.IsList() || createPositionIDs.Kind() != protoreflect.Int64Kind {
+		t.Errorf(
+			"CreateCriterionRequest.position_ids kind = %s, want repeated int64",
+			createPositionIDs.Kind(),
+		)
+	}
+
+	if int(createPositionIDs.Number()) != 8 {
+		t.Errorf(
+			"CreateCriterionRequest.position_ids number = %d, want 8",
+			createPositionIDs.Number(),
+		)
+	}
+
+	if !containsReservedNumber(createRequest, 2) {
+		t.Error("CreateCriterionRequest field number 2 must be reserved, not reused")
+	}
+
+	if !containsReservedName(createRequest, "position_id") {
+		t.Error("CreateCriterionRequest name position_id must be reserved, not reused")
+	}
+
+	updateRequest := (&motivationv1.UpdateCriterionRequest{}).ProtoReflect().Descriptor()
+
+	updatePositionIDs := updateRequest.Fields().ByName("position_ids")
+	if updatePositionIDs == nil {
+		t.Fatal("UpdateCriterionRequest.position_ids is missing")
+	}
+
+	if !updatePositionIDs.IsList() || updatePositionIDs.Kind() != protoreflect.Int64Kind {
+		t.Errorf(
+			"UpdateCriterionRequest.position_ids kind = %s, want repeated int64",
+			updatePositionIDs.Kind(),
+		)
+	}
+
+	if int(updatePositionIDs.Number()) != 7 {
+		t.Errorf(
+			"UpdateCriterionRequest.position_ids number = %d, want 7",
+			updatePositionIDs.Number(),
+		)
+	}
+
+	maskField := updateRequest.Fields().ByName("update_mask")
+	if maskField == nil {
+		t.Fatal("UpdateCriterionRequest.update_mask is missing")
+	}
+
+	options, ok := maskField.Options().(*descriptorpb.FieldOptions)
+	if !ok {
+		t.Fatal("UpdateCriterionRequest.update_mask options are missing")
+	}
+
+	allowedPaths := proto.GetExtension(options, motivationv1.E_AllowedFieldMaskPath)
+
+	allowed, ok := allowedPaths.([]string)
+	if !ok {
+		t.Fatalf("allowed paths = %T, want []string", allowedPaths)
+	}
+
+	var hasPositionIDsPath bool
+
+	for _, path := range allowed {
+		if path == "position_ids" {
+			hasPositionIDsPath = true
+		}
+	}
+
+	if !hasPositionIDsPath {
+		t.Error("UpdateCriterionRequest mask must allow position_ids")
+	}
+
+	// Snapshot and sheet scopes stay scalar: one frozen PositionID per row.
+	scalarScopes := []struct {
+		message protoreflect.MessageDescriptor
+		number  int32
+	}{
+		{(&motivationv1.PeriodCriterion{}).ProtoReflect().Descriptor(), 8},
+		{(&motivationv1.SheetCriterion{}).ProtoReflect().Descriptor(), 11},
+	}
+
+	for _, scope := range scalarScopes {
+		field := scope.message.Fields().ByName("position_id")
+		if field == nil {
+			t.Errorf("%s.position_id is missing", scope.message.FullName())
+			continue
+		}
+
+		if field.Kind() != protoreflect.Int64Kind || field.IsList() {
+			t.Errorf(
+				"%s.position_id must stay a scalar int64",
+				scope.message.FullName(),
+			)
+		}
+
+		if int(field.Number()) != int(scope.number) {
+			t.Errorf(
+				"%s.position_id number = %d, want unchanged %d",
+				scope.message.FullName(),
+				field.Number(),
+				scope.number,
+			)
+		}
+	}
+
+	listFilter := (&motivationv1.ListCriteriaRequest{}).ProtoReflect().Descriptor()
+
+	filter := listFilter.Fields().ByName("position_id")
+	if filter == nil || filter.Kind() != protoreflect.Int64Kind || filter.IsList() {
+		t.Error("ListCriteriaRequest.position_id must stay a scalar int64 filter")
+	}
+}
+
+func containsReservedNumber(descriptor protoreflect.MessageDescriptor, number int32) bool {
+	ranges := descriptor.ReservedRanges()
+	for index := 0; index < ranges.Len(); index++ {
+		reserved := ranges.Get(index)
+		if number >= int32(reserved[0]) && number < int32(reserved[1]) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func containsReservedName(descriptor protoreflect.MessageDescriptor, name string) bool {
+	names := descriptor.ReservedNames()
+	for index := 0; index < names.Len(); index++ {
+		if string(names.Get(index)) == name {
+			return true
+		}
+	}
+
+	return false
 }
 
 func TestCoefficientCapHistoryRoundTrip(t *testing.T) {

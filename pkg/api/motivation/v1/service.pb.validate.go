@@ -632,15 +632,46 @@ func (m *Criterion) validate(all bool) error {
 		}
 	}
 
-	if m.GetPositionId() <= 0 {
+	if len(m.GetPositionIds()) < 1 {
 		err := CriterionValidationError{
-			field:  "PositionId",
-			reason: "value must be greater than 0",
+			field:  "PositionIds",
+			reason: "value must contain at least 1 item(s)",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	_Criterion_PositionIds_Unique := make(map[int64]struct{}, len(m.GetPositionIds()))
+
+	for idx, item := range m.GetPositionIds() {
+		_, _ = idx, item
+
+		if _, exists := _Criterion_PositionIds_Unique[item]; exists {
+			err := CriterionValidationError{
+				field:  fmt.Sprintf("PositionIds[%v]", idx),
+				reason: "repeated value must contain unique items",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		} else {
+			_Criterion_PositionIds_Unique[item] = struct{}{}
+		}
+
+		if item <= 0 {
+			err := CriterionValidationError{
+				field:  fmt.Sprintf("PositionIds[%v]", idx),
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.ValidTo != nil {
@@ -4980,17 +5011,6 @@ func (m *CreateCriterionRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetPositionId() <= 0 {
-		err := CreateCriterionRequestValidationError{
-			field:  "PositionId",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if utf8.RuneCountInString(m.GetName()) < 1 {
 		err := CreateCriterionRequestValidationError{
 			field:  "Name",
@@ -5064,6 +5084,48 @@ func (m *CreateCriterionRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if len(m.GetPositionIds()) < 1 {
+		err := CreateCriterionRequestValidationError{
+			field:  "PositionIds",
+			reason: "value must contain at least 1 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	_CreateCriterionRequest_PositionIds_Unique := make(map[int64]struct{}, len(m.GetPositionIds()))
+
+	for idx, item := range m.GetPositionIds() {
+		_, _ = idx, item
+
+		if _, exists := _CreateCriterionRequest_PositionIds_Unique[item]; exists {
+			err := CreateCriterionRequestValidationError{
+				field:  fmt.Sprintf("PositionIds[%v]", idx),
+				reason: "repeated value must contain unique items",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		} else {
+			_CreateCriterionRequest_PositionIds_Unique[item] = struct{}{}
+		}
+
+		if item <= 0 {
+			err := CreateCriterionRequestValidationError{
+				field:  fmt.Sprintf("PositionIds[%v]", idx),
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.ValidTo != nil {
@@ -5439,6 +5501,37 @@ func (m *UpdateCriterionRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	_UpdateCriterionRequest_PositionIds_Unique := make(map[int64]struct{}, len(m.GetPositionIds()))
+
+	for idx, item := range m.GetPositionIds() {
+		_, _ = idx, item
+
+		if _, exists := _UpdateCriterionRequest_PositionIds_Unique[item]; exists {
+			err := UpdateCriterionRequestValidationError{
+				field:  fmt.Sprintf("PositionIds[%v]", idx),
+				reason: "repeated value must contain unique items",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		} else {
+			_UpdateCriterionRequest_PositionIds_Unique[item] = struct{}{}
+		}
+
+		if item <= 0 {
+			err := UpdateCriterionRequestValidationError{
+				field:  fmt.Sprintf("PositionIds[%v]", idx),
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Name != nil {

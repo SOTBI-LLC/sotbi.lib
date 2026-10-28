@@ -76,10 +76,12 @@ type PerformanceEvaluationServiceClient interface {
 	GetBaseCriteria(ctx context.Context, in *GetBaseCriteriaRequest, opts ...grpc.CallOption) (*GetBaseCriteriaResponse, error)
 	ListBaseCriteria(ctx context.Context, in *ListBaseCriteriaRequest, opts ...grpc.CallOption) (*ListBaseCriteriaResponse, error)
 	// CreateCriterion, UpdateCriterion, GetCriterion and ListCriteria manage the
-	// separate special criteria catalog, one Criterion per external position.
-	// Mutations require admin; reads are open to authenticated evaluation users.
-	// CreateCriterion verifies the position through authoritative Directory;
-	// existing resources, replays and reads never revalidate the position.
+	// separate special criteria catalog. One Criterion is shared by a non-empty
+	// unique set of external positions with one uniform scale. Mutations require
+	// admin; reads are open to authenticated evaluation users. CreateCriterion
+	// verifies every assigned position through authoritative Directory;
+	// UpdateCriterion verifies added positions only; existing resources, replays
+	// and reads never revalidate positions.
 	CreateCriterion(ctx context.Context, in *CreateCriterionRequest, opts ...grpc.CallOption) (*CreateCriterionResponse, error)
 	UpdateCriterion(ctx context.Context, in *UpdateCriterionRequest, opts ...grpc.CallOption) (*UpdateCriterionResponse, error)
 	GetCriterion(ctx context.Context, in *GetCriterionRequest, opts ...grpc.CallOption) (*GetCriterionResponse, error)
@@ -467,10 +469,12 @@ type PerformanceEvaluationServiceServer interface {
 	GetBaseCriteria(context.Context, *GetBaseCriteriaRequest) (*GetBaseCriteriaResponse, error)
 	ListBaseCriteria(context.Context, *ListBaseCriteriaRequest) (*ListBaseCriteriaResponse, error)
 	// CreateCriterion, UpdateCriterion, GetCriterion and ListCriteria manage the
-	// separate special criteria catalog, one Criterion per external position.
-	// Mutations require admin; reads are open to authenticated evaluation users.
-	// CreateCriterion verifies the position through authoritative Directory;
-	// existing resources, replays and reads never revalidate the position.
+	// separate special criteria catalog. One Criterion is shared by a non-empty
+	// unique set of external positions with one uniform scale. Mutations require
+	// admin; reads are open to authenticated evaluation users. CreateCriterion
+	// verifies every assigned position through authoritative Directory;
+	// UpdateCriterion verifies added positions only; existing resources, replays
+	// and reads never revalidate positions.
 	CreateCriterion(context.Context, *CreateCriterionRequest) (*CreateCriterionResponse, error)
 	UpdateCriterion(context.Context, *UpdateCriterionRequest) (*UpdateCriterionResponse, error)
 	GetCriterion(context.Context, *GetCriterionRequest) (*GetCriterionResponse, error)

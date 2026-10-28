@@ -378,18 +378,22 @@ func (x *BaseCriteria) GetValidTo() *Date {
 	return nil
 }
 
-// Criterion is one special catalog entry scoped to exactly one external
-// position. PositionID is an int64 signed external identifier and never
-// changes after creation.
+// Criterion is one special catalog entry shared by a non-empty unique set of
+// external positions. PositionIDs are int64 signed external identifiers. The
+// assignment set may be replaced entirely for periods opened after the save;
+// ID, Name, Description, MaxScore and validity stay uniform for every
+// assignment.
 type Criterion struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	MaxScore      int32                  `protobuf:"varint,4,opt,name=max_score,json=maxScore,proto3" json:"max_score,omitempty"`
-	ValidFrom     *Date                  `protobuf:"bytes,5,opt,name=valid_from,json=validFrom,proto3" json:"valid_from,omitempty"`
-	ValidTo       *Date                  `protobuf:"bytes,6,opt,name=valid_to,json=validTo,proto3,oneof" json:"valid_to,omitempty"`
-	PositionId    int64                  `protobuf:"varint,7,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Id          string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name        string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	MaxScore    int32                  `protobuf:"varint,4,opt,name=max_score,json=maxScore,proto3" json:"max_score,omitempty"`
+	ValidFrom   *Date                  `protobuf:"bytes,5,opt,name=valid_from,json=validFrom,proto3" json:"valid_from,omitempty"`
+	ValidTo     *Date                  `protobuf:"bytes,6,opt,name=valid_to,json=validTo,proto3,oneof" json:"valid_to,omitempty"`
+	// Non-empty set of distinct positive external positions sharing this
+	// criterion. Returned sorted by numeric identifier.
+	PositionIds   []int64 `protobuf:"varint,8,rep,packed,name=position_ids,json=positionIds,proto3" json:"position_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -466,11 +470,11 @@ func (x *Criterion) GetValidTo() *Date {
 	return nil
 }
 
-func (x *Criterion) GetPositionId() int64 {
+func (x *Criterion) GetPositionIds() []int64 {
 	if x != nil {
-		return x.PositionId
+		return x.PositionIds
 	}
-	return 0
+	return nil
 }
 
 type PeriodCriterion struct {
@@ -2051,14 +2055,16 @@ func (x *ListBaseCriteriaResponse) GetBaseCriteria() []*BaseCriteria {
 type CreateCriterionRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	IdempotencyKey string                 `protobuf:"bytes,1,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
-	PositionId     int64                  `protobuf:"varint,2,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
 	Name           string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Description    string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
 	MaxScore       int32                  `protobuf:"varint,5,opt,name=max_score,json=maxScore,proto3" json:"max_score,omitempty"`
 	ValidFrom      *Date                  `protobuf:"bytes,6,opt,name=valid_from,json=validFrom,proto3" json:"valid_from,omitempty"`
 	ValidTo        *Date                  `protobuf:"bytes,7,opt,name=valid_to,json=validTo,proto3,oneof" json:"valid_to,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Non-empty set of distinct positive external positions to verify through
+	// Directory and assign to the new criterion in one command.
+	PositionIds   []int64 `protobuf:"varint,8,rep,packed,name=position_ids,json=positionIds,proto3" json:"position_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateCriterionRequest) Reset() {
@@ -2098,13 +2104,6 @@ func (x *CreateCriterionRequest) GetIdempotencyKey() string {
 	return ""
 }
 
-func (x *CreateCriterionRequest) GetPositionId() int64 {
-	if x != nil {
-		return x.PositionId
-	}
-	return 0
-}
-
 func (x *CreateCriterionRequest) GetName() string {
 	if x != nil {
 		return x.Name
@@ -2136,6 +2135,13 @@ func (x *CreateCriterionRequest) GetValidFrom() *Date {
 func (x *CreateCriterionRequest) GetValidTo() *Date {
 	if x != nil {
 		return x.ValidTo
+	}
+	return nil
+}
+
+func (x *CreateCriterionRequest) GetPositionIds() []int64 {
+	if x != nil {
+		return x.PositionIds
 	}
 	return nil
 }
@@ -2192,7 +2198,11 @@ type UpdateCriterionRequest struct {
 	Name           *string                `protobuf:"bytes,4,opt,name=name,proto3,oneof" json:"name,omitempty"`
 	Description    *string                `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	// Absence deliberately clears the nullable validity end.
-	ValidTo       *Date `protobuf:"bytes,6,opt,name=valid_to,json=validTo,proto3,oneof" json:"valid_to,omitempty"`
+	ValidTo *Date `protobuf:"bytes,6,opt,name=valid_to,json=validTo,proto3,oneof" json:"valid_to,omitempty"`
+	// A masked position_ids replaces the whole assignment set with a non-empty
+	// distinct set of positive external identifiers; the absent path keeps the
+	// current assignments. Send position_ids only when the mask includes it.
+	PositionIds   []int64 `protobuf:"varint,7,rep,packed,name=position_ids,json=positionIds,proto3" json:"position_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2265,6 +2275,13 @@ func (x *UpdateCriterionRequest) GetDescription() string {
 func (x *UpdateCriterionRequest) GetValidTo() *Date {
 	if x != nil {
 		return x.ValidTo
+	}
+	return nil
+}
+
+func (x *UpdateCriterionRequest) GetPositionIds() []int64 {
+	if x != nil {
+		return x.PositionIds
 	}
 	return nil
 }
@@ -4730,7 +4747,7 @@ const file_api_motivation_v1_service_proto_rawDesc = "" +
 	"\n" +
 	"valid_from\x18\x05 \x01(\v2\x13.motivation.v1.DateB\b\xfaB\x05\x8a\x01\x02\x10\x01R\tvalidFrom\x123\n" +
 	"\bvalid_to\x18\x06 \x01(\v2\x13.motivation.v1.DateH\x00R\avalidTo\x88\x01\x01B\v\n" +
-	"\t_valid_to\"\xf8\x02\n" +
+	"\t_valid_to\"\x96\x03\n" +
 	"\tCriterion\x12X\n" +
 	"\x02id\x18\x01 \x01(\tBH\xfaBErC2>^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\xb0\x01\x01R\x02id\x12\x1f\n" +
 	"\x04name\x18\x02 \x01(\tB\v\xfaB\br\x06\x10\x012\x02\\SR\x04name\x12 \n" +
@@ -4738,10 +4755,10 @@ const file_api_motivation_v1_service_proto_rawDesc = "" +
 	"\tmax_score\x18\x04 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\bmaxScore\x12<\n" +
 	"\n" +
 	"valid_from\x18\x05 \x01(\v2\x13.motivation.v1.DateB\b\xfaB\x05\x8a\x01\x02\x10\x01R\tvalidFrom\x123\n" +
-	"\bvalid_to\x18\x06 \x01(\v2\x13.motivation.v1.DateH\x00R\avalidTo\x88\x01\x01\x12(\n" +
-	"\vposition_id\x18\a \x01(\x03B\a\xfaB\x04\"\x02 \x00R\n" +
-	"positionIdB\v\n" +
-	"\t_valid_to\"\xc5\x04\n" +
+	"\bvalid_to\x18\x06 \x01(\v2\x13.motivation.v1.DateH\x00R\avalidTo\x88\x01\x01\x123\n" +
+	"\fposition_ids\x18\b \x03(\x03B\x10\xfaB\r\x92\x01\n" +
+	"\b\x01\x18\x01\"\x04\"\x02 \x00R\vpositionIdsB\v\n" +
+	"\t_valid_toJ\x04\b\a\x10\bR\vposition_id\"\xc5\x04\n" +
 	"\x0fPeriodCriterion\x12X\n" +
 	"\x02id\x18\x01 \x01(\tBH\xfaBErC2>^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\xb0\x01\x01R\x02id\x12t\n" +
 	"\x10base_criteria_id\x18\x02 \x01(\tBH\xfaBErC2>^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\xb0\x01\x01H\x00R\x0ebaseCriteriaId\x12m\n" +
@@ -4890,28 +4907,29 @@ const file_api_motivation_v1_service_proto_rawDesc = "" +
 	"\n" +
 	"_active_on\"\\\n" +
 	"\x18ListBaseCriteriaResponse\x12@\n" +
-	"\rbase_criteria\x18\x01 \x03(\v2\x1b.motivation.v1.BaseCriteriaR\fbaseCriteria\"\x9e\x03\n" +
+	"\rbase_criteria\x18\x01 \x03(\v2\x1b.motivation.v1.BaseCriteriaR\fbaseCriteria\"\xbc\x03\n" +
 	"\x16CreateCriterionRequest\x12q\n" +
-	"\x0fidempotency_key\x18\x01 \x01(\tBH\xfaBErC2>^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\xb0\x01\x01R\x0eidempotencyKey\x12(\n" +
-	"\vposition_id\x18\x02 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\n" +
-	"positionId\x12\x1f\n" +
+	"\x0fidempotency_key\x18\x01 \x01(\tBH\xfaBErC2>^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\xb0\x01\x01R\x0eidempotencyKey\x12\x1f\n" +
 	"\x04name\x18\x03 \x01(\tB\v\xfaB\br\x06\x10\x012\x02\\SR\x04name\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12$\n" +
 	"\tmax_score\x18\x05 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\bmaxScore\x12<\n" +
 	"\n" +
 	"valid_from\x18\x06 \x01(\v2\x13.motivation.v1.DateB\b\xfaB\x05\x8a\x01\x02\x10\x01R\tvalidFrom\x123\n" +
-	"\bvalid_to\x18\a \x01(\v2\x13.motivation.v1.DateH\x00R\avalidTo\x88\x01\x01B\v\n" +
-	"\t_valid_to\"[\n" +
+	"\bvalid_to\x18\a \x01(\v2\x13.motivation.v1.DateH\x00R\avalidTo\x88\x01\x01\x123\n" +
+	"\fposition_ids\x18\b \x03(\x03B\x10\xfaB\r\x92\x01\n" +
+	"\b\x01\x18\x01\"\x04\"\x02 \x00R\vpositionIdsB\v\n" +
+	"\t_valid_toJ\x04\b\x02\x10\x03R\vposition_id\"[\n" +
 	"\x17CreateCriterionResponse\x12@\n" +
-	"\tcriterion\x18\x01 \x01(\v2\x18.motivation.v1.CriterionB\b\xfaB\x05\x8a\x01\x02\x10\x01R\tcriterion\"\xf7\x03\n" +
+	"\tcriterion\x18\x01 \x01(\v2\x18.motivation.v1.CriterionB\b\xfaB\x05\x8a\x01\x02\x10\x01R\tcriterion\"\xba\x04\n" +
 	"\x16UpdateCriterionRequest\x12q\n" +
 	"\x0fidempotency_key\x18\x01 \x01(\tBH\xfaBErC2>^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\xb0\x01\x01R\x0eidempotencyKey\x12X\n" +
-	"\x02id\x18\x02 \x01(\tBH\xfaBErC2>^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\xb0\x01\x01R\x02id\x12h\n" +
-	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB+\xfaB\x05\x8a\x01\x02\x10\x01\x8a\xb5\x18\x04name\x8a\xb5\x18\vdescription\x8a\xb5\x18\bvalid_toR\n" +
+	"\x02id\x18\x02 \x01(\tBH\xfaBErC2>^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$\xb0\x01\x01R\x02id\x12x\n" +
+	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB;\xfaB\x05\x8a\x01\x02\x10\x01\x8a\xb5\x18\x04name\x8a\xb5\x18\vdescription\x8a\xb5\x18\bvalid_to\x8a\xb5\x18\fposition_idsR\n" +
 	"updateMask\x12$\n" +
 	"\x04name\x18\x04 \x01(\tB\v\xfaB\br\x06\x10\x012\x02\\SH\x00R\x04name\x88\x01\x01\x12%\n" +
 	"\vdescription\x18\x05 \x01(\tH\x01R\vdescription\x88\x01\x01\x123\n" +
-	"\bvalid_to\x18\x06 \x01(\v2\x13.motivation.v1.DateH\x02R\avalidTo\x88\x01\x01B\a\n" +
+	"\bvalid_to\x18\x06 \x01(\v2\x13.motivation.v1.DateH\x02R\avalidTo\x88\x01\x01\x121\n" +
+	"\fposition_ids\x18\a \x03(\x03B\x0e\xfaB\v\x92\x01\b\x18\x01\"\x04\"\x02 \x00R\vpositionIdsB\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\v\n" +
 	"\t_valid_to\"[\n" +

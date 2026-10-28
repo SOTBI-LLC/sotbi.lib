@@ -43,10 +43,12 @@ service PerformanceEvaluationService {
   rpc ListBaseCriteria(ListBaseCriteriaRequest) returns (ListBaseCriteriaResponse);
 
   // CreateCriterion, UpdateCriterion, GetCriterion and ListCriteria manage the
-  // separate special criteria catalog, one Criterion per external position.
-  // Mutations require admin; reads are open to authenticated evaluation users.
-  // CreateCriterion verifies the position through authoritative Directory;
-  // existing resources, replays and reads never revalidate the position.
+  // separate special criteria catalog. One Criterion is shared by a non-empty
+  // unique set of external positions with one uniform scale. Mutations require
+  // admin; reads are open to authenticated evaluation users. CreateCriterion
+  // verifies every assigned position through authoritative Directory;
+  // UpdateCriterion verifies added positions only; existing resources, replays
+  // and reads never revalidate positions.
   rpc CreateCriterion(CreateCriterionRequest) returns (CreateCriterionResponse);
   rpc UpdateCriterion(UpdateCriterionRequest) returns (UpdateCriterionResponse);
   rpc GetCriterion(GetCriterionRequest) returns (GetCriterionResponse);
@@ -161,9 +163,11 @@ message BaseCriteria {
   optional Date valid_to = 6;
 }
 
-// Criterion is one special catalog entry scoped to exactly one external
-// position. PositionID is an int64 signed external identifier and never
-// changes after creation.
+// Criterion is one special catalog entry shared by a non-empty unique set of
+// external positions. PositionIDs are int64 signed external identifiers. The
+// assignment set may be replaced entirely for periods opened after the save;
+// ID, Name, Description, MaxScore and validity stay uniform for every
+// assignment.
 message Criterion {
   string id = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
   string name = 2 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
@@ -171,7 +175,19 @@ message Criterion {
   int32 max_score = 4 [(validate.rules).int32.gt = 0];
   Date valid_from = 5 [(validate.rules).message.required = true];
   optional Date valid_to = 6;
-  int64 position_id = 7 [(validate.rules).int64.gt = 0];
+
+  // The single-position scope was replaced by position_ids; the scalar field
+  // number and name are reserved forever.
+  reserved 7;
+  reserved "position_id";
+
+  // Non-empty set of distinct positive external positions sharing this
+  // criterion. Returned sorted by numeric identifier.
+  repeated int64 position_ids = 8 [(validate.rules).repeated = {
+    min_items: 1,
+    unique: true,
+    items: {int64: {gt: 0}}
+  }];
 }
 
 message PeriodCriterion {
@@ -393,12 +409,25 @@ message ListBaseCriteriaResponse {
 
 message CreateCriterionRequest {
   string idempotency_key = 1 [(validate.rules).string = {uuid: true, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}];
-  int64 position_id = 2 [(validate.rules).int64.gt = 0];
+
+  // The scalar position was replaced by position_ids; the field number and
+  // name are reserved forever.
+  reserved 2;
+  reserved "position_id";
+
   string name = 3 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
   string description = 4;
   int32 max_score = 5 [(validate.rules).int32.gt = 0];
   Date valid_from = 6 [(validate.rules).message.required = true];
   optional Date valid_to = 7;
+
+  // Non-empty set of distinct positive external positions to verify through
+  // Directory and assign to the new criterion in one command.
+  repeated int64 position_ids = 8 [(validate.rules).repeated = {
+    min_items: 1,
+    unique: true,
+    items: {int64: {gt: 0}}
+  }];
 }
 
 message CreateCriterionResponse {
@@ -412,13 +441,22 @@ message UpdateCriterionRequest {
     (validate.rules).message.required = true,
     (allowed_field_mask_path) = "name",
     (allowed_field_mask_path) = "description",
-    (allowed_field_mask_path) = "valid_to"
+    (allowed_field_mask_path) = "valid_to",
+    (allowed_field_mask_path) = "position_ids"
   ];
   optional string name = 4 [(validate.rules).string = {min_len: 1, pattern: "\\S"}];
   optional string description = 5;
 
   // Absence deliberately clears the nullable validity end.
   optional Date valid_to = 6;
+
+  // A masked position_ids replaces the whole assignment set with a non-empty
+  // distinct set of positive external identifiers; the absent path keeps the
+  // current assignments. Send position_ids only when the mask includes it.
+  repeated int64 position_ids = 7 [(validate.rules).repeated = {
+    unique: true,
+    items: {int64: {gt: 0}}
+  }];
 }
 
 message UpdateCriterionResponse {

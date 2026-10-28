@@ -40,11 +40,11 @@ func TestGeneratedRequestValidation(t *testing.T) {
 			},
 		},
 		{
-			name: "create special accepts positive position",
+			name: "create special accepts positive positions",
 			validate: func() error {
 				return (&motivationv1.CreateCriterionRequest{
 					IdempotencyKey: idempotencyKey,
-					PositionId:     9007199254740993,
+					PositionIds:    []int64{9007199254740993, 200},
 					Name:           "Cash register quality",
 					MaxScore:       60,
 					ValidFrom:      validDate,
@@ -52,7 +52,7 @@ func TestGeneratedRequestValidation(t *testing.T) {
 			},
 		},
 		{
-			name: "create special without position is rejected",
+			name: "create special without positions is rejected",
 			validate: func() error {
 				return (&motivationv1.CreateCriterionRequest{
 					IdempotencyKey: idempotencyKey,
@@ -68,7 +68,7 @@ func TestGeneratedRequestValidation(t *testing.T) {
 			validate: func() error {
 				return (&motivationv1.CreateCriterionRequest{
 					IdempotencyKey: idempotencyKey,
-					PositionId:     0,
+					PositionIds:    []int64{0},
 					Name:           "Cash register quality",
 					MaxScore:       60,
 					ValidFrom:      validDate,
@@ -81,7 +81,20 @@ func TestGeneratedRequestValidation(t *testing.T) {
 			validate: func() error {
 				return (&motivationv1.CreateCriterionRequest{
 					IdempotencyKey: idempotencyKey,
-					PositionId:     -5,
+					PositionIds:    []int64{-5},
+					Name:           "Cash register quality",
+					MaxScore:       60,
+					ValidFrom:      validDate,
+				}).ValidateAll()
+			},
+			wantErr: true,
+		},
+		{
+			name: "create special with duplicate positions is rejected",
+			validate: func() error {
+				return (&motivationv1.CreateCriterionRequest{
+					IdempotencyKey: idempotencyKey,
+					PositionIds:    []int64{200, 200},
 					Name:           "Cash register quality",
 					MaxScore:       60,
 					ValidFrom:      validDate,
@@ -605,6 +618,63 @@ func TestValidateUpdateCriterionRequest(t *testing.T) {
 				return request
 			},
 			wantErrText: "unsupported path",
+		},
+		{
+			name: "masked position_ids with values is accepted",
+			request: func() *motivationv1.UpdateCriterionRequest {
+				request := validRequest()
+				request.UpdateMask.Paths = []string{"position_ids"}
+				request.Description = nil
+				request.PositionIds = []int64{100, 200}
+
+				return request
+			},
+		},
+		{
+			name: "masked empty position_ids is rejected",
+			request: func() *motivationv1.UpdateCriterionRequest {
+				request := validRequest()
+				request.UpdateMask.Paths = []string{"position_ids"}
+				request.Description = nil
+
+				return request
+			},
+			wantErrText: "value for update_mask path",
+		},
+		{
+			name: "masked position_ids with duplicates is rejected",
+			request: func() *motivationv1.UpdateCriterionRequest {
+				request := validRequest()
+				request.UpdateMask.Paths = []string{"position_ids"}
+				request.Description = nil
+				request.PositionIds = []int64{200, 200}
+
+				return request
+			},
+			wantErrText: "unique",
+		},
+		{
+			name: "masked position_ids with non-positive value is rejected",
+			request: func() *motivationv1.UpdateCriterionRequest {
+				request := validRequest()
+				request.UpdateMask.Paths = []string{"position_ids"}
+				request.Description = nil
+				request.PositionIds = []int64{-1}
+
+				return request
+			},
+			wantErrText: "greater than 0",
+		},
+		{
+			name: "position_ids outside the mask may stay absent",
+			request: func() *motivationv1.UpdateCriterionRequest {
+				request := validRequest()
+				request.UpdateMask.Paths = []string{"name"}
+				request.Description = nil
+				request.Name = &name
+
+				return request
+			},
 		},
 		{
 			name: "empty mask",
